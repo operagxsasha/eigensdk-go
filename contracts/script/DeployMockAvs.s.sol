@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.12;
 
 import "./DeployMockAvsRegistries.s.sol";
 import "forge-std/console.sol";
@@ -15,7 +15,7 @@ contract DeployMockAvs is DeployMockAvsRegistries {
         ContractsRegistry contractsRegistry = ContractsRegistry(
             0x5FbDB2315678afecb367f032d93F642f64180aa3
         );
-        EigenlayerContracts
+    EigenlayerContracts
             memory eigenlayerContracts = _loadEigenlayerDeployedContracts();
         MockAvsOpsAddresses memory addressConfig = _loadAvsOpsAddresses(
             "ops_addresses"
@@ -47,7 +47,8 @@ contract DeployMockAvs is DeployMockAvsRegistries {
         mockAvsServiceManagerImplementation = new MockAvsServiceManager(
             registryCoordinator,
             eigenlayerContracts.avsDirectory,
-            eigenlayerContracts.rewardsCoordinator
+            eigenlayerContracts.rewardsCoordinator,
+            eigenlayerContracts.allocationManager
         );
 
         mockAvsProxyAdmin.upgradeAndCall(

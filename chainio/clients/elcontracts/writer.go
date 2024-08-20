@@ -11,12 +11,13 @@ import (
 
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
 	"github.com/Layr-Labs/eigensdk-go/chainio/txmgr"
+	avsdirectory "github.com/Layr-Labs/eigensdk-go/contracts/bindings/AVSDirectory"
+	allocationmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/AllocationManager"
 	delegationmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/DelegationManager"
-	avsdirectory "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IAVSDirectory"
 	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IERC20"
 	rewardscoordinator "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IRewardsCoordinator"
-	slasher "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ISlasher"
 	strategy "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IStrategy"
+	permissioncontroller "github.com/Layr-Labs/eigensdk-go/contracts/bindings/PermissionController"
 	strategymanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/StrategyManager"
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/metrics"
@@ -31,24 +32,26 @@ type Reader interface {
 }
 
 type ChainWriter struct {
-	slasher             *slasher.ContractISlasher
-	delegationManager   *delegationmanager.ContractDelegationManager
-	strategyManager     *strategymanager.ContractStrategyManager
-	rewardsCoordinator  *rewardscoordinator.ContractIRewardsCoordinator
-	avsDirectory        *avsdirectory.ContractIAVSDirectory
-	strategyManagerAddr gethcommon.Address
-	elChainReader       Reader
-	ethClient           eth.HttpBackend
-	logger              logging.Logger
-	txMgr               txmgr.TxManager
+	delegationManager    *delegationmanager.ContractDelegationManager
+	strategyManager      *strategymanager.ContractStrategyManager
+	rewardsCoordinator   *rewardscoordinator.ContractIRewardsCoordinator
+	avsDirectory         *avsdirectory.ContractAVSDirectory
+	allocationManager    *allocationmanager.ContractAllocationManager
+	permissionController *permissioncontroller.ContractPermissionController
+	strategyManagerAddr  gethcommon.Address
+	elChainReader        Reader
+	ethClient            eth.HttpBackend
+	logger               logging.Logger
+	txMgr                txmgr.TxManager
 }
 
 func NewChainWriter(
-	slasher *slasher.ContractISlasher,
 	delegationManager *delegationmanager.ContractDelegationManager,
 	strategyManager *strategymanager.ContractStrategyManager,
 	rewardsCoordinator *rewardscoordinator.ContractIRewardsCoordinator,
-	avsDirectory *avsdirectory.ContractIAVSDirectory,
+	avsDirectory *avsdirectory.ContractAVSDirectory,
+	allocationManager *allocationmanager.ContractAllocationManager,
+	permissionController *permissioncontroller.ContractPermissionController,
 	strategyManagerAddr gethcommon.Address,
 	elChainReader Reader,
 	ethClient eth.HttpBackend,
@@ -59,16 +62,17 @@ func NewChainWriter(
 	logger = logger.With(logging.ComponentKey, "elcontracts/writer")
 
 	return &ChainWriter{
-		slasher:             slasher,
-		delegationManager:   delegationManager,
-		strategyManager:     strategyManager,
-		strategyManagerAddr: strategyManagerAddr,
-		rewardsCoordinator:  rewardsCoordinator,
-		avsDirectory:        avsDirectory,
-		elChainReader:       elChainReader,
-		logger:              logger,
-		ethClient:           ethClient,
-		txMgr:               txMgr,
+		delegationManager:    delegationManager,
+		strategyManager:      strategyManager,
+		strategyManagerAddr:  strategyManagerAddr,
+		rewardsCoordinator:   rewardsCoordinator,
+		allocationManager:    allocationManager,
+		permissionController: permissionController,
+		avsDirectory:         avsDirectory,
+		elChainReader:        elChainReader,
+		logger:               logger,
+		ethClient:            ethClient,
+		txMgr:                txMgr,
 	}
 }
 
@@ -92,20 +96,22 @@ func BuildELChainWriter(
 		return nil, err
 	}
 	elChainReader := NewChainReader(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.AvsDirectory,
 		elContractBindings.RewardsCoordinator,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		logger,
 		ethClient,
 	)
 	return NewChainWriter(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.RewardsCoordinator,
 		elContractBindings.AvsDirectory,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		elContractBindings.StrategyManagerAddr,
 		elChainReader,
 		ethClient,
@@ -131,20 +137,22 @@ func NewWriterFromConfig(
 		return nil, err
 	}
 	elChainReader := NewChainReader(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.AvsDirectory,
 		elContractBindings.RewardsCoordinator,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		logger,
 		ethClient,
 	)
 	return NewChainWriter(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.RewardsCoordinator,
 		elContractBindings.AvsDirectory,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		elContractBindings.StrategyManagerAddr,
 		elChainReader,
 		ethClient,
@@ -164,19 +172,17 @@ func (w *ChainWriter) RegisterAsOperator(
 	}
 
 	w.logger.Infof("registering operator %s to EigenLayer", operator.Address)
-	opDetails := delegationmanager.IDelegationManagerOperatorDetails{
-		// Earning receiver has been deprecated, so we just use the operator address as a dummy value
-		// Any reward related setup is via RewardsCoordinator contract
-		DeprecatedEarningsReceiver: gethcommon.HexToAddress(operator.Address),
-		StakerOptOutWindowBlocks:   operator.StakerOptOutWindowBlocks,
-		DelegationApprover:         gethcommon.HexToAddress(operator.DelegationApproverAddress),
-	}
 
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
 		return nil, err
 	}
-	tx, err := w.delegationManager.RegisterAsOperator(noSendTxOpts, opDetails, operator.MetadataUrl)
+	tx, err := w.delegationManager.RegisterAsOperator(
+		noSendTxOpts,
+		gethcommon.HexToAddress(operator.DelegationApproverAddress),
+		operator.AllocationDelay,
+		operator.MetadataUrl,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -199,20 +205,17 @@ func (w *ChainWriter) UpdateOperatorDetails(
 	}
 
 	w.logger.Infof("updating operator details of operator %s to EigenLayer", operator.Address)
-	opDetails := delegationmanager.IDelegationManagerOperatorDetails{
-		// Earning receiver has been deprecated, so we just use the operator address as a dummy value
-		// Any reward related setup is via RewardsCoordinator contract
-		DeprecatedEarningsReceiver: gethcommon.HexToAddress(operator.Address),
-		DelegationApprover:         gethcommon.HexToAddress(operator.DelegationApproverAddress),
-		StakerOptOutWindowBlocks:   operator.StakerOptOutWindowBlocks,
-	}
 
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
 		return nil, err
 	}
 
-	tx, err := w.delegationManager.ModifyOperatorDetails(noSendTxOpts, opDetails)
+	tx, err := w.delegationManager.ModifyOperatorDetails(
+		noSendTxOpts,
+		gethcommon.HexToAddress(operator.Address),
+		gethcommon.HexToAddress(operator.DelegationApproverAddress),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +234,11 @@ func (w *ChainWriter) UpdateOperatorDetails(
 	return receipt, nil
 }
 
-func (w *ChainWriter) UpdateMetadataURI(ctx context.Context, uri string, waitForReceipt bool,
+func (w *ChainWriter) UpdateMetadataURI(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	uri string,
+	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
 	if w.delegationManager == nil {
 		return nil, errors.New("DelegationManager contract not provided")
@@ -242,7 +249,7 @@ func (w *ChainWriter) UpdateMetadataURI(ctx context.Context, uri string, waitFor
 		return nil, err
 	}
 
-	tx, err := w.delegationManager.UpdateOperatorMetadataURI(noSendTxOpts, uri)
+	tx, err := w.delegationManager.UpdateOperatorMetadataURI(noSendTxOpts, operatorAddress, uri)
 	if err != nil {
 		return nil, err
 	}
@@ -332,7 +339,7 @@ func (w *ChainWriter) SetClaimerFor(
 
 func (w *ChainWriter) ProcessClaim(
 	ctx context.Context,
-	claim rewardscoordinator.IRewardsCoordinatorRewardsMerkleClaim,
+	claim rewardscoordinator.IRewardsCoordinatorTypesRewardsMerkleClaim,
 	earnerAddress gethcommon.Address,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
@@ -414,7 +421,7 @@ func (w *ChainWriter) SetOperatorPISplit(
 
 func (w *ChainWriter) ProcessClaims(
 	ctx context.Context,
-	claims []rewardscoordinator.IRewardsCoordinatorRewardsMerkleClaim,
+	claims []rewardscoordinator.IRewardsCoordinatorTypesRewardsMerkleClaim,
 	earnerAddress gethcommon.Address,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
@@ -441,4 +448,281 @@ func (w *ChainWriter) ProcessClaims(
 	}
 
 	return receipt, nil
+}
+
+func (w *ChainWriter) ForceDeregisterFromOperatorSets(
+	ctx context.Context,
+	operator gethcommon.Address,
+	avs gethcommon.Address,
+	operatorSetIds []uint32,
+	waitForReceipt bool,
+) (*gethtypes.Receipt, error) {
+	if w.avsDirectory == nil {
+		return nil, errors.New("AVSDirectory contract not provided")
+	}
+
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.allocationManager.DeregisterFromOperatorSets(
+		noSendTxOpts,
+		allocationmanager.IAllocationManagerTypesDeregisterParams{
+			Operator:       operator,
+			Avs:            avs,
+			OperatorSetIds: operatorSetIds,
+		},
+	)
+
+	if err != nil {
+		return nil, utils.WrapError("failed to create ForceDeregisterFromOperatorSets tx", err)
+	}
+
+	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
+	if err != nil {
+		return nil, utils.WrapError("failed to send tx", err)
+	}
+
+	return receipt, nil
+}
+
+func (w *ChainWriter) ModifyAllocations(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	allocations []allocationmanager.IAllocationManagerTypesAllocateParams,
+	waitForReceipt bool,
+) (*gethtypes.Receipt, error) {
+	if w.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.allocationManager.ModifyAllocations(noSendTxOpts, operatorAddress, allocations)
+	if err != nil {
+		return nil, utils.WrapError("failed to create ModifyAllocations tx", err)
+	}
+
+	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
+	if err != nil {
+		return nil, utils.WrapError("failed to send tx", err)
+	}
+
+	return receipt, nil
+}
+
+func (w *ChainWriter) SetAllocationDelay(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	delay uint32,
+	waitForReceipt bool,
+) (*gethtypes.Receipt, error) {
+	if w.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.allocationManager.SetAllocationDelay(noSendTxOpts, operatorAddress, delay)
+	if err != nil {
+		return nil, utils.WrapError("failed to create InitializeAllocationDelay tx", err)
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
+	if err != nil {
+		return nil, utils.WrapError("failed to send tx", err)
+	}
+
+	return receipt, nil
+}
+
+func (w *ChainWriter) DeregisterFromOperatorSets(
+	ctx context.Context,
+	operator gethcommon.Address,
+	request DeregistrationRequest,
+) (*gethtypes.Receipt, error) {
+	if w.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.allocationManager.DeregisterFromOperatorSets(
+		noSendTxOpts,
+		allocationmanager.IAllocationManagerTypesDeregisterParams{
+			Operator:       operator,
+			Avs:            request.AVSAddress,
+			OperatorSetIds: request.OperatorSetIds,
+		})
+	if err != nil {
+		return nil, utils.WrapError("failed to create DeregisterFromOperatorSets tx", err)
+	}
+
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	if err != nil {
+		return nil, utils.WrapError("failed to send tx", err)
+	}
+
+	return receipt, nil
+}
+
+func (w *ChainWriter) RegisterForOperatorSets(
+	ctx context.Context,
+	request RegistrationRequest,
+) (*gethtypes.Receipt, error) {
+	if w.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.allocationManager.RegisterForOperatorSets(
+		noSendTxOpts,
+		request.OperatorAddress,
+		allocationmanager.IAllocationManagerTypesRegisterParams{
+			Avs:            request.AVSAddress,
+			OperatorSetIds: request.OperatorSetIds,
+		})
+	if err != nil {
+		return nil, utils.WrapError("failed to create RegisterForOperatorSets tx", err)
+	}
+
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	if err != nil {
+		return nil, utils.WrapError("failed to send tx", err)
+	}
+
+	return receipt, nil
+}
+
+func (w *ChainWriter) RemovePermission(
+	ctx context.Context,
+	request RemovePermissionRequest,
+) (*gethtypes.Receipt, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.permissionController.RemoveAppointee(
+		noSendTxOpts,
+		request.AccountAddress,
+		request.AppointeeAddress,
+		request.Target,
+		request.Selector,
+	)
+	if err != nil {
+		return nil, errors.New("call to permission controller failed: " + err.Error())
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	return receipt, err
+}
+
+func (w *ChainWriter) SetPermission(ctx context.Context, request SetPermissionRequest) (*gethtypes.Receipt, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.permissionController.SetAppointee(
+		noSendTxOpts,
+		request.AccountAddress,
+		request.AppointeeAddress,
+		request.Target,
+		request.Selector,
+	)
+	if err != nil {
+		return nil, errors.New("call to permission controller failed: " + err.Error())
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	return receipt, err
+}
+
+func (w *ChainWriter) AcceptAdmin(ctx context.Context, request AcceptAdminRequest) (*gethtypes.Receipt, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.permissionController.AcceptAdmin(noSendTxOpts, request.AccountAddress)
+	if err != nil {
+		return nil, errors.New("call to permission controller failed: " + err.Error())
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	return receipt, err
+}
+
+func (w *ChainWriter) AddPendingAdmin(ctx context.Context, request AddPendingAdminRequest) (*gethtypes.Receipt, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.permissionController.AddPendingAdmin(noSendTxOpts, request.AccountAddress, request.AdminAddress)
+	if err != nil {
+		return nil, errors.New("call to permission controller failed: " + err.Error())
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	return receipt, err
+}
+
+func (w *ChainWriter) RemoveAdmin(ctx context.Context, request RemoveAdminRequest) (*gethtypes.Receipt, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.permissionController.RemoveAdmin(noSendTxOpts, request.AccountAddress, request.AdminAddress)
+	if err != nil {
+		return nil, errors.New("call to permission controller failed: " + err.Error())
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	return receipt, err
+}
+
+func (w *ChainWriter) RemovePendingAdmin(
+	ctx context.Context,
+	request RemovePendingAdminRequest,
+) (*gethtypes.Receipt, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
+
+	tx, err := w.permissionController.RemovePendingAdmin(noSendTxOpts, request.AccountAddress, request.AdminAddress)
+	if err != nil {
+		return nil, errors.New("call to permission controller failed: " + err.Error())
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+	return receipt, err
 }

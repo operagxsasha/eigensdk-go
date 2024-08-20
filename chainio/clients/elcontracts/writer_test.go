@@ -112,7 +112,7 @@ func TestChainWriter(t *testing.T) {
 	contractAddrs := testutils.GetContractAddressesFromContractRegistry(anvilHttpEndpoint)
 
 	t.Run("update operator details", func(t *testing.T) {
-		walletModified, err := crypto.HexToECDSA("2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6")
+		walletModified, err := crypto.HexToECDSA("ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
 		assert.NoError(t, err)
 		walletModifiedAddress := crypto.PubkeyToAddress(walletModified.PublicKey)
 
@@ -129,7 +129,15 @@ func TestChainWriter(t *testing.T) {
 	})
 
 	t.Run("update metadata URI", func(t *testing.T) {
-		receipt, err := clients.ElChainWriter.UpdateMetadataURI(context.Background(), "https://0.0.0.0", true)
+		walletModified, err := crypto.HexToECDSA("ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+		assert.NoError(t, err)
+		walletModifiedAddress := crypto.PubkeyToAddress(walletModified.PublicKey)
+		receipt, err := clients.ElChainWriter.UpdateMetadataURI(
+			context.Background(),
+			walletModifiedAddress,
+			"https://0.0.0.0",
+			true,
+		)
 		assert.NoError(t, err)
 		assert.True(t, receipt.Status == 1)
 	})

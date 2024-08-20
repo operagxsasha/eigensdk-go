@@ -25,11 +25,12 @@ func BuildReadClients(
 	}
 
 	elChainReader := NewChainReader(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.AvsDirectory,
 		elContractBindings.RewardsCoordinator,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		logger,
 		client,
 	)
@@ -54,21 +55,23 @@ func BuildClients(
 	}
 
 	elChainReader := NewChainReader(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.AvsDirectory,
 		elContractBindings.RewardsCoordinator,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		logger,
 		client,
 	)
 
 	elChainWriter := NewChainWriter(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.RewardsCoordinator,
 		elContractBindings.AvsDirectory,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		elContractBindings.StrategyManagerAddr,
 		elChainReader,
 		client,
