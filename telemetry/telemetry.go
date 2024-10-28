@@ -27,6 +27,7 @@ func captureEvent(client *posthog.Client) {
 }
 
 /*
+The telemetry config should be configured as a singleton, so that it can be accessed from anywhere in the codebase.
 func InitTelemetry(key string) {
 	sync.OnceFunc(func() {
 		telemetry := &Telemetry{} // TODO: args
