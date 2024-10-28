@@ -412,57 +412,18 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 					"taskIndex", taskIndex,
 					"taskResponseDigest", taskResponseDigest)
 
-				nonSignersOperatorIds := []types.OperatorId{}
-				for operatorId := range operatorsAvsStateDict {
-					if _, operatorSigned := digestAggregatedOperators.signersOperatorIdsSet[operatorId]; !operatorSigned {
-						nonSignersOperatorIds = append(nonSignersOperatorIds, operatorId)
-					}
-				}
-
-				// the contract requires a sorted nonSignersOperatorIds
-				sort.SliceStable(nonSignersOperatorIds, func(i, j int) bool {
-					iOprInt := new(big.Int).SetBytes(nonSignersOperatorIds[i][:])
-					jOprInt := new(big.Int).SetBytes(nonSignersOperatorIds[j][:])
-					return iOprInt.Cmp(jOprInt) == -1
-				})
-
-				nonSignersG1Pubkeys := []*bls.G1Point{}
-				for _, operatorId := range nonSignersOperatorIds {
-					operator := operatorsAvsStateDict[operatorId]
-					nonSignersG1Pubkeys = append(nonSignersG1Pubkeys, operator.OperatorInfo.Pubkeys.G1Pubkey)
-				}
-
-				indices, err := a.avsRegistryService.GetCheckSignaturesIndices(
-					&bind.CallOpts{},
+				a.sendAggregatedResponse(
+					operatorsAvsStateDict,
+					taskIndex,
 					taskCreatedBlock,
+					signedTaskResponseDigest,
+					digestAggregatedOperators,
 					quorumNumbers,
-					nonSignersOperatorIds,
+					taskResponseDigest,
+					quorumApksG1,
 				)
-				if err != nil {
-					a.aggregatedResponsesC <- BlsAggregationServiceResponse{
-						Err:       utils.WrapError(errors.New("Failed to get check signatures indices"), err),
-						TaskIndex: taskIndex,
-					}
-					return
-				}
-
-				blsAggregationServiceResponse := BlsAggregationServiceResponse{
-					Err:                          nil,
-					TaskIndex:                    taskIndex,
-					TaskResponse:                 signedTaskResponseDigest.TaskResponse,
-					TaskResponseDigest:           taskResponseDigest,
-					NonSignersPubkeysG1:          nonSignersG1Pubkeys,
-					QuorumApksG1:                 quorumApksG1,
-					SignersApkG2:                 digestAggregatedOperators.signersApkG2,
-					SignersAggSigG1:              digestAggregatedOperators.signersAggSigG1,
-					NonSignerQuorumBitmapIndices: indices.NonSignerQuorumBitmapIndices,
-					QuorumApkIndices:             indices.QuorumApkIndices,
-					TotalStakeIndices:            indices.TotalStakeIndices,
-					NonSignerStakeIndices:        indices.NonSignerStakeIndices,
-				}
-				a.aggregatedResponsesC <- blsAggregationServiceResponse
 				taskExpiredTimer.Stop()
-				return
+
 			}
 		case <-taskExpiredTimer.C:
 			a.aggregatedResponsesC <- BlsAggregationServiceResponse{
@@ -472,7 +433,67 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 			return
 		}
 	}
+}
 
+func (a *BlsAggregatorService) sendAggregatedResponse(
+	operatorsAvsStateDict map[types.OperatorId]types.OperatorAvsState,
+	taskIndex types.TaskIndex,
+	taskCreatedBlock uint32,
+	signedTaskResponseDigest types.SignedTaskResponseDigest,
+	digestAggregatedOperators aggregatedOperators,
+	quorumNumbers types.QuorumNums,
+	taskResponseDigest types.TaskResponseDigest,
+	quorumApksG1 []*bls.G1Point,
+) {
+	nonSignersOperatorIds := []types.OperatorId{}
+	for operatorId := range operatorsAvsStateDict {
+		if _, operatorSigned := digestAggregatedOperators.signersOperatorIdsSet[operatorId]; !operatorSigned {
+			nonSignersOperatorIds = append(nonSignersOperatorIds, operatorId)
+		}
+	}
+
+	// the contract requires a sorted nonSignersOperatorIds
+	sort.SliceStable(nonSignersOperatorIds, func(i, j int) bool {
+		iOprInt := new(big.Int).SetBytes(nonSignersOperatorIds[i][:])
+		jOprInt := new(big.Int).SetBytes(nonSignersOperatorIds[j][:])
+		return iOprInt.Cmp(jOprInt) == -1
+	})
+
+	nonSignersG1Pubkeys := []*bls.G1Point{}
+	for _, operatorId := range nonSignersOperatorIds {
+		operator := operatorsAvsStateDict[operatorId]
+		nonSignersG1Pubkeys = append(nonSignersG1Pubkeys, operator.OperatorInfo.Pubkeys.G1Pubkey)
+	}
+
+	indices, err := a.avsRegistryService.GetCheckSignaturesIndices(
+		&bind.CallOpts{},
+		taskCreatedBlock,
+		quorumNumbers,
+		nonSignersOperatorIds,
+	)
+	if err != nil {
+		a.aggregatedResponsesC <- BlsAggregationServiceResponse{
+			Err:       utils.WrapError(errors.New("Failed to get check signatures indices"), err),
+			TaskIndex: taskIndex,
+		}
+		return
+	}
+
+	blsAggregationServiceResponse := BlsAggregationServiceResponse{
+		Err:                          nil,
+		TaskIndex:                    taskIndex,
+		TaskResponse:                 signedTaskResponseDigest.TaskResponse,
+		TaskResponseDigest:           taskResponseDigest,
+		NonSignersPubkeysG1:          nonSignersG1Pubkeys,
+		QuorumApksG1:                 quorumApksG1,
+		SignersApkG2:                 digestAggregatedOperators.signersApkG2,
+		SignersAggSigG1:              digestAggregatedOperators.signersAggSigG1,
+		NonSignerQuorumBitmapIndices: indices.NonSignerQuorumBitmapIndices,
+		QuorumApkIndices:             indices.QuorumApkIndices,
+		TotalStakeIndices:            indices.TotalStakeIndices,
+		NonSignerStakeIndices:        indices.NonSignerStakeIndices,
+	}
+	a.aggregatedResponsesC <- blsAggregationServiceResponse
 }
 
 // closeTaskGoroutine is run when the goroutine processing taskIndex's task responses ends (for whatever reason)
