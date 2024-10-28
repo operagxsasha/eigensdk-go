@@ -327,6 +327,9 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 	aggregatedOperatorsDict := map[types.TaskResponseDigest]aggregatedOperators{}
 	windowTimer := time.NewTimer(timeToExpiry + 1)
 	openWindow := false
+	var lastSignedTaskResponseDigest types.SignedTaskResponseDigest
+	var lastDigestAggregatedOperators aggregatedOperators
+	var lastTaskResponseDigest types.TaskResponseDigest
 	for {
 		select {
 		case signedTaskResponseDigest := <-signedTaskRespsC:
@@ -400,6 +403,12 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 					digestAggregatedOperators.signersTotalStakePerQuorum[quorumNum].Add(digestAggregatedOperators.signersTotalStakePerQuorum[quorumNum], stake)
 				}
 			}
+
+			// update the buffer variables to be used when the window timer fires
+			lastDigestAggregatedOperators = digestAggregatedOperators
+			lastTaskResponseDigest = taskResponseDigest
+			lastSignedTaskResponseDigest = signedTaskResponseDigest
+
 			// update the aggregatedOperatorsDict. Note that we need to assign the whole struct value at once,
 			// because of https://github.com/golang/go/issues/3117
 			aggregatedOperatorsDict[taskResponseDigest] = digestAggregatedOperators
@@ -431,11 +440,20 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 					quorumApksG1,
 				)
 				taskExpiredTimer.Stop()
-
+				return
 			}
 		case <-taskExpiredTimer.C:
 			if openWindow {
-				// send the aggregated response
+				a.sendAggregatedResponse(
+					operatorsAvsStateDict,
+					taskIndex,
+					taskCreatedBlock,
+					lastSignedTaskResponseDigest,
+					lastDigestAggregatedOperators,
+					quorumNumbers,
+					lastTaskResponseDigest,
+					quorumApksG1,
+				)
 			}
 
 			a.aggregatedResponsesC <- BlsAggregationServiceResponse{
@@ -445,7 +463,16 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 			return
 		case <-windowTimer.C:
 			a.logger.Info("Window timer expired")
-			// a.sendAggregatedResponse()
+			a.sendAggregatedResponse(
+				operatorsAvsStateDict,
+				taskIndex,
+				taskCreatedBlock,
+				lastSignedTaskResponseDigest,
+				lastDigestAggregatedOperators,
+				quorumNumbers,
+				lastTaskResponseDigest,
+				quorumApksG1,
+			)
 			return
 		}
 	}
