@@ -196,7 +196,7 @@ func (a *BlsAggregatorService) InitializeNewTaskWithWindow(
 	quorumNumbers types.QuorumNums,
 	quorumThresholdPercentages types.QuorumThresholdPercentages,
 	timeToExpiry time.Duration,
-	windowTime time.Duration,
+	windowDuration time.Duration,
 ) error {
 	a.logger.Debug(
 		"AggregatorService initializing new task",
@@ -226,7 +226,7 @@ func (a *BlsAggregatorService) InitializeNewTaskWithWindow(
 		quorumNumbers,
 		quorumThresholdPercentages,
 		timeToExpiry,
-		windowTime,
+		windowDuration,
 		signedTaskRespsC,
 	)
 	return nil
@@ -274,7 +274,7 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 	quorumNumbers types.QuorumNums,
 	quorumThresholdPercentages []types.QuorumThresholdPercentage,
 	timeToExpiry time.Duration,
-	windowTime time.Duration,
+	windowDuration time.Duration,
 	signedTaskRespsC <-chan types.SignedTaskResponseDigest,
 ) {
 	a.logger.Debug("AggregatorService goroutine processing new task",
@@ -434,22 +434,19 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 			// because of https://github.com/golang/go/issues/3117
 			aggregatedOperatorsDict[taskResponseDigest] = digestAggregatedOperators
 
-			if checkIfStakeThresholdsMet(
+			if !openWindow && checkIfStakeThresholdsMet(
 				a.logger,
 				digestAggregatedOperators.signersTotalStakePerQuorum,
 				totalStakePerQuorum,
 				quorumThresholdPercentagesMap,
 			) {
-				if !openWindow {
-					openWindow = true
-					windowTimer = time.NewTimer(windowTime * time.Second)
-					a.logger.Debug("Window timer started")
-					continue
-				}
 				a.logger.Debug("Task goroutine stake threshold reached",
 					"taskIndex", taskIndex,
 					"taskResponseDigest", taskResponseDigest)
-				return
+
+				openWindow = true
+				windowTimer = time.NewTimer(windowDuration * time.Second)
+				a.logger.Debug("Window timer started")
 			}
 		case <-taskExpiredTimer.C:
 			if openWindow {
