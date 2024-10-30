@@ -81,18 +81,35 @@ type aggregatedOperators struct {
 // BlsAggregationService is the interface provided to avs aggregator code for doing bls aggregation
 // Currently its only implementation is the BlsAggregatorService, so see the comment there for more details
 type BlsAggregationService interface {
-	// InitializeNewTask should be called whenever a new task is created. ProcessNewSignature will return an error
-	// if the task it is trying to process has not been initialized yet.
-	// quorumNumbers and quorumThresholdPercentages set the requirements for this task to be considered complete, which
+	// InitializeNewTask creates a new task goroutine meant to process new signed task responses for that task
+	// (that are sent via ProcessNewSignature) and adds a channel to a.taskChans to send the signed task responses to it.
+	// The quorumNumbers and quorumThresholdPercentages set the requirements for this task to be considered complete, which
 	// happens when a particular TaskResponseDigest (received via the a.taskChans[taskIndex]) has been signed by signers
-	// whose stake
-	// in each of the listed quorums adds up to at least quorumThresholdPercentages[i] of the total stake in that quorum
+	// whose stake in each of the listed quorums adds up to at least quorumThresholdPercentages[i] of the total stake in
+	// that quorum
 	InitializeNewTask(
 		taskIndex types.TaskIndex,
 		taskCreatedBlock uint32,
 		quorumNumbers types.QuorumNums,
 		quorumThresholdPercentages types.QuorumThresholdPercentages,
 		timeToExpiry time.Duration,
+	) error
+
+	// InitializeNewTaskWithWindow creates a new task goroutine meant to process new signed task responses for that task
+	// (that are sent via ProcessNewSignature) and adds a channel to a.taskChans to send the signed task responses to it.
+	// The quorumNumbers and quorumThresholdPercentages set the requirements for this task to be considered complete, which
+	// happens when a particular TaskResponseDigest (received via the a.taskChans[taskIndex]) has been signed by signers
+	// whose stake in each of the listed quorums adds up to at least quorumThresholdPercentages[i] of the total stake in
+	// that quorum.
+	// Once the quorum is reached, the task is still open for a window of `windowDuration` time to receive more signatures,
+	// before sending the aggregation response through the aggregatedResponsesC channel.
+	InitializeNewTaskWithWindow(
+		taskIndex types.TaskIndex,
+		taskCreatedBlock uint32,
+		quorumNumbers types.QuorumNums,
+		quorumThresholdPercentages types.QuorumThresholdPercentages,
+		timeToExpiry time.Duration,
+		windowDuration time.Duration,
 	) error
 
 	// ProcessNewSignature processes a new signature over a taskResponseDigest for a particular taskIndex by a
