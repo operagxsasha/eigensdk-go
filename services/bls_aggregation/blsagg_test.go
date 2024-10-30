@@ -1392,7 +1392,6 @@ func TestBlsAgg(t *testing.T) {
 		require.True(t, elapsed.Seconds() < windowDuration.Seconds())
 	})
 
-	// cannot test this as processing new signatures is blocking
 	t.Run("if window duration is zero, no signatures are aggregated after reaching quorum", func(t *testing.T) {
 		testOperator1 := types.TestOperator{
 			OperatorId:     types.OperatorId{1},
