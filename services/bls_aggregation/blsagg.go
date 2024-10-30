@@ -346,7 +346,7 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 	taskExpiredTimer := time.NewTimer(timeToExpiry)
 
 	aggregatedOperatorsDict := map[types.TaskResponseDigest]aggregatedOperators{}
-	windowTimer := time.NewTimer(timeToExpiry + 1)
+	windowTimer := time.NewTimer(timeToExpiry + 1*time.Second)
 	openWindow := false
 	var lastSignedTaskResponseDigest types.SignedTaskResponseDigest
 	var lastDigestAggregatedOperators aggregatedOperators
@@ -445,7 +445,7 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 					"taskResponseDigest", taskResponseDigest)
 
 				openWindow = true
-				windowTimer = time.NewTimer(windowDuration * time.Second)
+				windowTimer = time.NewTimer(windowDuration)
 				a.logger.Debug("Window timer started")
 			}
 		case <-taskExpiredTimer.C:

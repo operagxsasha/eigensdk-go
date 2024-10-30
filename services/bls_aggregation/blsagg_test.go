@@ -1188,7 +1188,7 @@ func TestBlsAgg(t *testing.T) {
 		},
 	)
 
-	t.Run("signatures are processed during window even after quorum", func(t *testing.T) {
+	t.Run("signatures are processed during window after quorum", func(t *testing.T) {
 		testOperator1 := types.TestOperator{
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
