@@ -353,6 +353,8 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 	taskExpiredTimer := time.NewTimer(timeToExpiry)
 
 	aggregatedOperatorsDict := map[types.TaskResponseDigest]aggregatedOperators{}
+	// The windowTimer is initialized to be longer than the taskExpiredTimer as it will
+	// be overwritten once the stake threshold is met
 	windowTimer := time.NewTimer(timeToExpiry + 1*time.Second)
 	openWindow := false
 	var lastSignedTaskResponseDigest types.SignedTaskResponseDigest
