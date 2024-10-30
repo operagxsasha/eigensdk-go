@@ -1285,7 +1285,11 @@ func TestBlsAgg(t *testing.T) {
 		require.EqualValues(t, taskIndex, gotAggregationServiceResponse.TaskIndex)
 		elapsed := time.Since(start)
 		t.Log("elapsed: ", elapsed.Seconds())
-		require.True(t, elapsed.Seconds() >= windowDuration.Seconds(), "The aggregation response should be sent after the window finishes")
+		require.True(
+			t,
+			elapsed.Seconds() >= windowDuration.Seconds(),
+			"The aggregation response should be sent after the window finishes",
+		)
 		require.True(t, elapsed.Seconds() < timeToExpiry.Seconds())
 	})
 
