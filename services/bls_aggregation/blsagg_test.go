@@ -1462,6 +1462,7 @@ func TestBlsAgg(t *testing.T) {
 		)
 		require.Nil(t, err)
 
+		time.Sleep(1 * time.Millisecond)
 		// quorum has already been reached, next signatures should not be aggregated
 		// this should timeout as the task goroutine is blocked on the response channel
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)

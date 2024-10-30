@@ -353,19 +353,6 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 	var lastTaskResponseDigest types.TaskResponseDigest
 	for {
 		select {
-		case <-windowTimer.C:
-			a.logger.Debug("Window timer expired")
-			a.sendAggregatedResponse(
-				operatorsAvsStateDict,
-				taskIndex,
-				taskCreatedBlock,
-				lastSignedTaskResponseDigest,
-				lastDigestAggregatedOperators,
-				quorumNumbers,
-				lastTaskResponseDigest,
-				quorumApksG1,
-			)
-			return
 		case signedTaskResponseDigest := <-signedTaskRespsC:
 			a.logger.Debug(
 				"Task goroutine received new signed task response digest",
@@ -479,6 +466,19 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 				Err:       TaskExpiredErrorFn(taskIndex),
 				TaskIndex: taskIndex,
 			}
+			return
+		case <-windowTimer.C:
+			a.logger.Debug("Window timer expired")
+			a.sendAggregatedResponse(
+				operatorsAvsStateDict,
+				taskIndex,
+				taskCreatedBlock,
+				lastSignedTaskResponseDigest,
+				lastDigestAggregatedOperators,
+				quorumNumbers,
+				lastTaskResponseDigest,
+				quorumApksG1,
+			)
 			return
 		}
 	}
