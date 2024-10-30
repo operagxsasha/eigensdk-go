@@ -1,45 +1,56 @@
 package telemetry
 
 import (
-	"os"
+	"errors"
+	"sync"
 
 	"github.com/posthog/posthog-go"
 )
 
-func config() {
-	client, _ := posthog.NewWithConfig(
-		os.Getenv("POSTHOG_API_KEY"),
-		posthog.Config{
-			PersonalApiKey: "your personal API key", // Optional, but much more performant.  If this token is not supplied, then fetching feature flag values will be slower.
-			Endpoint:       "https://us.i.posthog.com",
-		},
-	)
-	defer client.Close()
-	// run commands
+var once sync.Once
 
+var telemetrySingleton *Telemetry
+
+type Telemetry struct {
+	Client *posthog.Client
+	ApiKey string
+	UserId string
 }
 
-func captureEvent(client *posthog.Client) {
-	(*client).Enqueue(posthog.Capture{
-		DistinctId: "distinct_id_of_the_user",
-		Event:      "user_signed_up",
+// The telemetry config should be configured as a singleton,
+// so that it can be accessed from anywhere in the codebase.
+func InitTelemetry(Client *posthog.Client,
+	ApiKey string,
+	UserId string) *Telemetry {
+	once.Do(func() {
+		client, _ := posthog.NewWithConfig(
+			ApiKey,
+			posthog.Config{
+				Endpoint: "https://us.i.posthog.com",
+			},
+		)
+		defer client.Close()
+
+		telemetrySingleton = &Telemetry{
+			Client: &client,
+			ApiKey: ApiKey,
+			UserId: UserId,
+		}
 	})
-}
-
-/*
-The telemetry config should be configured as a singleton, so that it can be accessed from anywhere in the codebase.
-func InitTelemetry(key string) {
-	sync.OnceFunc(func() {
-		telemetry := &Telemetry{} // TODO: args
-		atomic.SwapPointer(&telemetrySingleton, unsafe.Pointer(telemetry))
-	})()
+	return telemetrySingleton
 }
 
 func GetTelemetry() (*Telemetry, error) {
-	telemetry := (*Telemetry)(atomic.LoadPointer(&telemetrySingleton))
-	if telemetry == nil {
-		return nil, fmt.Error()
+	if telemetrySingleton == nil {
+		return nil, errors.New("Telemetry not initialized")
 	}
-	return telemetry, nil
+	return telemetrySingleton, nil
 }
-*/
+
+func CaptureEvent(telemetry *Telemetry, event string) {
+	userId := telemetry.UserId
+	(*telemetry.Client).Enqueue(posthog.Capture{
+		DistinctId: userId,
+		Event:      event,
+	})
+}
