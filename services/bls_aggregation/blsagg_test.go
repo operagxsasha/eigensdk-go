@@ -30,6 +30,7 @@ import (
 // TestBlsAgg is a suite of test that tests the main aggregation logic of the aggregation service
 // it don't check any of the indices fields because those are just provided as a convenience to the caller
 // and aren't related to the main logic which we actually need to test
+// they are gotten from a call to the chain at the end of the aggregation so we should test that elsewhere
 func TestBlsAgg(t *testing.T) {
 
 	// we hardcode this for now, until we implement this feature properly
