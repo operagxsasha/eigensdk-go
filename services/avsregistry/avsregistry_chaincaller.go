@@ -82,7 +82,10 @@ func (ar *AvsRegistryServiceChainCaller) GetOperatorsAvsStateAtBlock(
 			"AvsRegistryServiceChainCaller",
 		)
 		return nil,
-			utils.WrapError("number of quorums returned from GetOperatorsStakeInQuorumsAtBlock does not match number of quorums requested. Probably pointing to old contract or wrong implementation", nil)
+			utils.WrapError(
+				"number of quorums returned from GetOperatorsStakeInQuorumsAtBlock does not match number of quorums requested. Probably pointing to old contract or wrong implementation",
+				nil,
+			)
 	}
 
 	for quorumIdx, quorumNum := range quorumNumbers {
