@@ -76,11 +76,12 @@ func (ar *AvsRegistryServiceChainCaller) GetOperatorsAvsStateAtBlock(
 	}
 	numquorums := len(quorumNumbers)
 	if len(operatorsStakesInQuorums) != numquorums {
-		ar.logger.Fatal(
+		ar.logger.Error(
 			"Number of quorums returned from GetOperatorsStakeInQuorumsAtBlock does not match number of quorums requested. Probably pointing to old contract or wrong implementation.",
 			"service",
 			"AvsRegistryServiceChainCaller",
 		)
+		return nil, fmt.Errorf("number of quorums returned from GetOperatorsStakeInQuorumsAtBlock does not match number of quorums requested. Probably pointing to old contract or wrong implementation")
 	}
 
 	for quorumIdx, quorumNum := range quorumNumbers {
