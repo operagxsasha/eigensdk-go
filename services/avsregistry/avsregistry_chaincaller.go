@@ -150,7 +150,7 @@ func (ar *AvsRegistryServiceChainCaller) getOperatorInfo(
 	info, ok := ar.operatorInfoService.GetOperatorInfo(ctx, operatorAddr)
 	if !ok {
 		return types.OperatorInfo{}, fmt.Errorf(
-			"Failed to get operator info from operatorInfoService (operatorAddr: %v, operatorId: %v)",
+			"failed to get operator info from operatorInfoService (operatorAddr: %v, operatorId: %v)",
 			operatorAddr,
 			operatorId,
 		)
