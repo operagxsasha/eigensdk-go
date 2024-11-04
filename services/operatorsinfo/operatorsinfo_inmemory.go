@@ -128,8 +128,9 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 	queryC <-chan query,
 	wg *sync.WaitGroup,
 	opts Opts,
-) {
-	go func() {
+) chan<- error {
+	errCh := make(chan error, 1)
+	go func(errCh chan<- error) {
 
 		// TODO(samlaf): we should probably save the service in the logger itself and add it automatically to all logs
 		ops.logger.Debug(
@@ -146,8 +147,9 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 				"service",
 				"OperatorPubkeysServiceInMemory",
 			)
-			// see the warning above the struct definition to understand why we panic here
-			panic(err)
+			// TODO! see the warning above the struct definition to understand why we panic here
+			errCh <- err
+			return
 		}
 		newSocketRegistrationC, newSocketRegistrationSub, err := ops.avsRegistrySubscriber.SubscribeToOperatorSocketUpdates()
 		if err != nil {
@@ -158,7 +160,8 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 				"service",
 				"OperatorPubkeysServiceInMemory",
 			)
-			panic(err)
+			errCh <- err
+			return
 		}
 		err = ops.queryPastRegisteredOperatorEventsAndFillDb(ctx, opts)
 		if err != nil {
@@ -169,7 +172,8 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 				"service",
 				"OperatorPubkeysServiceInMemory",
 			)
-			panic(err)
+			errCh <- err
+			return
 		}
 		// The constructor can return after we have backfilled the db by querying the events of operators that have
 		// registered with the blsApkRegistry
@@ -181,6 +185,7 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 				// TODO(samlaf): should we do anything here? Seems like this only happens when the aggregator is
 				// shutting down and we want graceful exit
 				ops.logger.Infof("OperatorPubkeysServiceInMemory: Context cancelled, exiting")
+				errCh <- errors.New("OperatorPubkeysServiceInMemory: Context cancelled, exiting")
 				return
 			case err := <-newPubkeyRegistrationSub.Err():
 				ops.logger.Error(
@@ -201,7 +206,8 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 						"OperatorPubkeysServiceInMemory",
 					)
 					// see the warning above the struct definition to understand why we panic here
-					panic(err)
+					errCh <- err
+					return
 				}
 			case err := <-newSocketRegistrationSub.Err():
 				ops.logger.Error(
@@ -221,7 +227,8 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 						"service",
 						"OperatorPubkeysServiceInMemory",
 					)
-					panic(err)
+					errCh <- err
+					return
 				}
 			case newPubkeyRegistrationEvent := <-newPubkeyRegistrationC:
 				operatorAddr := newPubkeyRegistrationEvent.Operator
@@ -279,7 +286,8 @@ func (ops *OperatorsInfoServiceInMemory) startServiceInGoroutine(
 				query.respC <- resp{operatorInfo, ok}
 			}
 		}
-	}()
+	}(errCh)
+	return errCh
 }
 
 func (ops *OperatorsInfoServiceInMemory) queryPastRegisteredOperatorEventsAndFillDb(
