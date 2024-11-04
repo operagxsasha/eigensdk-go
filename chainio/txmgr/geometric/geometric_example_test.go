@@ -12,6 +12,7 @@ import (
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/signerv2"
 	"github.com/Layr-Labs/eigensdk-go/testutils"
+	"github.com/Layr-Labs/eigensdk-go/utils"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -22,6 +23,37 @@ import (
 var (
 	chainid = big.NewInt(31337)
 )
+
+func createTx(client eth.HttpBackend, address common.Address) (*types.Transaction, error) {
+	zeroAddr := common.HexToAddress("0x0")
+	nonce, err := client.PendingNonceAt(context.TODO(), address)
+	if err != nil {
+		return nil, utils.WrapError("Failed to get PendingNonceAt", err)
+	}
+	return types.NewTx(&types.DynamicFeeTx{
+		To:    &zeroAddr,
+		Nonce: nonce,
+	}), nil
+}
+
+func createTxMgr(rpcUrl string, ecdsaPrivateKey *ecdsa.PrivateKey) (eth.HttpBackend, *GeometricTxManager, error) {
+	logger := logging.NewTextSLogger(os.Stdout, &logging.SLoggerOptions{})
+	client, err := ethclient.Dial(rpcUrl)
+	if err != nil {
+		return nil, nil, err
+	}
+	signerV2, signerAddr, err := signerv2.SignerFromConfig(signerv2.Config{PrivateKey: ecdsaPrivateKey}, chainid)
+	if err != nil {
+		return nil, nil, err
+	}
+	wallet, err := wallet.NewPrivateKeyWallet(client, signerV2, signerAddr, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	reg := prometheus.NewRegistry()
+	metrics := NewMetrics(reg, "example", logger)
+	return client, NewGeometricTxnManager(client, wallet, logger, metrics, GeometricTxnManagerParams{}), nil
+}
 
 func ExampleGeometricTxManager() {
 	anvilC, err := testutils.StartAnvilContainer("")
@@ -40,9 +72,16 @@ func ExampleGeometricTxManager() {
 	pk := ecdsaPrivateKey.PublicKey
 	address := crypto.PubkeyToAddress(pk)
 
-	client, txmgr := createTxMgr(anvilUrl, ecdsaPrivateKey)
+	client, txmgr, err := createTxMgr(anvilUrl, ecdsaPrivateKey)
+	if err != nil {
+		panic(err)
+	}
 
-	tx := createTx(client, address)
+	tx, err := createTx(client, address)
+	if err != nil {
+		panic(err)
+	}
+
 	_, err = txmgr.Send(context.TODO(), tx, true)
 	if err != nil {
 		panic(err)
@@ -51,35 +90,4 @@ func ExampleGeometricTxManager() {
 	// we just add this to make sure the example runs
 	fmt.Println("Tx sent")
 	// Output: Tx sent
-}
-
-func createTx(client eth.HttpBackend, address common.Address) *types.Transaction {
-	zeroAddr := common.HexToAddress("0x0")
-	nonce, err := client.PendingNonceAt(context.TODO(), address)
-	if err != nil {
-		panic(err)
-	}
-	return types.NewTx(&types.DynamicFeeTx{
-		To:    &zeroAddr,
-		Nonce: nonce,
-	})
-}
-
-func createTxMgr(rpcUrl string, ecdsaPrivateKey *ecdsa.PrivateKey) (eth.HttpBackend, *GeometricTxManager) {
-	logger := logging.NewTextSLogger(os.Stdout, &logging.SLoggerOptions{})
-	client, err := ethclient.Dial(rpcUrl)
-	if err != nil {
-		panic(err)
-	}
-	signerV2, signerAddr, err := signerv2.SignerFromConfig(signerv2.Config{PrivateKey: ecdsaPrivateKey}, chainid)
-	if err != nil {
-		panic(err)
-	}
-	wallet, err := wallet.NewPrivateKeyWallet(client, signerV2, signerAddr, logger)
-	if err != nil {
-		panic(err)
-	}
-	reg := prometheus.NewRegistry()
-	metrics := NewMetrics(reg, "example", logger)
-	return client, NewGeometricTxnManager(client, wallet, logger, metrics, GeometricTxnManagerParams{})
 }
