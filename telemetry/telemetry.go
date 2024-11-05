@@ -47,10 +47,11 @@ func GetTelemetry() (*Telemetry, error) {
 	return telemetrySingleton, nil
 }
 
-func CaptureEvent(telemetry *Telemetry, event string) {
+func CaptureEvent(telemetry *Telemetry, event string) error {
 	userId := telemetry.UserId
-	(*telemetry.Client).Enqueue(posthog.Capture{
+	err := (*telemetry.Client).Enqueue(posthog.Capture{
 		DistinctId: userId,
 		Event:      event,
 	})
+	return err
 }
