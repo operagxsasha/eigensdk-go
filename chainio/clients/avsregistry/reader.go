@@ -17,6 +17,7 @@ import (
 	stakeregistry "github.com/Layr-Labs/eigensdk-go/contracts/bindings/StakeRegistry"
 	"github.com/Layr-Labs/eigensdk-go/crypto/bls"
 	"github.com/Layr-Labs/eigensdk-go/logging"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 	"github.com/Layr-Labs/eigensdk-go/types"
 	"github.com/Layr-Labs/eigensdk-go/utils"
 )
@@ -92,6 +93,8 @@ func BuildAvsRegistryChainReader(
 	ethClient eth.HttpBackend,
 	logger logging.Logger,
 ) (*ChainReader, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.build")
+
 	contractRegistryCoordinator, err := regcoord.NewContractRegistryCoordinator(registryCoordinatorAddr, ethClient)
 	if err != nil {
 		return nil, utils.WrapError("Failed to create contractRegistryCoordinator", err)

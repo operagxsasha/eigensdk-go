@@ -1,7 +1,9 @@
+//go:telemetry
+
 package telemetry
 
 import (
-	"errors"
+	"runtime"
 	"sync"
 
 	"github.com/posthog/posthog-go"
@@ -9,9 +11,11 @@ import (
 
 var once sync.Once
 
-var telemetrySingleton *Telemetry
+var telemetrySingleton Telemetry = &BogusTelemetry{}
 
-type Telemetry struct {
+type BogusTelemetry struct{}
+
+type RealTelemetry struct {
 	Client *posthog.Client
 	ApiKey string
 	UserId string
@@ -21,7 +25,7 @@ type Telemetry struct {
 // so that it can be accessed from anywhere in the codebase.
 func InitTelemetry(Client *posthog.Client,
 	ApiKey string,
-	UserId string) *Telemetry {
+	UserId string) Telemetry {
 	once.Do(func() {
 		client, _ := posthog.NewWithConfig(
 			ApiKey,
@@ -29,9 +33,11 @@ func InitTelemetry(Client *posthog.Client,
 				Endpoint: "https://us.i.posthog.com",
 			},
 		)
-		defer client.Close()
+		runtime.SetFinalizer(client, func(client *posthog.Client) {
+			(*client).Close()
+		})
 
-		telemetrySingleton = &Telemetry{
+		telemetrySingleton = &RealTelemetry{
 			Client: &client,
 			ApiKey: ApiKey,
 			UserId: UserId,
@@ -40,14 +46,15 @@ func InitTelemetry(Client *posthog.Client,
 	return telemetrySingleton
 }
 
-func GetTelemetry() (*Telemetry, error) {
-	if telemetrySingleton == nil {
-		return nil, errors.New("Telemetry not initialized")
-	}
-	return telemetrySingleton, nil
+type Telemetry interface {
+	CaptureEvent(event string) error
 }
 
-func CaptureEvent(telemetry *Telemetry, event string) error {
+func GetTelemetry() Telemetry {
+	return telemetrySingleton
+}
+
+func (telemetry *RealTelemetry) CaptureEvent(event string) error {
 	userId := telemetry.UserId
 	err := (*telemetry.Client).Enqueue(posthog.Capture{
 		DistinctId: userId,
@@ -55,3 +62,12 @@ func CaptureEvent(telemetry *Telemetry, event string) error {
 	})
 	return err
 }
+
+func (telemetry *BogusTelemetry) CaptureEvent(event string) error {
+	return nil
+}
+
+// TODO: Implement close connection
+//func CloseClient(client *posthog.Client) {
+//	(*client).Close()
+//}
