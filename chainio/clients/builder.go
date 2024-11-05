@@ -57,7 +57,10 @@ func BuildReadClients(
 	config BuildAllConfig,
 	logger logging.Logger,
 ) (*ReadClients, error) {
-	config.validate(logger)
+	err := config.validate(logger)
+	if err != nil {
+		return nil, utils.WrapError("Failed to validate logger", err)
+	}
 
 	// Create the metrics server
 	promReg := prometheus.NewRegistry()
@@ -128,7 +131,10 @@ func BuildAll(
 	ecdsaPrivateKey *ecdsa.PrivateKey,
 	logger logging.Logger,
 ) (*Clients, error) {
-	config.validate(logger)
+	err := config.validate(logger)
+	if err != nil {
+		return nil, utils.WrapError("Failed to validate logger", err)
+	}
 
 	// Create the metrics server
 	promReg := prometheus.NewRegistry()
