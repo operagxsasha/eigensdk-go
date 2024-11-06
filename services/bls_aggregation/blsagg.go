@@ -300,7 +300,10 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 			"err",
 			err,
 		)
-		text := fmt.Sprintf("AggregatorService failed to get operators state from avs registry at blockNum %d", taskCreatedBlock)
+		text := fmt.Sprintf(
+			"AggregatorService failed to get operators state from avs registry at blockNum %d",
+			taskCreatedBlock,
+		)
 		a.aggregatedResponsesC <- BlsAggregationServiceResponse{
 			Err:       TaskInitializationErrorFn(utils.WrapError(text, err), taskIndex),
 			TaskIndex: taskIndex,
