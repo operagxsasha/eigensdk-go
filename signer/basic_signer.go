@@ -147,7 +147,8 @@ func (s *BasicSigner) EstimateGasPriceAndLimitAndSendTx(
 
 	tx, err = contract.RawTransact(opts, tx.Data())
 	if err != nil {
-		return nil, utils.WrapError(fmt.Errorf("Failed to send transaction with tag: %v", tag), err)
+		text := fmt.Sprintf("Failed to send transaction with tag: %v", tag)
+		return nil, utils.WrapError(text, err)
 	}
 
 	receipt, err := s.EnsureTransactionEvaled(
@@ -164,11 +165,12 @@ func (s *BasicSigner) EstimateGasPriceAndLimitAndSendTx(
 func (s *BasicSigner) EnsureTransactionEvaled(tx *gethtypes.Transaction, tag string) (*gethtypes.Receipt, error) {
 	receipt, err := bind.WaitMined(context.Background(), s.ethClient, tx)
 	if err != nil {
-		return nil, utils.WrapError(fmt.Errorf("Failed to wait for transaction to mine with tag: %v", tag), err)
+		text := fmt.Sprintf("Failed to wait for transaction to mine with tag: %v", tag)
+		return nil, utils.WrapError(text, err)
 	}
 	if receipt.Status != 1 {
 		return nil, fmt.Errorf(
-			"Transaction failed (tag: %v, txHash: %v, status: %v, gasUsed: %v)",
+			"transaction failed (tag: %v, txHash: %v, status: %v, gasUsed: %v)",
 			tag,
 			tx.Hash().Hex(),
 			receipt.Status,
