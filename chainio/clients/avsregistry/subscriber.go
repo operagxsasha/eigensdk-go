@@ -9,6 +9,7 @@ import (
 	blsapkreg "github.com/Layr-Labs/eigensdk-go/contracts/bindings/BLSApkRegistry"
 	regcoord "github.com/Layr-Labs/eigensdk-go/contracts/bindings/RegistryCoordinator"
 	"github.com/Layr-Labs/eigensdk-go/logging"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 	"github.com/Layr-Labs/eigensdk-go/utils"
 )
 
@@ -25,6 +26,8 @@ func NewChainSubscriber(
 	blsApkRegistry blsapkreg.ContractBLSApkRegistryFilters,
 	logger logging.Logger,
 ) *ChainSubscriber {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.subscriber.newchainsubscriber")
+
 	logger = logger.With(logging.ComponentKey, "avsregistry/ChainSubscriber")
 
 	return &ChainSubscriber{
@@ -41,6 +44,8 @@ func BuildAvsRegistryChainSubscriber(
 	ethWsClient eth.WsBackend,
 	logger logging.Logger,
 ) (*ChainSubscriber, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.subscriber.newchainsubscriber")
+
 	regCoord, err := regcoord.NewContractRegistryCoordinator(regCoordAddr, ethWsClient)
 	if err != nil {
 		return nil, utils.WrapError("Failed to create RegistryCoordinator contract", err)
@@ -63,6 +68,8 @@ func NewSubscriberFromConfig(
 	wsClient eth.WsBackend,
 	logger logging.Logger,
 ) (*ChainSubscriber, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.subscriber.newsubscriberFromConfig")
+
 	bindings, err := NewBindingsFromConfig(cfg, wsClient, logger)
 	if err != nil {
 		return nil, err
@@ -72,6 +79,8 @@ func NewSubscriberFromConfig(
 }
 
 func (s *ChainSubscriber) SubscribeToNewPubkeyRegistrations() (chan *blsapkreg.ContractBLSApkRegistryNewPubkeyRegistration, event.Subscription, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.subscriber.subscribetonewpubkeyregistrations")
+
 	newPubkeyRegistrationChan := make(chan *blsapkreg.ContractBLSApkRegistryNewPubkeyRegistration)
 	sub, err := s.blsApkRegistry.WatchNewPubkeyRegistration(
 		&bind.WatchOpts{}, newPubkeyRegistrationChan, nil,
@@ -83,6 +92,8 @@ func (s *ChainSubscriber) SubscribeToNewPubkeyRegistrations() (chan *blsapkreg.C
 }
 
 func (s *ChainSubscriber) SubscribeToOperatorSocketUpdates() (chan *regcoord.ContractRegistryCoordinatorOperatorSocketUpdate, event.Subscription, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.subscriber.subscribetooperatorsocketupdates")
+
 	operatorSocketUpdateChan := make(chan *regcoord.ContractRegistryCoordinatorOperatorSocketUpdate)
 	sub, err := s.regCoord.WatchOperatorSocketUpdate(
 		&bind.WatchOpts{}, operatorSocketUpdateChan, nil,

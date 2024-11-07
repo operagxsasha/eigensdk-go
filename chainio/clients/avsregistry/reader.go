@@ -51,6 +51,7 @@ func NewChainReader(
 	ethClient eth.HttpBackend,
 ) *ChainReader {
 	logger = logger.With(logging.ComponentKey, "avsregistry/ChainReader")
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.newchainreader")
 
 	return &ChainReader{
 		blsApkRegistryAddr:      blsApkRegistryAddr,
@@ -69,6 +70,8 @@ func NewReaderFromConfig(
 	client eth.HttpBackend,
 	logger logging.Logger,
 ) (*ChainReader, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.newreaderfromconfig")
+
 	bindings, err := NewBindingsFromConfig(cfg, client, logger)
 	if err != nil {
 		return nil, err
@@ -93,7 +96,7 @@ func BuildAvsRegistryChainReader(
 	ethClient eth.HttpBackend,
 	logger logging.Logger,
 ) (*ChainReader, error) {
-	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.build")
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.buildavsregistrychainreader")
 
 	contractRegistryCoordinator, err := regcoord.NewContractRegistryCoordinator(registryCoordinatorAddr, ethClient)
 	if err != nil {
@@ -130,6 +133,8 @@ func BuildAvsRegistryChainReader(
 }
 
 func (r *ChainReader) GetQuorumCount(opts *bind.CallOpts) (uint8, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getquorumcount")
+
 	if r.registryCoordinator == nil {
 		return 0, errors.New("RegistryCoordinator contract not provided")
 	}
@@ -140,6 +145,8 @@ func (r *ChainReader) GetOperatorsStakeInQuorumsAtCurrentBlock(
 	opts *bind.CallOpts,
 	quorumNumbers types.QuorumNums,
 ) ([][]opstateretriever.OperatorStateRetrieverOperator, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorsstakeinquorumsatcurrentblock")
+
 	if opts.Context == nil {
 		opts.Context = context.Background()
 	}
@@ -160,6 +167,8 @@ func (r *ChainReader) GetOperatorsStakeInQuorumsAtBlock(
 	quorumNumbers types.QuorumNums,
 	blockNumber uint32,
 ) ([][]opstateretriever.OperatorStateRetrieverOperator, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorsstakeinquorumsatblock")
+
 	if r.operatorStateRetriever == nil {
 		return nil, errors.New("OperatorStateRetriever contract not provided")
 	}
@@ -179,6 +188,8 @@ func (r *ChainReader) GetOperatorAddrsInQuorumsAtCurrentBlock(
 	opts *bind.CallOpts,
 	quorumNumbers types.QuorumNums,
 ) ([][]common.Address, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatoraddrsinquorumsatcurrentblock")
+
 	if r.operatorStateRetriever == nil {
 		return nil, errors.New("OperatorStateRetriever contract not provided")
 	}
@@ -219,6 +230,8 @@ func (r *ChainReader) GetOperatorsStakeInQuorumsOfOperatorAtBlock(
 	operatorId types.OperatorId,
 	blockNumber uint32,
 ) (types.QuorumNums, [][]opstateretriever.OperatorStateRetrieverOperator, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorsstakeinquorumsofoperatoratblock")
+
 	if r.operatorStateRetriever == nil {
 		return nil, nil, errors.New("OperatorStateRetriever contract not provided")
 	}
@@ -241,6 +254,8 @@ func (r *ChainReader) GetOperatorsStakeInQuorumsOfOperatorAtCurrentBlock(
 	opts *bind.CallOpts,
 	operatorId types.OperatorId,
 ) (types.QuorumNums, [][]opstateretriever.OperatorStateRetrieverOperator, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorsstakeinquorumsofoperatoratcurrentblock")
+
 	if opts.Context == nil {
 		opts.Context = context.Background()
 	}
@@ -264,6 +279,8 @@ func (r *ChainReader) GetOperatorStakeInQuorumsOfOperatorAtCurrentBlock(
 	opts *bind.CallOpts,
 	operatorId types.OperatorId,
 ) (map[types.QuorumNum]types.StakeAmount, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorstakeinquorumsofoperatoratcurrentblock")
+
 	if r.registryCoordinator == nil {
 		return nil, errors.New("RegistryCoordinator contract not provided")
 	}
@@ -312,6 +329,8 @@ func (r *ChainReader) GetCheckSignaturesIndices(
 	quorumNumbers types.QuorumNums,
 	nonSignerOperatorIds []types.OperatorId,
 ) (opstateretriever.OperatorStateRetrieverCheckSignaturesIndices, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getchecksignaturesindices")
+
 	if r.operatorStateRetriever == nil {
 		return opstateretriever.OperatorStateRetrieverCheckSignaturesIndices{}, errors.New(
 			"OperatorStateRetriever contract not provided",
@@ -342,6 +361,8 @@ func (r *ChainReader) GetOperatorId(
 	opts *bind.CallOpts,
 	operatorAddress common.Address,
 ) ([32]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorid")
+
 	if r.registryCoordinator == nil {
 		return [32]byte{}, errors.New("RegistryCoordinator contract not provided")
 	}
@@ -360,6 +381,8 @@ func (r *ChainReader) GetOperatorFromId(
 	opts *bind.CallOpts,
 	operatorId types.OperatorId,
 ) (common.Address, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorfromid")
+
 	if r.registryCoordinator == nil {
 		return common.Address{}, errors.New("RegistryCoordinator contract not provided")
 	}
@@ -378,6 +401,8 @@ func (r *ChainReader) QueryRegistrationDetail(
 	opts *bind.CallOpts,
 	operatorAddress common.Address,
 ) ([]bool, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.queryregistrationdetail")
+
 	operatorId, err := r.GetOperatorId(opts, operatorAddress)
 	if err != nil {
 		return nil, utils.WrapError("Failed to get operator id", err)
@@ -407,6 +432,8 @@ func (r *ChainReader) IsOperatorRegistered(
 	opts *bind.CallOpts,
 	operatorAddress common.Address,
 ) (bool, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.isoperatorregistered")
+
 	if r.registryCoordinator == nil {
 		return false, errors.New("RegistryCoordinator contract not provided")
 	}
@@ -427,6 +454,8 @@ func (r *ChainReader) QueryExistingRegisteredOperatorPubKeys(
 	stopBlock *big.Int,
 	blockRange *big.Int,
 ) ([]types.OperatorAddr, []types.OperatorPubkeys, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.queryexistingregisteredoperatorpubkeys")
+
 	blsApkRegistryAbi, err := apkreg.ContractBLSApkRegistryMetaData.GetAbi()
 	if err != nil {
 		return nil, nil, utils.WrapError("Cannot get Abi", err)
@@ -526,6 +555,8 @@ func (r *ChainReader) QueryExistingRegisteredOperatorSockets(
 	stopBlock *big.Int,
 	blockRange *big.Int,
 ) (map[types.OperatorId]types.Socket, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.queryexistingregisteredoperatorpubkeys")
+
 	if r.registryCoordinator == nil {
 		return nil, errors.New("RegistryCoordinator contract not provided")
 	}

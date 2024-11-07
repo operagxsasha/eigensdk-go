@@ -23,6 +23,7 @@ import (
 	stakeregistry "github.com/Layr-Labs/eigensdk-go/contracts/bindings/StakeRegistry"
 	"github.com/Layr-Labs/eigensdk-go/crypto/bls"
 	"github.com/Layr-Labs/eigensdk-go/logging"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 	"github.com/Layr-Labs/eigensdk-go/types"
 	"github.com/Layr-Labs/eigensdk-go/utils"
 )
@@ -60,6 +61,8 @@ func NewChainWriter(
 	ethClient eth.HttpBackend,
 	txMgr txmgr.TxManager,
 ) *ChainWriter {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.newchainwriter")
+
 	logger = logger.With(logging.ComponentKey, "avsregistry/ChainWriter")
 
 	return &ChainWriter{
@@ -84,6 +87,8 @@ func BuildAvsRegistryChainWriter(
 	ethClient eth.HttpBackend,
 	txMgr txmgr.TxManager,
 ) (*ChainWriter, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.buildvvsregistrychainwriter")
+
 	registryCoordinator, err := regcoord.NewContractRegistryCoordinator(registryCoordinatorAddr, ethClient)
 	if err != nil {
 		return nil, utils.WrapError("Failed to create RegistryCoordinator contract", err)
@@ -151,6 +156,8 @@ func NewWriterFromConfig(
 	txMgr txmgr.TxManager,
 	logger logging.Logger,
 ) (*ChainWriter, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.newwriterfromconfig")
+
 	bindings, err := NewBindingsFromConfig(cfg, client, logger)
 	if err != nil {
 		return nil, err
@@ -203,6 +210,8 @@ func (w *ChainWriter) RegisterOperatorInQuorumWithAVSRegistryCoordinator(
 	socket string,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.registeroperatorinquorumwithavsregistrycoordinator")
+
 	operatorAddr := crypto.PubkeyToAddress(operatorEcdsaPrivateKey.PublicKey)
 	w.logger.Info(
 		"registering operator with the AVS's registry coordinator",
@@ -305,6 +314,8 @@ func (w *ChainWriter) RegisterOperator(
 	socket string,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.registeroperator")
+
 	operatorAddr := crypto.PubkeyToAddress(operatorEcdsaPrivateKey.PublicKey)
 	w.logger.Info(
 		"registering operator with the AVS's registry coordinator",
@@ -423,6 +434,8 @@ func (w *ChainWriter) UpdateStakesOfEntireOperatorSetForQuorums(
 	quorumNumbers types.QuorumNums,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.updatestakesofentireoperatorsetforquorums")
+
 	w.logger.Info("updating stakes for entire operator set", "quorumNumbers", quorumNumbers)
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
@@ -456,6 +469,8 @@ func (w *ChainWriter) UpdateStakesOfOperatorSubsetForAllQuorums(
 	operators []gethcommon.Address,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.updatestakesofoperatorsubsetforallquorums")
+
 	w.logger.Info("updating stakes of operator subset for all quorums", "operators", operators)
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
@@ -485,6 +500,8 @@ func (w *ChainWriter) DeregisterOperator(
 	pubkey regcoord.BN254G1Point,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.deregisteroperator")
+
 	w.logger.Info("deregistering operator with the AVS's registry coordinator")
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
@@ -511,6 +528,8 @@ func (w *ChainWriter) UpdateSocket(
 	socket types.Socket,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.updatesocket")
+
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
 		return nil, err
