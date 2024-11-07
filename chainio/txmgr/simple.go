@@ -8,6 +8,7 @@ import (
 
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/wallet"
 	"github.com/Layr-Labs/eigensdk-go/logging"
+	"github.com/Layr-Labs/eigensdk-go/utils"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -91,6 +92,30 @@ func (m *SimpleTxManager) Send(
 	return receipt, nil
 }
 
+// SendWithRetry is used to send a transaction to the Ethereum node, same as Send but adding retry logic.
+// If the transaction fails, it will retry sending the transaction until it gets a receipt, using
+// exponential backoff. It will start with retryTimeout and double the time on each attempt.
+func (m *SimpleTxManager) SendWithRetry(
+	ctx context.Context,
+	tx *types.Transaction,
+	retryTimeout time.Duration,
+) (*types.Receipt, error) {
+	for {
+		r, err := m.send(ctx, tx)
+		if err != nil {
+			return nil, errors.Join(errors.New("send: failed to estimate gas and nonce"), err) // TODO: retry?
+		}
+
+		timeoutCtx, cancel := context.WithTimeout(context.Background(), retryTimeout)
+		defer cancel()
+		receipt, err := m.waitForReceipt(timeoutCtx, r.TxHash.Hex())
+		if err == nil {
+			return receipt, nil
+		}
+		retryTimeout *= 2
+	}
+}
+
 func (m *SimpleTxManager) send(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
 	// Estimate gas and nonce
 	// can't print tx hash in logs because the tx changes below when we complete and sign it
@@ -139,7 +164,7 @@ func (m *SimpleTxManager) waitForReceipt(ctx context.Context, txID wallet.TxID) 
 	for {
 		select {
 		case <-ctx.Done():
-			return nil, errors.Join(errors.New("Context done before tx was mined"), ctx.Err())
+			return nil, utils.WrapError(ctx.Err(), "context done before tx was mined")
 		case <-queryTicker.C:
 			if receipt := m.queryReceipt(ctx, txID); receipt != nil {
 				return receipt, nil
