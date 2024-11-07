@@ -254,7 +254,8 @@ func (r *ChainReader) GetOperatorsStakeInQuorumsOfOperatorAtCurrentBlock(
 	opts *bind.CallOpts,
 	operatorId types.OperatorId,
 ) (types.QuorumNums, [][]opstateretriever.OperatorStateRetrieverOperator, error) {
-	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorsstakeinquorumsofoperatoratcurrentblock")
+	_ = telemetry.GetTelemetry().
+		CaptureEvent("avsregistry.chainreader.getoperatorsstakeinquorumsofoperatoratcurrentblock")
 
 	if opts.Context == nil {
 		opts.Context = context.Background()
@@ -279,7 +280,8 @@ func (r *ChainReader) GetOperatorStakeInQuorumsOfOperatorAtCurrentBlock(
 	opts *bind.CallOpts,
 	operatorId types.OperatorId,
 ) (map[types.QuorumNum]types.StakeAmount, error) {
-	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainreader.getoperatorstakeinquorumsofoperatoratcurrentblock")
+	_ = telemetry.GetTelemetry().
+		CaptureEvent("avsregistry.chainreader.getoperatorstakeinquorumsofoperatoratcurrentblock")
 
 	if r.registryCoordinator == nil {
 		return nil, errors.New("RegistryCoordinator contract not provided")

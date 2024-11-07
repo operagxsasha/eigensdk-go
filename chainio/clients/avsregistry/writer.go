@@ -210,7 +210,8 @@ func (w *ChainWriter) RegisterOperatorInQuorumWithAVSRegistryCoordinator(
 	socket string,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
-	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.registeroperatorinquorumwithavsregistrycoordinator")
+	_ = telemetry.GetTelemetry().
+		CaptureEvent("avsregistry.chainwriter.registeroperatorinquorumwithavsregistrycoordinator")
 
 	operatorAddr := crypto.PubkeyToAddress(operatorEcdsaPrivateKey.PublicKey)
 	w.logger.Info(
