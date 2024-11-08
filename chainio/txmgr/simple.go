@@ -100,6 +100,7 @@ func (m *SimpleTxManager) SendWithRetry(
 	tx *types.Transaction,
 	retryTimeout time.Duration,
 	maxRetries uint32,
+	exponentialFactor uint32,
 ) (*types.Receipt, error) {
 	for i := uint32(0); i < maxRetries; i++ {
 		r, err := m.send(ctx, tx)
@@ -109,7 +110,7 @@ func (m *SimpleTxManager) SendWithRetry(
 		// if sending failed, backoff and try again
 		m.logger.Error("failed to send transaction", err)
 		time.Sleep(retryTimeout)
-		retryTimeout *= 2
+		retryTimeout *= time.Duration(exponentialFactor)
 	}
 	return nil, errors.New("max retries reached")
 }
