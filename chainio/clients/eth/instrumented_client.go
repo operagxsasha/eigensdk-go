@@ -6,6 +6,7 @@ import (
 	"time"
 
 	rpccalls "github.com/Layr-Labs/eigensdk-go/metrics/collectors/rpc_calls"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -31,6 +32,8 @@ var _ HttpBackend = (*InstrumentedClient)(nil)
 var _ WsBackend = (*InstrumentedClient)(nil)
 
 func NewInstrumentedClient(rpcAddress string, rpcCallsCollector *rpccalls.Collector) (*InstrumentedClient, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.newinstrumentedclient")
+
 	client, err := ethclient.Dial(rpcAddress)
 	if err != nil {
 		return nil, err
@@ -43,6 +46,8 @@ func NewInstrumentedClientFromClient(
 	client *ethclient.Client,
 	rpcCallsCollector *rpccalls.Collector,
 ) *InstrumentedClient {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.newinstrumentedclientfromclient")
+
 	clientAndVersion := getClientAndVersion(client)
 	return &InstrumentedClient{
 		client:            client,
@@ -54,6 +59,8 @@ func NewInstrumentedClientFromClient(
 // gethClient interface methods
 
 func (iec *InstrumentedClient) ChainID(ctx context.Context) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.chainid")
+
 	chainID := func() (*big.Int, error) { return iec.client.ChainID(ctx) }
 	id, err := instrumentFunction[*big.Int](chainID, "eth_chainId", iec)
 	return id, err
@@ -64,6 +71,8 @@ func (iec *InstrumentedClient) BalanceAt(
 	account common.Address,
 	blockNumber *big.Int,
 ) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.balanceat")
+
 	balanceAt := func() (*big.Int, error) { return iec.client.BalanceAt(ctx, account, blockNumber) }
 	balance, err := instrumentFunction[*big.Int](balanceAt, "eth_getBalance", iec)
 	if err != nil {
@@ -73,6 +82,8 @@ func (iec *InstrumentedClient) BalanceAt(
 }
 
 func (iec *InstrumentedClient) BlockByHash(ctx context.Context, hash common.Hash) (*types.Block, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.blockbyhash")
+
 	blockByHash := func() (*types.Block, error) { return iec.client.BlockByHash(ctx, hash) }
 	block, err := instrumentFunction[*types.Block](blockByHash, "eth_getBlockByHash", iec)
 	if err != nil {
@@ -82,6 +93,8 @@ func (iec *InstrumentedClient) BlockByHash(ctx context.Context, hash common.Hash
 }
 
 func (iec *InstrumentedClient) BlockByNumber(ctx context.Context, number *big.Int) (*types.Block, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.blockbynumber")
+
 	blockByNumber := func() (*types.Block, error) { return iec.client.BlockByNumber(ctx, number) }
 	block, err := instrumentFunction[*types.Block](
 		blockByNumber,
@@ -95,6 +108,8 @@ func (iec *InstrumentedClient) BlockByNumber(ctx context.Context, number *big.In
 }
 
 func (iec *InstrumentedClient) BlockNumber(ctx context.Context) (uint64, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.blocknumber")
+
 	blockNumber := func() (uint64, error) { return iec.client.BlockNumber(ctx) }
 	number, err := instrumentFunction[uint64](blockNumber, "eth_blockNumber", iec)
 	if err != nil {
@@ -108,6 +123,8 @@ func (iec *InstrumentedClient) CallContract(
 	call ethereum.CallMsg,
 	blockNumber *big.Int,
 ) ([]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.callcontract")
+
 	callContract := func() ([]byte, error) { return iec.client.CallContract(ctx, call, blockNumber) }
 	bytes, err := instrumentFunction[[]byte](callContract, "eth_call", iec)
 	if err != nil {
@@ -121,6 +138,8 @@ func (iec *InstrumentedClient) CodeAt(
 	contract common.Address,
 	blockNumber *big.Int,
 ) ([]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.codeat")
+
 	call := func() ([]byte, error) { return iec.client.CodeAt(ctx, contract, blockNumber) }
 	bytes, err := instrumentFunction[[]byte](call, "eth_getCode", iec)
 	if err != nil {
@@ -130,6 +149,8 @@ func (iec *InstrumentedClient) CodeAt(
 }
 
 func (iec *InstrumentedClient) EstimateGas(ctx context.Context, call ethereum.CallMsg) (uint64, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.estimategas")
+
 	estimateGas := func() (uint64, error) { return iec.client.EstimateGas(ctx, call) }
 	gas, err := instrumentFunction[uint64](estimateGas, "eth_estimateGas", iec)
 	if err != nil {
@@ -144,6 +165,8 @@ func (iec *InstrumentedClient) FeeHistory(
 	lastBlock *big.Int,
 	rewardPercentiles []float64,
 ) (*ethereum.FeeHistory, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.feehistory")
+
 	feeHistory := func() (*ethereum.FeeHistory, error) {
 		return iec.client.FeeHistory(ctx, blockCount, lastBlock, rewardPercentiles)
 	}
@@ -159,6 +182,8 @@ func (iec *InstrumentedClient) FeeHistory(
 }
 
 func (iec *InstrumentedClient) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.filterlogs")
+
 	filterLogs := func() ([]types.Log, error) { return iec.client.FilterLogs(ctx, query) }
 	logs, err := instrumentFunction[[]types.Log](filterLogs, "eth_getLogs", iec)
 	if err != nil {
@@ -168,6 +193,8 @@ func (iec *InstrumentedClient) FilterLogs(ctx context.Context, query ethereum.Fi
 }
 
 func (iec *InstrumentedClient) HeaderByHash(ctx context.Context, hash common.Hash) (*types.Header, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.headerbyhash")
+
 	headerByHash := func() (*types.Header, error) { return iec.client.HeaderByHash(ctx, hash) }
 	header, err := instrumentFunction[*types.Header](
 		headerByHash,
@@ -181,6 +208,8 @@ func (iec *InstrumentedClient) HeaderByHash(ctx context.Context, hash common.Has
 }
 
 func (iec *InstrumentedClient) HeaderByNumber(ctx context.Context, number *big.Int) (*types.Header, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.headerbynumber")
+
 	headerByNumber := func() (*types.Header, error) { return iec.client.HeaderByNumber(ctx, number) }
 	header, err := instrumentFunction[*types.Header](
 		headerByNumber,
@@ -198,6 +227,8 @@ func (iec *InstrumentedClient) NonceAt(
 	account common.Address,
 	blockNumber *big.Int,
 ) (uint64, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.nonceat")
+
 	nonceAt := func() (uint64, error) { return iec.client.NonceAt(ctx, account, blockNumber) }
 	nonce, err := instrumentFunction[uint64](nonceAt, "eth_getTransactionCount", iec)
 	if err != nil {
@@ -207,6 +238,8 @@ func (iec *InstrumentedClient) NonceAt(
 }
 
 func (iec *InstrumentedClient) PendingBalanceAt(ctx context.Context, account common.Address) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.pendingbalanceat")
+
 	pendingBalanceAt := func() (*big.Int, error) { return iec.client.PendingBalanceAt(ctx, account) }
 	balance, err := instrumentFunction[*big.Int](pendingBalanceAt, "eth_getBalance", iec)
 	if err != nil {
@@ -216,6 +249,8 @@ func (iec *InstrumentedClient) PendingBalanceAt(ctx context.Context, account com
 }
 
 func (iec *InstrumentedClient) PendingCallContract(ctx context.Context, call ethereum.CallMsg) ([]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.pendingcallcontract")
+
 	pendingCallContract := func() ([]byte, error) { return iec.client.PendingCallContract(ctx, call) }
 	bytes, err := instrumentFunction[[]byte](pendingCallContract, "eth_call", iec)
 	if err != nil {
@@ -225,6 +260,8 @@ func (iec *InstrumentedClient) PendingCallContract(ctx context.Context, call eth
 }
 
 func (iec *InstrumentedClient) PendingCodeAt(ctx context.Context, account common.Address) ([]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.pendingcodeat")
+
 	pendingCodeAt := func() ([]byte, error) { return iec.client.PendingCodeAt(ctx, account) }
 	bytes, err := instrumentFunction[[]byte](pendingCodeAt, "eth_getCode", iec)
 	if err != nil {
@@ -234,6 +271,8 @@ func (iec *InstrumentedClient) PendingCodeAt(ctx context.Context, account common
 }
 
 func (iec *InstrumentedClient) PendingNonceAt(ctx context.Context, account common.Address) (uint64, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.pendingnonceat")
+
 	pendingNonceAt := func() (uint64, error) { return iec.client.PendingNonceAt(ctx, account) }
 	nonce, err := instrumentFunction[uint64](
 		pendingNonceAt,
@@ -251,6 +290,8 @@ func (iec *InstrumentedClient) PendingStorageAt(
 	account common.Address,
 	key common.Hash,
 ) ([]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.pendingstorageat")
+
 	pendingStorageAt := func() ([]byte, error) { return iec.client.PendingStorageAt(ctx, account, key) }
 	bytes, err := instrumentFunction[[]byte](pendingStorageAt, "eth_getStorageAt", iec)
 	if err != nil {
@@ -260,6 +301,8 @@ func (iec *InstrumentedClient) PendingStorageAt(
 }
 
 func (iec *InstrumentedClient) PendingTransactionCount(ctx context.Context) (uint, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.pendingtransactioncount")
+
 	pendingTransactionCount := func() (uint, error) { return iec.client.PendingTransactionCount(ctx) }
 	count, err := instrumentFunction[uint](
 		pendingTransactionCount,
@@ -273,6 +316,8 @@ func (iec *InstrumentedClient) PendingTransactionCount(ctx context.Context) (uin
 }
 
 func (iec *InstrumentedClient) SendTransaction(ctx context.Context, tx *types.Transaction) error {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.sendtransaction")
+
 	// instrumentFunction takes a function that returns a value and an error
 	// so we just wrap the SendTransaction method in a function that returns 0 as its value,
 	// which we throw out below
@@ -287,6 +332,8 @@ func (iec *InstrumentedClient) StorageAt(
 	key common.Hash,
 	blockNumber *big.Int,
 ) ([]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.storageat")
+
 	storageAt := func() ([]byte, error) { return iec.client.StorageAt(ctx, account, key, blockNumber) }
 	bytes, err := instrumentFunction[[]byte](storageAt, "eth_getStorageAt", iec)
 	if err != nil {
@@ -300,6 +347,8 @@ func (iec *InstrumentedClient) SubscribeFilterLogs(
 	query ethereum.FilterQuery,
 	ch chan<- types.Log,
 ) (ethereum.Subscription, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.subscribefilterlogs")
+
 	subscribeFilterLogs := func() (ethereum.Subscription, error) { return iec.client.SubscribeFilterLogs(ctx, query, ch) }
 	subscription, err := instrumentFunction[ethereum.Subscription](
 		subscribeFilterLogs,
@@ -316,6 +365,8 @@ func (iec *InstrumentedClient) SubscribeNewHead(
 	ctx context.Context,
 	ch chan<- *types.Header,
 ) (ethereum.Subscription, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.subscribenewhead")
+
 	subscribeNewHead := func() (ethereum.Subscription, error) { return iec.client.SubscribeNewHead(ctx, ch) }
 	subscription, err := instrumentFunction[ethereum.Subscription](
 		subscribeNewHead,
@@ -329,6 +380,8 @@ func (iec *InstrumentedClient) SubscribeNewHead(
 }
 
 func (iec *InstrumentedClient) SuggestGasPrice(ctx context.Context) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.suggestgasprice")
+
 	suggestGasPrice := func() (*big.Int, error) { return iec.client.SuggestGasPrice(ctx) }
 	gasPrice, err := instrumentFunction[*big.Int](suggestGasPrice, "eth_gasPrice", iec)
 	if err != nil {
@@ -338,6 +391,8 @@ func (iec *InstrumentedClient) SuggestGasPrice(ctx context.Context) (*big.Int, e
 }
 
 func (iec *InstrumentedClient) SuggestGasTipCap(ctx context.Context) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.suggestgastipcap")
+
 	suggestGasTipCap := func() (*big.Int, error) { return iec.client.SuggestGasTipCap(ctx) }
 	gasTipCap, err := instrumentFunction[*big.Int](
 		suggestGasTipCap,
@@ -369,6 +424,8 @@ func (iec *InstrumentedClient) TransactionByHash(
 	ctx context.Context,
 	hash common.Hash,
 ) (tx *types.Transaction, isPending bool, err error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.transactionbyhash")
+
 	start := time.Now()
 	tx, isPending, err = iec.client.TransactionByHash(ctx, hash)
 	// we count both successful and erroring calls (even though this is not well defined in the spec)
@@ -388,6 +445,8 @@ func (iec *InstrumentedClient) TransactionByHash(
 }
 
 func (iec *InstrumentedClient) TransactionCount(ctx context.Context, blockHash common.Hash) (uint, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.transactioncount")
+
 	transactionCount := func() (uint, error) { return iec.client.TransactionCount(ctx, blockHash) }
 	count, err := instrumentFunction[uint](
 		transactionCount,
@@ -405,6 +464,8 @@ func (iec *InstrumentedClient) TransactionInBlock(
 	blockHash common.Hash,
 	index uint,
 ) (*types.Transaction, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.transactioninblock")
+
 	transactionInBlock := func() (*types.Transaction, error) { return iec.client.TransactionInBlock(ctx, blockHash, index) }
 	tx, err := instrumentFunction[*types.Transaction](
 		transactionInBlock,
@@ -418,6 +479,8 @@ func (iec *InstrumentedClient) TransactionInBlock(
 }
 
 func (iec *InstrumentedClient) TransactionReceipt(ctx context.Context, txHash common.Hash) (*types.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.transactionreceipt")
+
 	transactionReceipt := func() (*types.Receipt, error) { return iec.client.TransactionReceipt(ctx, txHash) }
 	receipt, err := instrumentFunction[*types.Receipt](
 		transactionReceipt,
@@ -434,6 +497,8 @@ func (iec *InstrumentedClient) TransactionReceipt(ctx context.Context, txHash co
 // but it is needed to comply with the rpc metrics defined in avs-node spec
 // https://docs.eigenlayer.xyz/eigenlayer/avs-guides/spec/metrics/metrics-prom-spec
 func getClientAndVersion(client *ethclient.Client) string {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.getclientandversion")
+
 	var clientVersion string
 	err := client.Client().Call(&clientVersion, "web3_clientVersion")
 	if err != nil {
@@ -448,6 +513,8 @@ func instrumentFunction[T any](
 	rpcMethodName string,
 	iec *InstrumentedClient,
 ) (value T, err error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("eth.instrumentedclient.instrumentfunction")
+
 	start := time.Now()
 	result, err := rpcCall()
 	// we count both successful and erroring calls (even though this is not well defined in the spec)
