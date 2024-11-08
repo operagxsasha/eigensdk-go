@@ -103,20 +103,15 @@ func (m *SimpleTxManager) SendWithRetry(
 ) (*types.Receipt, error) {
 	for i := uint32(0); i < maxRetries; i++ {
 		r, err := m.send(ctx, tx)
-		if err != nil {
-			m.logger.Error("send: failed to estimate gas and nonce", err)
-		}
-
-		timeoutCtx, cancel := context.WithTimeout(context.Background(), retryTimeout)
-		defer cancel()
-
-		receipt, err := m.waitForReceipt(timeoutCtx, r.TxHash.Hex())
 		if err == nil {
-			return receipt, nil
+			return m.waitForReceipt(ctx, r.TxHash.Hex())
 		}
-		retryTimeout *= 2 // using factor 2 for exponential backoff
+		// if sending failed, backoff and try again
+		m.logger.Error("failed to send transaction", err)
+		time.Sleep(retryTimeout)
+		retryTimeout *= 2
 	}
-	return nil, errors.New("max retries reached without receiving a receipt")
+	return nil, errors.New("max retries reached")
 }
 
 func (m *SimpleTxManager) send(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
