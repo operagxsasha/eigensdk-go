@@ -94,26 +94,29 @@ func (m *SimpleTxManager) Send(
 
 // SendWithRetry is used to send a transaction to the Ethereum node, same as Send but adding retry logic.
 // If the transaction fails, it will retry sending the transaction until it gets a receipt, using
-// exponential backoff. It will start with retryTimeout and double the time on each attempt.
+// exponential backoff with factor 2, starting with retryTimeout.
 func (m *SimpleTxManager) SendWithRetry(
 	ctx context.Context,
 	tx *types.Transaction,
 	retryTimeout time.Duration,
+	maxRetries uint32,
 ) (*types.Receipt, error) {
-	for {
+	for i := uint32(0); i < maxRetries; i++ {
 		r, err := m.send(ctx, tx)
 		if err != nil {
-			return nil, errors.Join(errors.New("send: failed to estimate gas and nonce"), err) // TODO: retry?
+			m.logger.Error("send: failed to estimate gas and nonce", err)
 		}
 
 		timeoutCtx, cancel := context.WithTimeout(context.Background(), retryTimeout)
 		defer cancel()
+
 		receipt, err := m.waitForReceipt(timeoutCtx, r.TxHash.Hex())
 		if err == nil {
 			return receipt, nil
 		}
-		retryTimeout *= 2
+		retryTimeout *= 2 // using factor 2 for exponential backoff
 	}
+	return nil, errors.New("max retries reached without receiving a receipt")
 }
 
 func (m *SimpleTxManager) send(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
