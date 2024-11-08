@@ -11,6 +11,7 @@ import (
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/wallet"
 	"github.com/Layr-Labs/eigensdk-go/chainio/txmgr"
 	"github.com/Layr-Labs/eigensdk-go/logging"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 	"github.com/Layr-Labs/eigensdk-go/utils"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -130,6 +131,8 @@ func NewGeometricTxnManager(
 	metrics Metrics,
 	params GeometricTxnManagerParams,
 ) *GeometricTxManager {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.newgeometrictxnmanager")
+
 	fillUnsetParamsWithDefaultValues(&params)
 	return &GeometricTxManager{
 		ethClient: ethClient,
@@ -143,6 +146,8 @@ func NewGeometricTxnManager(
 // GetNoSendTxOpts This generates a noSend TransactOpts so that we can use
 // this to generate the transaction without actually sending it
 func (m *GeometricTxManager) GetNoSendTxOpts() (*bind.TransactOpts, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.getnosendtxopts")
+
 	ctxWithTimeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	from, err := m.wallet.SenderAddress(ctxWithTimeout)
@@ -157,6 +162,8 @@ func (m *GeometricTxManager) GetNoSendTxOpts() (*bind.TransactOpts, error) {
 }
 
 func newTxnRequest(tx *types.Transaction) *txnRequest {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.newtxnrequest")
+
 	return &txnRequest{
 		tx:          tx,
 		requestedAt: time.Now(),
@@ -174,6 +181,8 @@ func (t *GeometricTxManager) Send(
 	tx *types.Transaction,
 	waitForReceipt bool,
 ) (*types.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.send")
+
 	return t.processTransaction(ctx, newTxnRequest(tx))
 }
 
@@ -183,6 +192,8 @@ func (t *GeometricTxManager) Send(
 // But sending nonces 2,1 and forgetting 0 would cause the manager to get stuck waiting for nonce 0 to be mined.
 // Thus a wallet which manages nonces should be used to ensure the correct nonce is set.
 func (t *GeometricTxManager) processTransaction(ctx context.Context, req *txnRequest) (*types.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.processtransaction")
+
 	t.logger.Debug("new transaction",
 		"nonce", req.tx.Nonce(), "gasFeeCap", req.tx.GasFeeCap(), "gasTipCap", req.tx.GasTipCap(),
 	)
@@ -266,6 +277,8 @@ func (t *GeometricTxManager) processTransaction(ctx context.Context, req *txnReq
 // this is only needed for the Fireblocks wallet, where some processing is done in their backend before broadcasting to
 // the ethereum network.
 func (t *GeometricTxManager) ensureAnyFireblocksTransactionBroadcasted(ctx context.Context, txs []*transaction) error {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.ensureanyfireblockstransactionbroadcasted")
+
 	queryTicker := time.NewTicker(t.params.GetTxReceiptTickerDuration)
 	defer queryTicker.Stop()
 
@@ -294,6 +307,8 @@ func (t *GeometricTxManager) ensureAnyTransactionConfirmed(
 	ctx context.Context,
 	txs []*transaction,
 ) (*types.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.ensureanytransactionconfirmed")
+
 	queryTicker := time.NewTicker(t.params.GetTxReceiptTickerDuration)
 	defer queryTicker.Stop()
 	var receipt *types.Receipt
@@ -366,6 +381,8 @@ func (t *GeometricTxManager) ensureAnyTransactionConfirmed(
 // It returns the receipt once the transaction has been confirmed.
 // It returns an error if the transaction fails to be sent for reasons other than timeouts.
 func (t *GeometricTxManager) monitorTransaction(ctx context.Context, req *txnRequest) (*types.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.monitortransaction")
+
 	numSpeedUps := 0
 	retryFromFailure := 0
 
@@ -505,6 +522,8 @@ func (t *GeometricTxManager) speedUpTxn(
 	tx *types.Transaction,
 	numSpeedUps int,
 ) (*types.Transaction, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.speeduptxn")
+
 	// bump the current gasTip, and also reestimate it from the node, and take the highest value
 	var newGasTipCap *big.Int
 	{
@@ -551,6 +570,8 @@ func (t *GeometricTxManager) updateGasTipCap(
 	newGasTipCap *big.Int,
 	from common.Address,
 ) (*types.Transaction, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.updategastipcap")
+
 	gasFeeCap, err := t.estimateGasFeeCap(ctx, newGasTipCap)
 	if err != nil {
 		return nil, utils.WrapError("failed to estimate gas fee cap", err)
@@ -587,6 +608,8 @@ func (t *GeometricTxManager) updateGasTipCap(
 }
 
 func (t *GeometricTxManager) estimateGasTipCap(ctx context.Context) (gasTipCap *big.Int, err error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.estimategastipcap")
+
 	gasTipCap, err = t.ethClient.SuggestGasTipCap(ctx)
 	if err != nil {
 		// If the transaction failed because the backend does not support
@@ -605,6 +628,8 @@ func (t *GeometricTxManager) estimateGasTipCap(ctx context.Context) (gasTipCap *
 // addGasTipCapBuffer adds a buffer to the gas tip cap to account for potential changes in the state of the chain
 // The result is returned in a new big.Int to avoid modifying the input gasTipCap.
 func (t *GeometricTxManager) addGasTipCapBuffer(gasTipCap *big.Int) *big.Int {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.addgastipcapbuffer")
+
 	bumpedGasTipCap := new(big.Int).Set(gasTipCap)
 	return bumpedGasTipCap.Mul(bumpedGasTipCap, big.NewInt(int64(t.params.GasTipMultiplier*100))).
 		Div(bumpedGasTipCap, big.NewInt(100))
@@ -615,6 +640,8 @@ func (t *GeometricTxManager) addGasTipCapBuffer(gasTipCap *big.Int) *big.Int {
 // Rationale: https://www.blocknative.com/blog/eip-1559-fees
 // The result is returned in a new big.Int to avoid modifying gasTipCap.
 func (t *GeometricTxManager) estimateGasFeeCap(ctx context.Context, gasTipCap *big.Int) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.estimategasfeecap")
+
 	header, err := t.ethClient.HeaderByNumber(ctx, nil)
 	if err != nil {
 		return nil, utils.WrapError("failed to get latest header", err)
@@ -623,5 +650,7 @@ func (t *GeometricTxManager) estimateGasFeeCap(ctx context.Context, gasTipCap *b
 }
 
 func (t *GeometricTxManager) addGasBuffer(gasLimit uint64) uint64 {
+	_ = telemetry.GetTelemetry().CaptureEvent("txmgr.geometric.addgasbuffer")
+
 	return uint64(t.params.GasMultiplier * float64(gasLimit))
 }
