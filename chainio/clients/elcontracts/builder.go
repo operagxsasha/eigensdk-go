@@ -5,6 +5,7 @@ import (
 	"github.com/Layr-Labs/eigensdk-go/chainio/txmgr"
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/metrics"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 )
 
 // Returns a tuple of reader clients with the given:
@@ -15,6 +16,8 @@ func BuildReadClients(
 	logger logging.Logger,
 	eigenMetrics *metrics.EigenMetrics,
 ) (*ChainReader, *ContractBindings, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.builder.buildreadclients")
+
 	elContractBindings, err := NewBindingsFromConfig(
 		config,
 		client,
@@ -44,6 +47,8 @@ func BuildClients(
 	logger logging.Logger,
 	eigenMetrics *metrics.EigenMetrics,
 ) (*ChainReader, *ChainWriter, *ContractBindings, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.builder.buildclients")
+
 	elContractBindings, err := NewBindingsFromConfig(
 		config,
 		client,

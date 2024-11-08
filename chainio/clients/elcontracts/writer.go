@@ -20,6 +20,7 @@ import (
 	strategymanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/StrategyManager"
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/metrics"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 	"github.com/Layr-Labs/eigensdk-go/types"
 	"github.com/Layr-Labs/eigensdk-go/utils"
 )
@@ -57,6 +58,7 @@ func NewChainWriter(
 	txMgr txmgr.TxManager,
 ) *ChainWriter {
 	logger = logger.With(logging.ComponentKey, "elcontracts/writer")
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.newchainwriter")
 
 	return &ChainWriter{
 		slasher:             slasher,
@@ -82,6 +84,8 @@ func BuildELChainWriter(
 	eigenMetrics metrics.Metrics,
 	txMgr txmgr.TxManager,
 ) (*ChainWriter, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.buildelchainwriter")
+
 	elContractBindings, err := NewEigenlayerContractBindings(
 		delegationManagerAddr,
 		avsDirectoryAddr,
@@ -122,6 +126,8 @@ func NewWriterFromConfig(
 	eigenMetrics metrics.Metrics,
 	txMgr txmgr.TxManager,
 ) (*ChainWriter, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.newwriterfromconfig")
+
 	elContractBindings, err := NewBindingsFromConfig(
 		cfg,
 		ethClient,
@@ -159,6 +165,8 @@ func (w *ChainWriter) RegisterAsOperator(
 	operator types.Operator,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.registerasoperator")
+
 	if w.delegationManager == nil {
 		return nil, errors.New("DelegationManager contract not provided")
 	}
@@ -194,6 +202,8 @@ func (w *ChainWriter) UpdateOperatorDetails(
 	operator types.Operator,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.updateoperatordetails")
+
 	if w.delegationManager == nil {
 		return nil, errors.New("DelegationManager contract not provided")
 	}
@@ -233,6 +243,8 @@ func (w *ChainWriter) UpdateOperatorDetails(
 
 func (w *ChainWriter) UpdateMetadataURI(ctx context.Context, uri string, waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.updatemetadatauri")
+
 	if w.delegationManager == nil {
 		return nil, errors.New("DelegationManager contract not provided")
 	}
@@ -265,6 +277,8 @@ func (w *ChainWriter) DepositERC20IntoStrategy(
 	amount *big.Int,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.depositerc20intostrategy")
+
 	if w.strategyManager == nil {
 		return nil, errors.New("StrategyManager contract not provided")
 	}
@@ -309,6 +323,8 @@ func (w *ChainWriter) SetClaimerFor(
 	claimer gethcommon.Address,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.setclaimerfor")
+
 	if w.rewardsCoordinator == nil {
 		return nil, errors.New("RewardsCoordinator contract not provided")
 	}
@@ -336,6 +352,8 @@ func (w *ChainWriter) ProcessClaim(
 	earnerAddress gethcommon.Address,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.processclaim")
+
 	if w.rewardsCoordinator == nil {
 		return nil, errors.New("RewardsCoordinator contract not provided")
 	}
@@ -365,6 +383,8 @@ func (w *ChainWriter) ForceDeregisterFromOperatorSets(
 	operatorSignature avsdirectory.ISignatureUtilsSignatureWithSaltAndExpiry,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.forcederegisterfromoperatorsets")
+
 	if w.avsDirectory == nil {
 		return nil, errors.New("AVSDirectory contract not provided")
 	}
@@ -401,6 +421,8 @@ func (w *ChainWriter) SetOperatorCommissionBips(
 	commissionBips uint16,
 	waitForReceipt bool,
 ) (*gethtypes.Receipt, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainwriter.setoperatorcommissionbips")
+
 	if w.rewardsCoordinator == nil {
 		return nil, errors.New("RewardsCoordinator contract not provided")
 	}

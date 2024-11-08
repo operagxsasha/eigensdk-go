@@ -7,7 +7,6 @@ import (
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
 	gethcommon "github.com/ethereum/go-ethereum/common"
 
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
@@ -19,14 +18,15 @@ import (
 	strategy "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IStrategy"
 	strategymanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/StrategyManager"
 	"github.com/Layr-Labs/eigensdk-go/logging"
+	"github.com/Layr-Labs/eigensdk-go/telemetry"
 	"github.com/Layr-Labs/eigensdk-go/types"
 	"github.com/Layr-Labs/eigensdk-go/utils"
 )
 
 type Config struct {
-	DelegationManagerAddress  common.Address
-	AvsDirectoryAddress       common.Address
-	RewardsCoordinatorAddress common.Address
+	DelegationManagerAddress  gethcommon.Address
+	AvsDirectoryAddress       gethcommon.Address
+	RewardsCoordinatorAddress gethcommon.Address
 }
 
 type ChainReader struct {
@@ -49,6 +49,7 @@ func NewChainReader(
 	ethClient eth.HttpBackend,
 ) *ChainReader {
 	logger = logger.With(logging.ComponentKey, "elcontracts/reader")
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.newchainreader")
 
 	return &ChainReader{
 		slasher:            slasher,
@@ -69,6 +70,8 @@ func BuildELChainReader(
 	ethClient eth.HttpBackend,
 	logger logging.Logger,
 ) (*ChainReader, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.buildelchainreader")
+
 	elContractBindings, err := NewEigenlayerContractBindings(
 		delegationManagerAddr,
 		avsDirectoryAddr,
@@ -94,6 +97,8 @@ func NewReaderFromConfig(
 	ethClient eth.HttpBackend,
 	logger logging.Logger,
 ) (*ChainReader, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.newreaderfromconfig")
+
 	elContractBindings, err := NewBindingsFromConfig(
 		cfg,
 		ethClient,
@@ -117,6 +122,8 @@ func (r *ChainReader) IsOperatorRegistered(
 	ctx context.Context,
 	operator types.Operator,
 ) (bool, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.isoperatorregistered")
+
 	if r.delegationManager == nil {
 		return false, errors.New("DelegationManager contract not provided")
 	}
@@ -136,6 +143,8 @@ func (r *ChainReader) GetOperatorDetails(
 	ctx context.Context,
 	operator types.Operator,
 ) (types.Operator, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getoperatordetails")
+
 	if r.delegationManager == nil {
 		return types.Operator{}, errors.New("DelegationManager contract not provided")
 	}
@@ -160,13 +169,15 @@ func (r *ChainReader) GetStrategyAndUnderlyingToken(
 	ctx context.Context,
 	strategyAddr gethcommon.Address,
 ) (*strategy.ContractIStrategy, gethcommon.Address, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getstrategyandunderlyingtoken")
+
 	contractStrategy, err := strategy.NewContractIStrategy(strategyAddr, r.ethClient)
 	if err != nil {
-		return nil, common.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
+		return nil, gethcommon.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
 	}
 	underlyingTokenAddr, err := contractStrategy.UnderlyingToken(&bind.CallOpts{Context: ctx})
 	if err != nil {
-		return nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
+		return nil, gethcommon.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}
 	return contractStrategy, underlyingTokenAddr, nil
 }
@@ -177,17 +188,19 @@ func (r *ChainReader) GetStrategyAndUnderlyingERC20Token(
 	ctx context.Context,
 	strategyAddr gethcommon.Address,
 ) (*strategy.ContractIStrategy, erc20.ContractIERC20Methods, gethcommon.Address, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getstrategyandunderlyingerc20token")
+
 	contractStrategy, err := strategy.NewContractIStrategy(strategyAddr, r.ethClient)
 	if err != nil {
-		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
+		return nil, nil, gethcommon.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
 	}
 	underlyingTokenAddr, err := contractStrategy.UnderlyingToken(&bind.CallOpts{Context: ctx})
 	if err != nil {
-		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
+		return nil, nil, gethcommon.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}
 	contractUnderlyingToken, err := erc20.NewContractIERC20(underlyingTokenAddr, r.ethClient)
 	if err != nil {
-		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
+		return nil, nil, gethcommon.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}
 	return contractStrategy, contractUnderlyingToken, underlyingTokenAddr, nil
 }
@@ -197,6 +210,8 @@ func (r *ChainReader) ServiceManagerCanSlashOperatorUntilBlock(
 	operatorAddr gethcommon.Address,
 	serviceManagerAddr gethcommon.Address,
 ) (uint32, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.servicemanagercanslashoperatoruntilblock")
+
 	if r.slasher == nil {
 		return uint32(0), errors.New("slasher contract not provided")
 	}
@@ -210,6 +225,8 @@ func (r *ChainReader) OperatorIsFrozen(
 	ctx context.Context,
 	operatorAddr gethcommon.Address,
 ) (bool, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.operatorisfrozen")
+
 	if r.slasher == nil {
 		return false, errors.New("slasher contract not provided")
 	}
@@ -222,6 +239,8 @@ func (r *ChainReader) GetOperatorSharesInStrategy(
 	operatorAddr gethcommon.Address,
 	strategyAddr gethcommon.Address,
 ) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getoperatorsharesinstrategy")
+
 	if r.delegationManager == nil {
 		return &big.Int{}, errors.New("DelegationManager contract not provided")
 	}
@@ -241,6 +260,8 @@ func (r *ChainReader) CalculateDelegationApprovalDigestHash(
 	approverSalt [32]byte,
 	expiry *big.Int,
 ) ([32]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.calculatedelegationapprovaldigesthash")
+
 	if r.delegationManager == nil {
 		return [32]byte{}, errors.New("DelegationManager contract not provided")
 	}
@@ -262,6 +283,8 @@ func (r *ChainReader) CalculateOperatorAVSRegistrationDigestHash(
 	salt [32]byte,
 	expiry *big.Int,
 ) ([32]byte, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.calculateoperatoravsregistrationdigesthash")
+
 	if r.avsDirectory == nil {
 		return [32]byte{}, errors.New("AVSDirectory contract not provided")
 	}
@@ -276,6 +299,8 @@ func (r *ChainReader) CalculateOperatorAVSRegistrationDigestHash(
 }
 
 func (r *ChainReader) GetDistributionRootsLength(ctx context.Context) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getdistributionrootslength")
+
 	if r.rewardsCoordinator == nil {
 		return nil, errors.New("RewardsCoordinator contract not provided")
 	}
@@ -284,6 +309,8 @@ func (r *ChainReader) GetDistributionRootsLength(ctx context.Context) (*big.Int,
 }
 
 func (r *ChainReader) CurrRewardsCalculationEndTimestamp(ctx context.Context) (uint32, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.currrewardscalculationendtimestamp")
+
 	if r.rewardsCoordinator == nil {
 		return 0, errors.New("RewardsCoordinator contract not provided")
 	}
@@ -294,6 +321,8 @@ func (r *ChainReader) CurrRewardsCalculationEndTimestamp(ctx context.Context) (u
 func (r *ChainReader) GetCurrentClaimableDistributionRoot(
 	ctx context.Context,
 ) (rewardscoordinator.IRewardsCoordinatorDistributionRoot, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getcurrentclaimabledistributionroot")
+
 	if r.rewardsCoordinator == nil {
 		return rewardscoordinator.IRewardsCoordinatorDistributionRoot{}, errors.New(
 			"RewardsCoordinator contract not provided",
@@ -307,6 +336,8 @@ func (r *ChainReader) GetRootIndexFromHash(
 	ctx context.Context,
 	rootHash [32]byte,
 ) (uint32, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getrootindexfromhash")
+
 	if r.rewardsCoordinator == nil {
 		return 0, errors.New("RewardsCoordinator contract not provided")
 	}
@@ -319,6 +350,8 @@ func (r *ChainReader) GetCumulativeClaimed(
 	earner gethcommon.Address,
 	token gethcommon.Address,
 ) (*big.Int, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.getcumulativeclaimed")
+
 	if r.rewardsCoordinator == nil {
 		return nil, errors.New("RewardsCoordinator contract not provided")
 	}
@@ -330,6 +363,8 @@ func (r *ChainReader) CheckClaim(
 	ctx context.Context,
 	claim rewardscoordinator.IRewardsCoordinatorRewardsMerkleClaim,
 ) (bool, error) {
+	_ = telemetry.GetTelemetry().CaptureEvent("elcontracts.chainreader.checkclaim")
+
 	if r.rewardsCoordinator == nil {
 		return false, errors.New("RewardsCoordinator contract not provided")
 	}
