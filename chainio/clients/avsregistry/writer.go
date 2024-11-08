@@ -87,7 +87,7 @@ func BuildAvsRegistryChainWriter(
 	ethClient eth.HttpBackend,
 	txMgr txmgr.TxManager,
 ) (*ChainWriter, error) {
-	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.buildvvsregistrychainwriter")
+	_ = telemetry.GetTelemetry().CaptureEvent("avsregistry.chainwriter.buildavsregistrychainwriter")
 
 	registryCoordinator, err := regcoord.NewContractRegistryCoordinator(registryCoordinatorAddr, ethClient)
 	if err != nil {
