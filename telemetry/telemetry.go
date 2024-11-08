@@ -66,8 +66,3 @@ func (telemetry *RealTelemetry) CaptureEvent(event string) error {
 func (telemetry *BogusTelemetry) CaptureEvent(event string) error {
 	return nil
 }
-
-// TODO: Implement close connection
-//func CloseClient(client *posthog.Client) {
-//	(*client).Close()
-//}
