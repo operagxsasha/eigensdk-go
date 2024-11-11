@@ -1362,7 +1362,10 @@ func TestIntegrationBlsAgg(t *testing.T) {
 		blsAggServ := NewBlsAggregatorService(avsRegistryService, hashFunction, logger)
 
 		// create quorum
-		registryCoordinator, _ := regcoord.NewContractRegistryCoordinator(contractAddrs.RegistryCoordinator, ethHttpClient)
+		registryCoordinator, _ := regcoord.NewContractRegistryCoordinator(
+			contractAddrs.RegistryCoordinator,
+			ethHttpClient,
+		)
 		operatorSetParam := regcoord.IRegistryCoordinatorOperatorSetParam{
 			MaxOperatorCount:        10,
 			KickBIPsOfOperatorStake: 1,
