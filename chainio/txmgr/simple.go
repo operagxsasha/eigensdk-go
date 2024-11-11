@@ -107,7 +107,6 @@ func (m *SimpleTxManager) SendWithRetry(
 		if err == nil {
 			return m.waitForReceipt(ctx, r.TxHash.Hex())
 		}
-		// if sending failed, backoff and try again
 		m.logger.Error("failed to send transaction", err)
 		m.logger.Debugf("waiting %f seconds for backoff", retryTimeout.Seconds())
 		time.Sleep(retryTimeout)
