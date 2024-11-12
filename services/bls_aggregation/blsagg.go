@@ -406,7 +406,6 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 					),
 				}
 			} else {
-				// The operator has already signed on this digest
 				a.logger.Debug("Task goroutine updating existing aggregated operator signatures",
 					"taskIndex", taskIndex,
 					"taskResponseDigest", taskResponseDigest)
