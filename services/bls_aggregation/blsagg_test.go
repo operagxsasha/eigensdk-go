@@ -115,17 +115,17 @@ func TestBlsAgg(t *testing.T) {
 	t.Run("1 quorum 3 operator 3 correct signatures", func(t *testing.T) {
 		testOperator1 := types.TestOperator{
 			OperatorId:     types.OperatorId{1},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
 		}
 		testOperator3 := types.TestOperator{
 			OperatorId:     types.OperatorId{3},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(300), 1: big.NewInt(100)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(300)},
 			BlsKeypair:     newBlsKeyPairPanics("0x3"),
 		}
 		blockNum := uint32(1)
@@ -274,7 +274,7 @@ func TestBlsAgg(t *testing.T) {
 					Add(testOperator1.BlsKeypair.GetPubKeyG1()).
 					Add(testOperator2.BlsKeypair.GetPubKeyG1()),
 			},
-			SignersApkG2:    op1G2Key.Add(op1G2Key).Add(op2G2Key).Add(op2G2Key),
+			SignersApkG2:    op1G2Key.Add(op1G2Key).Add(op2G2Key).Add(op2G2Key), // adding each key twice as they participate in two quorums
 			SignersAggSigG1: op1Signature.Add(op1Signature).Add(op2Signature).Add(op2Signature),
 		}
 		gotAggregationServiceResponse := <-blsAggServ.aggregatedResponsesC
@@ -381,8 +381,13 @@ func TestBlsAgg(t *testing.T) {
 					Add(testOperator2.BlsKeypair.GetPubKeyG1()),
 			},
 			SignersApkG2: bls.NewZeroG2Point().
-				Add(testOperator1.BlsKeypair.GetPubKeyG2().Add(testOperator2.BlsKeypair.GetPubKeyG2())),
+				Add(testOperator1.BlsKeypair.GetPubKeyG2()).
+				Add(testOperator1.BlsKeypair.GetPubKeyG2()).
+				Add(testOperator2.BlsKeypair.GetPubKeyG2()).
+				Add(testOperator2.BlsKeypair.GetPubKeyG2()),
 			SignersAggSigG1: testOperator1.BlsKeypair.SignMessage(task1ResponseDigest).
+				Add(testOperator1.BlsKeypair.SignMessage(task1ResponseDigest)).
+				Add(testOperator2.BlsKeypair.SignMessage(task1ResponseDigest)).
 				Add(testOperator2.BlsKeypair.SignMessage(task1ResponseDigest)),
 		}
 		wantAggregationServiceResponseTask2 := BlsAggregationServiceResponse{
@@ -399,8 +404,13 @@ func TestBlsAgg(t *testing.T) {
 					Add(testOperator1.BlsKeypair.GetPubKeyG1()).
 					Add(testOperator2.BlsKeypair.GetPubKeyG1()),
 			},
-			SignersApkG2: testOperator1.BlsKeypair.GetPubKeyG2().Add(testOperator2.BlsKeypair.GetPubKeyG2()),
+			SignersApkG2: testOperator1.BlsKeypair.GetPubKeyG2().
+				Add(testOperator1.BlsKeypair.GetPubKeyG2()).
+				Add(testOperator2.BlsKeypair.GetPubKeyG2()).
+				Add(testOperator2.BlsKeypair.GetPubKeyG2()),
 			SignersAggSigG1: testOperator1.BlsKeypair.SignMessage(task2ResponseDigest).
+				Add(testOperator1.BlsKeypair.SignMessage(task2ResponseDigest)).
+				Add(testOperator2.BlsKeypair.SignMessage(task2ResponseDigest)).
 				Add(testOperator2.BlsKeypair.SignMessage(task2ResponseDigest)),
 		}
 
@@ -545,12 +555,12 @@ func TestBlsAgg(t *testing.T) {
 	t.Run("1 quorum 2 operator 1 correct signature quorumThreshold 50% - verified", func(t *testing.T) {
 		testOperator1 := types.TestOperator{
 			OperatorId:     types.OperatorId{1},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
 		}
 		taskIndex := types.TaskIndex(0)
@@ -604,12 +614,12 @@ func TestBlsAgg(t *testing.T) {
 	t.Run("1 quorum 2 operator 1 correct signature quorumThreshold 60% - task expired", func(t *testing.T) {
 		testOperator1 := types.TestOperator{
 			OperatorId:     types.OperatorId{1},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
 		}
 		blockNum := uint32(1)
@@ -1017,12 +1027,12 @@ func TestBlsAgg(t *testing.T) {
 		func(t *testing.T) {
 			testOperator1 := types.TestOperator{
 				OperatorId:     types.OperatorId{1},
-				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 				BlsKeypair:     newBlsKeyPairPanics("0x1"),
 			}
 			testOperator2 := types.TestOperator{
 				OperatorId:     types.OperatorId{2},
-				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 				BlsKeypair:     newBlsKeyPairPanics("0x2"),
 			}
 			blockNum := uint32(1)
