@@ -390,7 +390,9 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 				signersApkG2 := bls.NewZeroG2Point()
 				signersAggSigG1 := bls.NewZeroSignature()
 				for range operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].StakePerQuorum {
-					signersApkG2 = signersApkG2.Add(operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey)
+					signersApkG2 = signersApkG2.Add(
+						operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey,
+					)
 					signersAggSigG1 = signersAggSigG1.Add(signedTaskResponseDigest.BlsSignature)
 				}
 				digestAggregatedOperators = aggregatedOperators{
