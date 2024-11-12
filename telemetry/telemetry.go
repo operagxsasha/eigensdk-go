@@ -23,7 +23,7 @@ type RealTelemetry struct {
 
 // The telemetry config should be configured as a singleton,
 // so that it can be accessed from anywhere in the codebase.
-func InitTelemetry(Client *posthog.Client,
+func InitTelemetry(
 	ApiKey string,
 	UserId string) Telemetry {
 	once.Do(func() {
