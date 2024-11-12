@@ -274,8 +274,9 @@ func TestBlsAgg(t *testing.T) {
 					Add(testOperator1.BlsKeypair.GetPubKeyG1()).
 					Add(testOperator2.BlsKeypair.GetPubKeyG1()),
 			},
-			SignersApkG2:    op1G2Key.Add(op1G2Key).Add(op2G2Key).Add(op2G2Key), // adding each key twice as they participate in two quorums
+			SignersApkG2:    op1G2Key.Add(op1G2Key).Add(op2G2Key).Add(op2G2Key),
 			SignersAggSigG1: op1Signature.Add(op1Signature).Add(op2Signature).Add(op2Signature),
+			// each key is added twice because both operators stake on two quorums
 		}
 		gotAggregationServiceResponse := <-blsAggServ.aggregatedResponsesC
 		require.EqualValues(t, wantAggregationServiceResponse, gotAggregationServiceResponse)
@@ -1398,8 +1399,13 @@ func TestIntegrationBlsAgg(t *testing.T) {
 		_, err = avsClients.TxManager.Send(context.TODO(), tx, true)
 		require.NoError(t, err)
 
+		tx, err = registryCoordinator.CreateQuorum(noSendTxOpts, operatorSetParam, big.NewInt(0), strategyParam)
+		require.NoError(t, err)
+		_, err = avsClients.TxManager.Send(context.TODO(), tx, true)
+		require.NoError(t, err)
+
 		// register operator
-		quorumNumbers := types.QuorumNums{0, 1}
+		quorumNumbers := types.QuorumNums{1, 2}
 		quorumThresholdPercentages := []types.QuorumThresholdPercentage{100, 100}
 
 		_, err = avsWriter.RegisterOperator(
