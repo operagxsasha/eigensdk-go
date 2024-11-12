@@ -202,7 +202,7 @@ func TestBlsAgg(t *testing.T) {
 		require.EqualValues(t, taskIndex, gotAggregationServiceResponse.TaskIndex)
 	})
 
-	t.Run("2 quorums 2 operators 2 correct signatures", func(t *testing.T) { // TODO: this should be failing now
+	t.Run("2 quorums 2 operators 2 correct signatures", func(t *testing.T) {
 		testOperator1 := types.TestOperator{
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
@@ -255,6 +255,11 @@ func TestBlsAgg(t *testing.T) {
 		)
 		require.Nil(t, err)
 
+		op1G2Key := testOperator1.BlsKeypair.GetPubKeyG2()
+		op2G2Key := testOperator2.BlsKeypair.GetPubKeyG2()
+		op1Signature := testOperator1.BlsKeypair.SignMessage(taskResponseDigest)
+		op2Signature := testOperator2.BlsKeypair.SignMessage(taskResponseDigest)
+
 		wantAggregationServiceResponse := BlsAggregationServiceResponse{
 			Err:                 nil,
 			TaskIndex:           taskIndex,
@@ -263,15 +268,14 @@ func TestBlsAgg(t *testing.T) {
 			NonSignersPubkeysG1: []*bls.G1Point{},
 			QuorumApksG1: []*bls.G1Point{
 				bls.NewZeroG1Point().
-					Add(testOperator1.BlsKeypair.GetPubKeyG1()). // TOOD: add each operator twice?
+					Add(testOperator1.BlsKeypair.GetPubKeyG1()).
 					Add(testOperator2.BlsKeypair.GetPubKeyG1()),
 				bls.NewZeroG1Point().
-					Add(testOperator1.BlsKeypair.GetPubKeyG1()). // TODO: add each operator twice?
+					Add(testOperator1.BlsKeypair.GetPubKeyG1()).
 					Add(testOperator2.BlsKeypair.GetPubKeyG1()),
 			},
-			SignersApkG2: testOperator1.BlsKeypair.GetPubKeyG2().Add(testOperator2.BlsKeypair.GetPubKeyG2()),
-			SignersAggSigG1: testOperator1.BlsKeypair.SignMessage(taskResponseDigest).
-				Add(testOperator2.BlsKeypair.SignMessage(taskResponseDigest)),
+			SignersApkG2:    op1G2Key.Add(op1G2Key).Add(op2G2Key).Add(op2G2Key),
+			SignersAggSigG1: op1Signature.Add(op1Signature).Add(op2Signature).Add(op2Signature),
 		}
 		gotAggregationServiceResponse := <-blsAggServ.aggregatedResponsesC
 		require.EqualValues(t, wantAggregationServiceResponse, gotAggregationServiceResponse)
