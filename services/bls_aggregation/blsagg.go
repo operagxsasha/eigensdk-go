@@ -387,26 +387,32 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 			// after verifying signature we aggregate its sig and pubkey, and update the signed stake amount
 			if !ok {
 				// first operator to sign on this digest
+				signersApkG2 := bls.NewZeroG2Point()
+				signersAggSigG1 := bls.NewZeroSignature()
+				for range operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].StakePerQuorum {
+					signersApkG2 = signersApkG2.Add(operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey)
+					signersAggSigG1 = signersAggSigG1.Add(signedTaskResponseDigest.BlsSignature)
+				}
 				digestAggregatedOperators = aggregatedOperators{
 					// we've already verified that the operator is part of the task's quorum, so we don't need checks
 					// here
-					signersApkG2: bls.NewZeroG2Point().
-						Add(operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey),
-					signersAggSigG1:       signedTaskResponseDigest.BlsSignature,
+					signersApkG2:          signersApkG2,
+					signersAggSigG1:       signersAggSigG1,
 					signersOperatorIdsSet: map[types.OperatorId]bool{signedTaskResponseDigest.OperatorId: true},
 					signersTotalStakePerQuorum: cloneStakePerQuorumMap(
 						operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].StakePerQuorum,
 					),
 				}
 			} else {
+				// The operator has already signed on this digest
 				a.logger.Debug("Task goroutine updating existing aggregated operator signatures",
 					"taskIndex", taskIndex,
 					"taskResponseDigest", taskResponseDigest)
 
-				digestAggregatedOperators.signersAggSigG1.Add(signedTaskResponseDigest.BlsSignature)
-				digestAggregatedOperators.signersApkG2.Add(operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey)
 				digestAggregatedOperators.signersOperatorIdsSet[signedTaskResponseDigest.OperatorId] = true
 				for quorumNum, stake := range operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].StakePerQuorum {
+					digestAggregatedOperators.signersAggSigG1.Add(signedTaskResponseDigest.BlsSignature)
+					digestAggregatedOperators.signersApkG2.Add(operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey)
 					if _, ok := digestAggregatedOperators.signersTotalStakePerQuorum[quorumNum]; !ok {
 						// if we haven't seen this quorum before, initialize its signed stake to 0
 						// possible if previous operators who sent us signatures were not part of this quorum
