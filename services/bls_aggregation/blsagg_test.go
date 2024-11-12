@@ -62,7 +62,7 @@ func TestBlsAgg(t *testing.T) {
 	t.Run("1 quorum 1 operator 1 correct signature", func(t *testing.T) {
 		testOperator1 := types.TestOperator{
 			OperatorId:     types.OperatorId{1},
-			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
+			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
 		}
 		blockNum := uint32(1)
