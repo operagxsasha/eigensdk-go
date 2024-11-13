@@ -389,6 +389,8 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 				// first operator to sign on this digest
 				signersApkG2 := bls.NewZeroG2Point()
 				signersAggSigG1 := bls.NewZeroSignature()
+				// for each quorum the operator has stake in, the signature is aggregated
+				// see https://github.com/Layr-Labs/eigenlayer-middleware/blob/7d49b5181b09198ed275783453aa082bb3766990/src/BLSSignatureChecker.sol#L161-L168
 				for range operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].StakePerQuorum {
 					signersApkG2 = signersApkG2.Add(
 						operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey,
@@ -411,6 +413,8 @@ func (a *BlsAggregatorService) singleTaskAggregatorGoroutineFunc(
 					"taskResponseDigest", taskResponseDigest)
 
 				digestAggregatedOperators.signersOperatorIdsSet[signedTaskResponseDigest.OperatorId] = true
+
+				// for each quorum the operator has stake in, the signature is aggregated
 				for quorumNum, stake := range operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].StakePerQuorum {
 					digestAggregatedOperators.signersAggSigG1.Add(signedTaskResponseDigest.BlsSignature)
 					digestAggregatedOperators.signersApkG2.Add(operatorsAvsStateDict[signedTaskResponseDigest.OperatorId].OperatorInfo.Pubkeys.G2Pubkey)
