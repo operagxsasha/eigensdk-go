@@ -8,18 +8,21 @@ import (
 	"testing"
 
 	eigenkms "github.com/Layr-Labs/eigensdk-go/aws/kms"
-	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/wallet"
 	"github.com/Layr-Labs/eigensdk-go/chainio/txmgr"
-	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/signerv2"
 	"github.com/Layr-Labs/eigensdk-go/testutils"
+
 	"github.com/aws/aws-sdk-go-v2/service/kms/types"
+
 	"github.com/ethereum/go-ethereum/common"
 	gtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+
 	"github.com/stretchr/testify/assert"
+
 	"github.com/testcontainers/testcontainers-go"
 )
 
@@ -81,7 +84,28 @@ func teardown() {
 	_ = anvil.Terminate(context.Background())
 }
 
-func TestSendTransaction(t *testing.T) {
+func TestSignTransactionWithKmsSigner(t *testing.T) {
+	logger := testutils.GetTestLogger()
+	ethClient, err := ethclient.Dial(anvilEndpoint)
+	assert.Nil(t, err)
+	chainID, err := ethClient.ChainID(context.Background())
+	assert.Nil(t, err)
+	zeroAddr := common.HexToAddress("0x0")
+
+	// read input from JSON if available, otherwise use default values
+	var defaultInput = struct {
+		ChainID big.Int        `json:"chain_id"`
+		Nonce   uint64         `json:"nonce"`
+		To      common.Address `json:"to"`
+		Value   big.Int        `json:"value"`
+	}{
+		ChainID: *big.NewInt(0),
+		Nonce:   0,
+		To:      zeroAddr,
+		Value:   *big.NewInt(1_000_000_000_000_000_000),
+	}
+	testData := testutils.NewTestData(defaultInput)
+
 	c, err := testutils.NewKMSClient(mappedLocalstackPort)
 	assert.Nil(t, err)
 	assert.NotNil(t, keyMetadata.KeyId)
@@ -91,14 +115,9 @@ func TestSendTransaction(t *testing.T) {
 	keyAddr := crypto.PubkeyToAddress(*pk)
 	t.Logf("Public key address: %s", keyAddr.String())
 	assert.NotEqual(t, keyAddr, common.Address{0})
-	err = rpcClient.CallContext(context.Background(), nil, "anvil_setBalance", keyAddr, "2_000_000_000_000_000_000")
+	err = rpcClient.CallContext(context.Background(), nil, "anvil_setBalance", keyAddr, 2_000_000_000_000_000_000)
 	assert.Nil(t, err)
 
-	logger := &logging.NoopLogger{}
-	ethClient, err := eth.NewClient(anvilEndpoint)
-	assert.Nil(t, err)
-	chainID, err := ethClient.ChainID(context.Background())
-	assert.Nil(t, err)
 	signer := signerv2.NewKMSSigner(context.Background(), c, pk, *keyMetadata.KeyId, chainID)
 	assert.Nil(t, err)
 	assert.NotNil(t, signer)
@@ -107,13 +126,12 @@ func TestSendTransaction(t *testing.T) {
 	assert.NotNil(t, pkWallet)
 	txMgr := txmgr.NewSimpleTxManager(pkWallet, ethClient, logger, keyAddr)
 	assert.NotNil(t, txMgr)
-	zeroAddr := common.HexToAddress("0x0")
 	receipt, err := txMgr.Send(context.Background(), gtypes.NewTx(&gtypes.DynamicFeeTx{
-		ChainID: chainID,
-		Nonce:   0,
+		ChainID: &testData.Input.ChainID,
+		Nonce:   testData.Input.Nonce,
 		To:      &zeroAddr,
-		Value:   big.NewInt(1_000_000_000_000_000_000),
-	}))
+		Value:   &testData.Input.Value,
+	}), true)
 	assert.Nil(t, err)
 	assert.NotNil(t, receipt)
 	balance, err := ethClient.BalanceAt(context.Background(), keyAddr, nil)

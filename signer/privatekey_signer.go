@@ -6,6 +6,7 @@ import (
 	"errors"
 	"math/big"
 	"os"
+	"path/filepath"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
@@ -13,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
+// Deprecated: Use SignerV2 instead
 type PrivateKeySigner struct {
 	txOpts *bind.TransactOpts
 }
@@ -55,7 +57,7 @@ func (p *PrivateKeySigner) SendToExternal(ctx context.Context, tx *types.Transac
 }
 
 func getECDSAPrivateKey(keyStoreFile string, password string) (*ecdsa.PrivateKey, error) {
-	keyStoreContents, err := os.ReadFile(keyStoreFile)
+	keyStoreContents, err := os.ReadFile(filepath.Clean(keyStoreFile))
 	if err != nil {
 		return nil, err
 	}

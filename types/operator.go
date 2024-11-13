@@ -25,7 +25,6 @@ type Operator struct {
 	Address string `yaml:"address" json:"address"`
 
 	// https://github.com/Layr-Labs/eigenlayer-contracts/blob/delegation-redesign/src/contracts/interfaces/IDelegationManager.sol#L18
-	EarningsReceiverAddress   string `yaml:"earnings_receiver_address"    json:"earnings_receiver_address"`
 	DelegationApproverAddress string `yaml:"delegation_approver_address"  json:"delegation_approver_address"`
 	StakerOptOutWindowBlocks  uint32 `yaml:"staker_opt_out_window_blocks" json:"staker_opt_out_window_blocks"`
 
@@ -36,10 +35,6 @@ type Operator struct {
 func (o Operator) Validate() error {
 	if !utils.IsValidEthereumAddress(o.Address) {
 		return ErrInvalidOperatorAddress
-	}
-
-	if !utils.IsValidEthereumAddress(o.EarningsReceiverAddress) {
-		return ErrInvalidEarningsReceiverAddress
 	}
 
 	if o.DelegationApproverAddress != ZeroAddress && !utils.IsValidEthereumAddress(o.DelegationApproverAddress) {
@@ -178,14 +173,14 @@ type OperatorAvsState struct {
 }
 
 var (
-	maxNumberOfQuorums = 192
+	maxNumberOfQuorums uint8 = 192
 )
 
 func BitmapToQuorumIds(bitmap *big.Int) []QuorumNum {
 	// loop through each index in the bitmap to construct the array
 	quorumIds := make([]QuorumNum, 0, maxNumberOfQuorums)
-	for i := 0; i < maxNumberOfQuorums; i++ {
-		if bitmap.Bit(i) == 1 {
+	for i := uint8(0); i < maxNumberOfQuorums; i++ {
+		if bitmap.Bit(int(i)) == 1 {
 			quorumIds = append(quorumIds, QuorumNum(i))
 		}
 	}

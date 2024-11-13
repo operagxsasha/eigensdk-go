@@ -8,9 +8,11 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/fireblocks"
 	"github.com/Layr-Labs/eigensdk-go/logging"
+
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -31,13 +33,20 @@ var (
 	ErrTransactionFailed      = errors.New("transaction failed")
 )
 
+type ethClient interface {
+	ChainID(ctx context.Context) (*big.Int, error)
+	TransactionReceipt(ctx context.Context, txHash common.Hash) (*types.Receipt, error)
+
+	bind.ContractBackend
+}
+
 type fireblocksWallet struct {
 	// mu protects access to nonceToTxID and txIDToNonce which can be
 	// accessed concurrently by SendTransaction and GetTransactionReceipt
 	mu sync.Mutex
 
 	fireblocksClient fireblocks.Client
-	ethClient        eth.Client
+	ethClient        ethClient
 	vaultAccountName string
 	logger           logging.Logger
 	chainID          *big.Int
@@ -56,7 +65,7 @@ type fireblocksWallet struct {
 
 func NewFireblocksWallet(
 	fireblocksClient fireblocks.Client,
-	ethClient eth.Client,
+	ethClient ethClient,
 	vaultAccountName string,
 	logger logging.Logger,
 ) (Wallet, error) {
@@ -88,9 +97,9 @@ func (t *fireblocksWallet) getAccount(ctx context.Context) (*fireblocks.VaultAcc
 		if err != nil {
 			return nil, fmt.Errorf("error listing vault accounts: %w", err)
 		}
-		for _, a := range accounts {
+		for i, a := range accounts {
 			if a.Name == t.vaultAccountName {
-				t.account = &a
+				t.account = &accounts[i]
 				break
 			}
 		}
@@ -112,11 +121,11 @@ func (f *fireblocksWallet) getWhitelistedAccount(
 		if err != nil {
 			return nil, fmt.Errorf("error listing external wallets: %w", err)
 		}
-		for _, a := range accounts {
+		for i, a := range accounts {
 			for _, asset := range a.Assets {
 				if asset.Address == address && asset.Status == "APPROVED" && asset.ID == assetID {
-					f.whitelistedAccounts[address] = &a
-					whitelistedAccount = &a
+					f.whitelistedAccounts[address] = &accounts[i]
+					whitelistedAccount = &accounts[i]
 					return whitelistedAccount, nil
 				}
 			}
@@ -143,11 +152,11 @@ func (t *fireblocksWallet) getWhitelistedContract(
 		if err != nil {
 			return nil, fmt.Errorf("error listing contracts: %w", err)
 		}
-		for _, c := range contracts {
+		for i_c, c := range contracts {
 			for _, a := range c.Assets {
 				if a.Address == address && a.Status == "APPROVED" && a.ID == assetID {
-					t.whitelistedContracts[address] = &c
-					contract = &c
+					t.whitelistedContracts[address] = &contracts[i_c]
+					contract = &contracts[i_c]
 					return contract, nil
 				}
 			}

@@ -1,9 +1,11 @@
-// Package metrics implements the avs node prometheus metrics spec: https://docs.eigenlayer.xyz/eigenlayer/avs-guides/spec/metrics/metrics-prom-spec
+// Package metrics implements the avs node prometheus metrics spec:
+// https://docs.eigenlayer.xyz/eigenlayer/avs-guides/spec/metrics/metrics-prom-spec
 package metrics
 
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/types"
@@ -26,9 +28,11 @@ type EigenMetrics struct {
 
 var _ Metrics = (*EigenMetrics)(nil)
 
-// Follows the structure from https://pkg.go.dev/github.com/prometheus/client_golang/prometheus#hdr-A_Basic_Example
+// NewEigenMetrics Follows the structure from
+// https://pkg.go.dev/github.com/prometheus/client_golang/prometheus#hdr-A_Basic_Example
 // TODO(samlaf): I think each avs runs in a separate docker bridge network.
-// In order for prometheus to scrape the metrics does the address need to be 0.0.0.0:port to accept connections from other networks?
+// In order for prometheus to scrape the metrics does the address need to be 0.0.0.0:port to accept connections from
+// other networks?
 func NewEigenMetrics(avsName, ipPortAddress string, reg prometheus.Registerer, logger logging.Logger) *EigenMetrics {
 
 	metrics := &EigenMetrics{
@@ -61,8 +65,9 @@ func (m *EigenMetrics) initMetrics() {
 	// Performance score starts as 100, and goes down if node doesn't perform well
 	m.performanceScore.Set(100)
 
-	// TODO(samlaf): should we initialize the feeEarnedTotal? This would require the user to pass in a list of tokens for which to initialize the metric
-	// same for rpcRequestDurationSeconds and rpcRequestTotal... we could initialize them to be 0 on every json-rpc... but is that really necessary?
+	// TODO(samlaf): should we initialize the feeEarnedTotal? This would require the user to pass in a list of tokens
+	// for which to initialize the metric same for rpcRequestDurationSeconds and rpcRequestTotal... we could initialize
+	// them to be 0 on every json-rpc... but is that really necessary?
 }
 
 // AddEigenFeeEarnedTotal adds the fee earned to the total fee earned metric
@@ -82,8 +87,10 @@ func (m *EigenMetrics) Start(ctx context.Context, reg prometheus.Gatherer) <-cha
 	errChan := make(chan error, 1)
 	mux := http.NewServeMux()
 	httpServer := http.Server{
-		Addr:    m.ipPortAddress,
-		Handler: mux,
+		Addr:         m.ipPortAddress,
+		Handler:      mux,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
 	}
 	mux.Handle("/metrics", promhttp.HandlerFor(
 		reg,
