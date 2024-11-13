@@ -33,7 +33,7 @@ func InitTelemetry(
 				Endpoint: "https://us.i.posthog.com",
 			},
 		)
-		runtime.SetFinalizer(client, func(client *posthog.Client) {
+		runtime.SetFinalizer(&client, func(client *posthog.Client) {
 			(*client).Close()
 		})
 
