@@ -57,10 +57,11 @@ func TestSendWithRetryWithNoError(t *testing.T) {
 	txMgr := txmgr.NewSimpleTxManager(pkWallet, ethHttpClient, logger, addr)
 
 	tx := newTx()
-	retryTimeout := 2 * time.Second
-	maxRetries := uint32(10)
+	retryTimeout := 200 * time.Millisecond
+	maxElapsedTime := 2 * time.Second
+	multiplier := 1.5
 
-	_, err = txMgr.SendWithRetry(context.Background(), tx, retryTimeout, maxRetries, 2)
+	_, err = txMgr.SendWithRetry(context.Background(), tx, retryTimeout, maxElapsedTime, multiplier)
 	require.NoError(t, err)
 }
 
@@ -82,10 +83,11 @@ func TestSendWithRetryDoesBackoff(t *testing.T) {
 	txMgr := txmgr.NewSimpleTxManager(pkWallet, ethBackend, logger, addr)
 
 	tx := newTx()
-	retryTimeout := 2 * time.Second
-	maxRetries := uint32(10)
+	retryTimeout := 200 * time.Millisecond
+	maxElapsedTime := 3 * time.Second
+	multiplier := 1.5
 
-	_, err = txMgr.SendWithRetry(context.Background(), tx, retryTimeout, maxRetries, 2)
+	_, err = txMgr.SendWithRetry(context.Background(), tx, retryTimeout, maxElapsedTime, multiplier)
 	require.NoError(t, err)
 	assert.Equal(t, ethBackend.pendingFailures, uint32(0))
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/wallet"
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/utils"
+	"github.com/cenkalti/backoff/v4"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -94,25 +95,32 @@ func (m *SimpleTxManager) Send(
 
 // SendWithRetry is used to send a transaction to the Ethereum node, same as Send but adding retry logic.
 // If the transaction fails, it will retry sending the transaction until it gets a receipt, using
-// **exponential backoff** with factor `exponentialFactor`, starting with `retryTimeout`.
+// **exponential backoff** with factor `multiplier`, starting with `initialInterval`.
 func (m *SimpleTxManager) SendWithRetry(
 	ctx context.Context,
 	tx *types.Transaction,
-	retryTimeout time.Duration,
-	maxRetries uint32,
-	exponentialFactor uint32,
+	initialInterval time.Duration,
+	maxElapsedTime time.Duration,
+	multiplier float64,
 ) (*types.Receipt, error) {
-	for i := uint32(0); i < maxRetries; i++ {
+	backoffConfig := backoff.NewExponentialBackOff(
+		backoff.WithInitialInterval(initialInterval),
+		backoff.WithMultiplier(multiplier),
+		backoff.WithMaxElapsedTime(maxElapsedTime),
+	)
+
+	sendAndWait := func() (*types.Receipt, error) {
 		r, err := m.send(ctx, tx)
-		if err == nil {
-			return m.waitForReceipt(ctx, r.TxHash.Hex())
+		if err != nil {
+			return nil, err
 		}
 		m.logger.Error("failed to send transaction", err)
-		m.logger.Debugf("waiting %f seconds for backoff", retryTimeout.Seconds())
-		time.Sleep(retryTimeout)
-		retryTimeout *= time.Duration(exponentialFactor)
+		m.logger.Debugf("waiting %f seconds for backoff", initialInterval.Seconds())
+
+		return m.waitForReceipt(ctx, r.TxHash.Hex())
 	}
-	return nil, errors.New("max retries reached")
+
+	return backoff.RetryWithData(sendAndWait, backoffConfig)
 }
 
 func (m *SimpleTxManager) send(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
