@@ -55,7 +55,7 @@ func writeBytesToFile(path string, data []byte) error {
 	dir := filepath.Dir(path)
 
 	// create the directory if it doesn't exist. If exists, it does nothing
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0750); err != nil {
 		fmt.Println("Error creating directories:", err)
 		return err
 	}
@@ -81,7 +81,7 @@ func writeBytesToFile(path string, data []byte) error {
 }
 
 func ReadKey(keyStoreFile string, password string) (*ecdsa.PrivateKey, error) {
-	keyStoreContents, err := os.ReadFile(keyStoreFile)
+	keyStoreContents, err := os.ReadFile(filepath.Clean(keyStoreFile))
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func ReadKey(keyStoreFile string, password string) (*ecdsa.PrivateKey, error) {
 // GetAddressFromKeyStoreFile We are using Web3 format defined by
 // https://ethereum.org/en/developers/docs/data-structures-and-encoding/web3-secret-storage/
 func GetAddressFromKeyStoreFile(keyStoreFile string) (gethcommon.Address, error) {
-	keyJson, err := os.ReadFile(keyStoreFile)
+	keyJson, err := os.ReadFile(filepath.Clean(keyStoreFile))
 	if err != nil {
 		return gethcommon.Address{}, err
 	}

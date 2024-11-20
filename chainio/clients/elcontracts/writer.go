@@ -6,7 +6,6 @@ import (
 
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	gethcommon "github.com/ethereum/go-ethereum/common"
 	gethtypes "github.com/ethereum/go-ethereum/core/types"
 
@@ -27,7 +26,7 @@ import (
 
 type Reader interface {
 	GetStrategyAndUnderlyingERC20Token(
-		opts *bind.CallOpts, strategyAddr gethcommon.Address,
+		ctx context.Context, strategyAddr gethcommon.Address,
 	) (*strategy.ContractIStrategy, erc20.ContractIERC20Methods, gethcommon.Address, error)
 }
 
@@ -276,7 +275,7 @@ func (w *ChainWriter) DepositERC20IntoStrategy(
 		return nil, err
 	}
 	_, underlyingTokenContract, underlyingTokenAddr, err := w.elChainReader.GetStrategyAndUnderlyingERC20Token(
-		&bind.CallOpts{Context: ctx},
+		ctx,
 		strategyAddr,
 	)
 	if err != nil {
@@ -350,72 +349,6 @@ func (w *ChainWriter) ProcessClaim(
 	if err != nil {
 		return nil, utils.WrapError("failed to create ProcessClaim tx", err)
 	}
-	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
-	if err != nil {
-		return nil, utils.WrapError("failed to send tx", err)
-	}
-
-	return receipt, nil
-}
-
-func (w *ChainWriter) ForceDeregisterFromOperatorSets(
-	ctx context.Context,
-	operator gethcommon.Address,
-	avs gethcommon.Address,
-	operatorSetIds []uint32,
-	operatorSignature avsdirectory.ISignatureUtilsSignatureWithSaltAndExpiry,
-	waitForReceipt bool,
-) (*gethtypes.Receipt, error) {
-	if w.avsDirectory == nil {
-		return nil, errors.New("AVSDirectory contract not provided")
-	}
-
-	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
-	if err != nil {
-		return nil, utils.WrapError("failed to get no send tx opts", err)
-	}
-
-	tx, err := w.avsDirectory.ForceDeregisterFromOperatorSets(
-		noSendTxOpts,
-		operator,
-		avs,
-		operatorSetIds,
-		operatorSignature,
-	)
-
-	if err != nil {
-		return nil, utils.WrapError("failed to create ForceDeregisterFromOperatorSets tx", err)
-	}
-
-	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
-	if err != nil {
-		return nil, utils.WrapError("failed to send tx", err)
-	}
-
-	return receipt, nil
-}
-
-func (w *ChainWriter) SetOperatorCommissionBips(
-	ctx context.Context,
-	operatorSet rewardscoordinator.IAVSDirectoryOperatorSet,
-	rewardType uint8,
-	commissionBips uint16,
-	waitForReceipt bool,
-) (*gethtypes.Receipt, error) {
-	if w.rewardsCoordinator == nil {
-		return nil, errors.New("RewardsCoordinator contract not provided")
-	}
-
-	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
-	if err != nil {
-		return nil, utils.WrapError("failed to get no send tx opts", err)
-	}
-
-	tx, err := w.rewardsCoordinator.SetOperatorCommissionBips(noSendTxOpts, operatorSet, rewardType, commissionBips)
-	if err != nil {
-		return nil, utils.WrapError("failed to create SetOperatorCommissionBips tx", err)
-	}
-
 	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
 	if err != nil {
 		return nil, utils.WrapError("failed to send tx", err)
