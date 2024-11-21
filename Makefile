@@ -3,7 +3,7 @@
 
 GO_LINES_IGNORED_DIRS=contracts
 GO_PACKAGES=./chainio/... ./crypto/... ./logging/... \
-	./types/... ./utils/... ./signer/... ./cmd/... \
+	./types/... ./utils/... ./cmd/... \
 	./signerv2/... ./aws/... ./internal/... ./metrics/... \
 	./nodeapi/... ./cmd/... ./services/... ./testutils/...
 GO_FOLDERS=$(shell echo ${GO_PACKAGES} | sed -e "s/\.\///g" | sed -e "s/\/\.\.\.//g")
