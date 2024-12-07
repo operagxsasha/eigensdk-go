@@ -58,7 +58,7 @@ func New(cfg Config) (Signer, error) {
 	}, nil
 }
 
-func (s *Signer) Sign(ctx context.Context, msg []byte) ([]byte, error) {
+func (s Signer) Sign(ctx context.Context, msg []byte) ([]byte, error) {
 	if len(msg) != 32 {
 		return nil, bls.ErrInvalidMessageLength
 	}
@@ -78,7 +78,7 @@ func (s *Signer) Sign(ctx context.Context, msg []byte) ([]byte, error) {
 	return resp.Signature, nil
 }
 
-func (s *Signer) GetOperatorId() (string, error) {
+func (s Signer) GetOperatorId() (string, error) {
 	pkBytes, err := hex.DecodeString(s.pubKeyHex)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode BLS public key: %w", err)
