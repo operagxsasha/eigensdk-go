@@ -12,7 +12,7 @@ const (
 type SignerConfig struct {
 	// Type of the signer
 	SignerType SignerType
-	
+
 	// Params for local signer
 	// Path to the key file
 	Path string

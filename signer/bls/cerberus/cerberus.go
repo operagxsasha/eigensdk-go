@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	sdkBls "github.com/Layr-Labs/eigensdk-go/crypto/bls"
-	"github.com/Layr-Labs/eigensdk-go/signer/bls"
+	"github.com/Layr-Labs/eigensdk-go/signer/bls/types"
 
 	v1 "github.com/Layr-Labs/cerberus-api/pkg/api/v1"
 )
@@ -60,7 +60,7 @@ func New(cfg Config) (Signer, error) {
 
 func (s Signer) Sign(ctx context.Context, msg []byte) ([]byte, error) {
 	if len(msg) != 32 {
-		return nil, bls.ErrInvalidMessageLength
+		return nil, types.ErrInvalidMessageLength
 	}
 
 	var data [32]byte
