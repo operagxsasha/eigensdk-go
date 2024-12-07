@@ -17,7 +17,15 @@ type Signer interface {
 	GetOperatorId() (string, error)
 }
 
-// NewSigner creates a new signer based on the config
+// NewSigner creates a new Signer instance based on the provided configuration.
+// It supports different types of signers, such as Local and Cerberus.
+//
+// Parameters:
+//   - cfg: A SignerConfig struct that contains the configuration for the signer.
+//
+// Returns:
+//   - Signer: An instance of the Signer interface.
+//   - error: An error if the signer type is invalid or if there is an issue creating the signer.
 func NewSigner(cfg types.SignerConfig) (Signer, error) {
 	switch cfg.SignerType {
 	case types.Local:
