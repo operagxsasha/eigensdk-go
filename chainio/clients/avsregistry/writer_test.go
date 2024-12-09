@@ -75,7 +75,7 @@ func TestWriterMethods(t *testing.T) {
 	})
 }
 
-func TestAvsRegistryWriterTest_ComplianceBLSSignature(t *testing.T) {
+func TestBlsSignature(t *testing.T) {
 	// read input from JSON if available, otherwise use default values
 	var defaultInput = struct {
 		messageBytes []byte `json:"message_bytes"`
