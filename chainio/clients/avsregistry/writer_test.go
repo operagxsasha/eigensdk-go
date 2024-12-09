@@ -78,24 +78,25 @@ func TestWriterMethods(t *testing.T) {
 func TestBlsSignature(t *testing.T) {
 	// read input from JSON if available, otherwise use default values
 	var defaultInput = struct {
-		messageBytes []byte `json:"message_bytes"`
-		bls_priv_key string `json:"bls_priv_key"`
+		Message    string `json:"message"`
+		BlsPrivKey string `json:"bls_priv_key"`
 	}{
-		messageBytes: []byte("Hello, world!Hello, world!123456"),
-		bls_priv_key: "12248929636257230549931416853095037629726205319386239410403476017439825112537",
+		Message:    "Hello, world!Hello, world!123456",
+		BlsPrivKey: "12248929636257230549931416853095037629726205319386239410403476017439825112537",
 	}
 
 	testData := testutils.NewTestData(defaultInput)
-
 	// The message to sign
-	var messageArray [32]byte
-	copy(messageArray[:], testData.Input.messageBytes[:32])
+	messageArray := []byte(testData.Input.Message)
+
+	var messageArray32 [32]byte
+	copy(messageArray32[:], messageArray)
 
 	// The private key as a string
-	privKey, _ := bls.NewPrivateKey(testData.Input.bls_priv_key)
+	privKey, _ := bls.NewPrivateKey(testData.Input.BlsPrivKey)
 	keyPair := bls.NewKeyPair(privKey)
 
-	sig := keyPair.SignMessage(messageArray)
+	sig := keyPair.SignMessage(messageArray32)
 
 	x := sig.G1Affine.X.String()
 	y := sig.G1Affine.Y.String()
