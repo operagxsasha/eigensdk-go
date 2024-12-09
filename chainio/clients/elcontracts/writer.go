@@ -359,7 +359,6 @@ func (w *ChainWriter) ProcessClaim(
 
 func (w *ChainWriter) SetOperatorAVSSplit(
 	ctx context.Context,
-	claim rewardscoordinator.IRewardsCoordinatorRewardsMerkleClaim,
 	operator gethcommon.Address,
 	avs gethcommon.Address,
 	split uint16,
