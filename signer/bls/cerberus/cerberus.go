@@ -87,3 +87,7 @@ func (s Signer) GetOperatorId() (string, error) {
 	publicKey := pubkey.Deserialize(pkBytes)
 	return publicKey.GetOperatorID(), nil
 }
+
+func (s Signer) GetPublicKeyHex() string {
+	return s.pubKeyHex
+}

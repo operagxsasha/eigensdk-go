@@ -15,6 +15,8 @@ type Signer interface {
 	// GetOperatorId returns the operator ID of the signer.
 	// This is hash of the G1 public key of the signer
 	GetOperatorId() (string, error)
+
+	GetPublicKeyHex() string
 }
 
 // NewSigner creates a new Signer instance based on the provided configuration.
