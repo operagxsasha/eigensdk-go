@@ -63,7 +63,7 @@ core_default := "DelegationManager IRewardsCoordinator ISlasher StrategyManager 
 core_location := "./lib/eigenlayer-middleware/lib/eigenlayer-contracts"
 core_bindings_location := "../../../../bindings"
 
-middleware_default := "RegistryCoordinator IndexRegistry OperatorStateRetriever StakeRegistry BLSApkRegistry IBLSSignatureChecker ServiceManagerBase IERC20"
+middleware_default := "RegistryCoordinator IndexRegistry OperatorStateRetriever StakeRegistry BLSApkRegistry IBLSSignatureChecker ServiceManagerBase IERC20 ERC20"
 middleware_location := "./lib/eigenlayer-middleware"
 middleware_bindings_location := "../../bindings"
 

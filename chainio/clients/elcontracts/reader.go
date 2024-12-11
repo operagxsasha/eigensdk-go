@@ -12,8 +12,8 @@ import (
 
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
 	delegationmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/DelegationManager"
+	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ERC20"
 	avsdirectory "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IAVSDirectory"
-	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IERC20"
 	rewardscoordinator "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IRewardsCoordinator"
 	slasher "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ISlasher"
 	strategy "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IStrategy"
@@ -176,7 +176,7 @@ func (r *ChainReader) GetStrategyAndUnderlyingToken(
 func (r *ChainReader) GetStrategyAndUnderlyingERC20Token(
 	ctx context.Context,
 	strategyAddr gethcommon.Address,
-) (*strategy.ContractIStrategy, erc20.ContractIERC20Methods, gethcommon.Address, error) {
+) (*strategy.ContractIStrategy, erc20.ContractERC20Methods, gethcommon.Address, error) {
 	contractStrategy, err := strategy.NewContractIStrategy(strategyAddr, r.ethClient)
 	if err != nil {
 		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
@@ -185,7 +185,7 @@ func (r *ChainReader) GetStrategyAndUnderlyingERC20Token(
 	if err != nil {
 		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}
-	contractUnderlyingToken, err := erc20.NewContractIERC20(underlyingTokenAddr, r.ethClient)
+	contractUnderlyingToken, err := erc20.NewContractERC20(underlyingTokenAddr, r.ethClient)
 	if err != nil {
 		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}

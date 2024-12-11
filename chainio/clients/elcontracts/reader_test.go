@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"testing"
 
-	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IERC20"
+	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ERC20"
 	"github.com/Layr-Labs/eigensdk-go/testutils"
 	"github.com/Layr-Labs/eigensdk-go/testutils/testclients"
 	"github.com/Layr-Labs/eigensdk-go/types"
@@ -46,7 +46,7 @@ func TestChainReader(t *testing.T) {
 		assert.NotNil(t, strategy)
 		assert.NotEqual(t, common.Address{}, underlyingTokenAddr)
 
-		erc20Token, err := erc20.NewContractIERC20(underlyingTokenAddr, clients.EthHttpClient)
+		erc20Token, err := erc20.NewContractERC20(underlyingTokenAddr, clients.EthHttpClient)
 		assert.NoError(t, err)
 
 		tokenName, err := erc20Token.Name(&bind.CallOpts{})

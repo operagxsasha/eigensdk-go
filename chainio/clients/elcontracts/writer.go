@@ -12,8 +12,8 @@ import (
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
 	"github.com/Layr-Labs/eigensdk-go/chainio/txmgr"
 	delegationmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/DelegationManager"
+	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ERC20"
 	avsdirectory "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IAVSDirectory"
-	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IERC20"
 	rewardscoordinator "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IRewardsCoordinator"
 	slasher "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ISlasher"
 	strategy "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IStrategy"
@@ -27,7 +27,7 @@ import (
 type Reader interface {
 	GetStrategyAndUnderlyingERC20Token(
 		ctx context.Context, strategyAddr gethcommon.Address,
-	) (*strategy.ContractIStrategy, erc20.ContractIERC20Methods, gethcommon.Address, error)
+	) (*strategy.ContractIStrategy, erc20.ContractERC20Methods, gethcommon.Address, error)
 }
 
 type ChainWriter struct {
