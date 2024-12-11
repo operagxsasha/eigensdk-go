@@ -356,34 +356,3 @@ func (w *ChainWriter) ProcessClaim(
 
 	return receipt, nil
 }
-
-func (w *ChainWriter) ProcessClaims(
-	ctx context.Context,
-	claims []rewardscoordinator.IRewardsCoordinatorRewardsMerkleClaim,
-	earnerAddress gethcommon.Address,
-	waitForReceipt bool,
-) (*gethtypes.Receipt, error) {
-	if w.rewardsCoordinator == nil {
-		return nil, errors.New("RewardsCoordinator contract not provided")
-	}
-
-	if len(claims) == 0 {
-		return nil, errors.New("claims is empty, at least one claim must be provided")
-	}
-
-	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
-	if err != nil {
-		return nil, utils.WrapError("failed to get no send tx opts", err)
-	}
-
-	tx, err := w.rewardsCoordinator.ProcessClaims(noSendTxOpts, claims, earnerAddress)
-	if err != nil {
-		return nil, utils.WrapError("failed to create ProcessClaims tx", err)
-	}
-	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
-	if err != nil {
-		return nil, utils.WrapError("failed to send tx", err)
-	}
-
-	return receipt, nil
-}

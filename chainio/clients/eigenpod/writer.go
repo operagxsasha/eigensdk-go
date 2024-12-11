@@ -1,9 +1,10 @@
 package eigenpod
 
 import (
-	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eigenpod/bindings"
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
 	"github.com/Layr-Labs/eigensdk-go/chainio/txmgr"
+	ieigenpod "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IEigenPod"
+	ieigenpodmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IEigenPodManager"
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/utils"
 
@@ -13,19 +14,19 @@ import (
 type ChainWriter struct {
 	logger    logging.Logger
 	ethClient eth.HttpBackend
-	eigenPod  *bindings.IEigenPod
+	eigenPod  *ieigenpod.ContractIEigenPod
 	txMgr     txmgr.TxManager
 }
 
 type ManagerChainWriter struct {
 	logger    logging.Logger
 	ethClient eth.HttpBackend
-	manager   *bindings.IEigenPodManager
+	manager   *ieigenpodmanager.ContractIEigenPodManager
 	txMgr     txmgr.TxManager
 }
 
 func newChainWriter(
-	eigenPod *bindings.IEigenPod,
+	eigenPod *ieigenpod.ContractIEigenPod,
 	ethClient eth.HttpBackend,
 	logger logging.Logger,
 	txMgr txmgr.TxManager,
@@ -41,7 +42,7 @@ func newChainWriter(
 }
 
 func newManagerChainWriter(
-	manager *bindings.IEigenPodManager,
+	manager *ieigenpodmanager.ContractIEigenPodManager,
 	ethClient eth.HttpBackend,
 	logger logging.Logger,
 	txMgr txmgr.TxManager,
@@ -62,7 +63,7 @@ func NewWriter(
 	txMgr txmgr.TxManager,
 	logger logging.Logger,
 ) (*ChainWriter, error) {
-	pod, err := bindings.NewIEigenPod(eigenPodAddress, ethClient)
+	pod, err := ieigenpod.NewContractIEigenPod(eigenPodAddress, ethClient)
 	if err != nil {
 		return nil, utils.WrapError("Failed to create EigenPod contract", err)
 	}
@@ -76,7 +77,7 @@ func NewManagerWriter(
 	txMgr txmgr.TxManager,
 	logger logging.Logger,
 ) (*ManagerChainWriter, error) {
-	manager, err := bindings.NewIEigenPodManager(eigenPodManagerAddress, ethClient)
+	manager, err := ieigenpodmanager.NewContractIEigenPodManager(eigenPodManagerAddress, ethClient)
 	if err != nil {
 		return nil, utils.WrapError("Failed to create EigenPodManager contract", err)
 	}

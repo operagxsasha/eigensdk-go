@@ -21,13 +21,13 @@ func BuildEigenPodClients(
 	}
 
 	eigenPodChainReader := newChainReader(
-		&eigenPodBindings.IEigenPodCaller,
+		&eigenPodBindings.ContractIEigenPodCaller,
 		client,
 		logger,
 	)
 
 	eigenPodChainWriter := newChainWriter(
-		eigenPodBindings.IEigenPod,
+		eigenPodBindings.ContractIEigenPod,
 		client,
 		logger,
 		txMgr,
@@ -48,13 +48,13 @@ func BuildEigenPodManagerClients(
 	}
 
 	eigenPodManagerChainReader := newManagerChainReader(
-		&eigenPodManagerBindings.IEigenPodManagerCaller,
+		&eigenPodManagerBindings.ContractIEigenPodManagerCaller,
 		client,
 		logger,
 	)
 
 	eigenPodManagerChainWriter := newManagerChainWriter(
-		eigenPodManagerBindings.IEigenPodManager,
+		eigenPodManagerBindings.ContractIEigenPodManager,
 		client,
 		logger,
 		txMgr,
