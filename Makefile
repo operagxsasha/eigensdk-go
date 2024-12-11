@@ -59,7 +59,7 @@ lint: ## runs all linters
 
 ___BINDINGS___: ## 
 
-core_default := "DelegationManager IRewardsCoordinator ISlasher StrategyManager EigenPod EigenPodManager IStrategy IAVSDirectory"
+core_default := "DelegationManager IRewardsCoordinator ISlasher StrategyManager EigenPod EigenPodManager IStrategy IAVSDirectory IEigenPod IEigenPodManager"
 core_location := "./lib/eigenlayer-middleware/lib/eigenlayer-contracts"
 core_bindings_location := "../../../../bindings"
 
@@ -107,13 +107,9 @@ else
 	cd contracts && ./generate-bindings.sh $(sdk_location) $(sdk_default) $(sdk_bindings_location)
 endif
 
-.PHONY: eigenpod-bindings
-eigenpod-bindings: ## generates contract bindings for eigenpod
-	cd chainio/clients/eigenpod && ./generate.sh
-
 .PHONY: bindings
 bindings: ## generates all contract bindings
-	rm -rf bindings/* && make core-bindings middleware-bindings sdk-bindings eigenpod-bindings
+	rm -rf bindings/* && make core-bindings middleware-bindings sdk-bindings
 
 
 ___CONTRACTS___: ## 

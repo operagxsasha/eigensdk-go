@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package bindings
+package contractIEigenPodManager
 
 import (
 	"errors"
@@ -29,113 +29,219 @@ var (
 	_ = abi.ConvertType
 )
 
-// IEigenPodManagerMetaData contains all meta data concerning the IEigenPodManager contract.
-var IEigenPodManagerMetaData = &bind.MetaData{
+// ContractIEigenPodManagerMetaData contains all meta data concerning the ContractIEigenPodManager contract.
+var ContractIEigenPodManagerMetaData = &bind.MetaData{
 	ABI: "[{\"type\":\"function\",\"name\":\"addShares\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"shares\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"beaconChainETHStrategy\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIStrategy\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"createPod\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"eigenPodBeacon\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIBeacon\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"ethPOS\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIETHPOSDeposit\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getPod\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIEigenPod\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"hasPod\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"numPods\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"ownerToPod\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIEigenPod\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pause\",\"inputs\":[{\"name\":\"newPausedStatus\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"pauseAll\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"paused\",\"inputs\":[{\"name\":\"index\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"paused\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pauserRegistry\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIPauserRegistry\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"podOwnerShares\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"int256\",\"internalType\":\"int256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"recordBeaconChainETHBalanceUpdate\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"sharesDelta\",\"type\":\"int256\",\"internalType\":\"int256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"removeShares\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"shares\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setPauserRegistry\",\"inputs\":[{\"name\":\"newPauserRegistry\",\"type\":\"address\",\"internalType\":\"contractIPauserRegistry\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"slasher\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractISlasher\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"stake\",\"inputs\":[{\"name\":\"pubkey\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"depositDataRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"strategyManager\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIStrategyManager\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"unpause\",\"inputs\":[{\"name\":\"newPausedStatus\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"withdrawSharesAsTokens\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"destination\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"shares\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"BeaconChainETHDeposited\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"BeaconChainETHWithdrawalCompleted\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"shares\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"nonce\",\"type\":\"uint96\",\"indexed\":false,\"internalType\":\"uint96\"},{\"name\":\"delegatedAddress\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"withdrawer\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"withdrawalRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"NewTotalShares\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newTotalShares\",\"type\":\"int256\",\"indexed\":false,\"internalType\":\"int256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Paused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newPausedStatus\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"PauserRegistrySet\",\"inputs\":[{\"name\":\"pauserRegistry\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"contractIPauserRegistry\"},{\"name\":\"newPauserRegistry\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"contractIPauserRegistry\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"PodDeployed\",\"inputs\":[{\"name\":\"eigenPod\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"podOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"PodSharesUpdated\",\"inputs\":[{\"name\":\"podOwner\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sharesDelta\",\"type\":\"int256\",\"indexed\":false,\"internalType\":\"int256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Unpaused\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"newPausedStatus\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false}]",
 }
 
-// IEigenPodManagerABI is the input ABI used to generate the binding from.
-// Deprecated: Use IEigenPodManagerMetaData.ABI instead.
-var IEigenPodManagerABI = IEigenPodManagerMetaData.ABI
+// ContractIEigenPodManagerABI is the input ABI used to generate the binding from.
+// Deprecated: Use ContractIEigenPodManagerMetaData.ABI instead.
+var ContractIEigenPodManagerABI = ContractIEigenPodManagerMetaData.ABI
 
-// IEigenPodManager is an auto generated Go binding around an Ethereum contract.
-type IEigenPodManager struct {
-	IEigenPodManagerCaller     // Read-only binding to the contract
-	IEigenPodManagerTransactor // Write-only binding to the contract
-	IEigenPodManagerFilterer   // Log filterer for contract events
+// ContractIEigenPodManagerMethods is an auto generated interface around an Ethereum contract.
+type ContractIEigenPodManagerMethods interface {
+	ContractIEigenPodManagerCalls
+	ContractIEigenPodManagerTransacts
+	ContractIEigenPodManagerFilters
 }
 
-// IEigenPodManagerCaller is an auto generated read-only Go binding around an Ethereum contract.
-type IEigenPodManagerCaller struct {
+// ContractIEigenPodManagerCalls is an auto generated interface that defines the call methods available for an Ethereum contract.
+type ContractIEigenPodManagerCalls interface {
+	BeaconChainETHStrategy(opts *bind.CallOpts) (common.Address, error)
+
+	EigenPodBeacon(opts *bind.CallOpts) (common.Address, error)
+
+	EthPOS(opts *bind.CallOpts) (common.Address, error)
+
+	GetPod(opts *bind.CallOpts, podOwner common.Address) (common.Address, error)
+
+	HasPod(opts *bind.CallOpts, podOwner common.Address) (bool, error)
+
+	NumPods(opts *bind.CallOpts) (*big.Int, error)
+
+	OwnerToPod(opts *bind.CallOpts, podOwner common.Address) (common.Address, error)
+
+	Paused(opts *bind.CallOpts, index uint8) (bool, error)
+
+	Paused0(opts *bind.CallOpts) (*big.Int, error)
+
+	PauserRegistry(opts *bind.CallOpts) (common.Address, error)
+
+	PodOwnerShares(opts *bind.CallOpts, podOwner common.Address) (*big.Int, error)
+
+	Slasher(opts *bind.CallOpts) (common.Address, error)
+
+	StrategyManager(opts *bind.CallOpts) (common.Address, error)
+}
+
+// ContractIEigenPodManagerTransacts is an auto generated interface that defines the transact methods available for an Ethereum contract.
+type ContractIEigenPodManagerTransacts interface {
+	AddShares(opts *bind.TransactOpts, podOwner common.Address, shares *big.Int) (*types.Transaction, error)
+
+	CreatePod(opts *bind.TransactOpts) (*types.Transaction, error)
+
+	Pause(opts *bind.TransactOpts, newPausedStatus *big.Int) (*types.Transaction, error)
+
+	PauseAll(opts *bind.TransactOpts) (*types.Transaction, error)
+
+	RecordBeaconChainETHBalanceUpdate(opts *bind.TransactOpts, podOwner common.Address, sharesDelta *big.Int) (*types.Transaction, error)
+
+	RemoveShares(opts *bind.TransactOpts, podOwner common.Address, shares *big.Int) (*types.Transaction, error)
+
+	SetPauserRegistry(opts *bind.TransactOpts, newPauserRegistry common.Address) (*types.Transaction, error)
+
+	Stake(opts *bind.TransactOpts, pubkey []byte, signature []byte, depositDataRoot [32]byte) (*types.Transaction, error)
+
+	Unpause(opts *bind.TransactOpts, newPausedStatus *big.Int) (*types.Transaction, error)
+
+	WithdrawSharesAsTokens(opts *bind.TransactOpts, podOwner common.Address, destination common.Address, shares *big.Int) (*types.Transaction, error)
+}
+
+// ContractIEigenPodManagerFilterer is an auto generated interface that defines the log filtering methods available for an Ethereum contract.
+type ContractIEigenPodManagerFilters interface {
+	FilterBeaconChainETHDeposited(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerBeaconChainETHDepositedIterator, error)
+	WatchBeaconChainETHDeposited(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerBeaconChainETHDeposited, podOwner []common.Address) (event.Subscription, error)
+	ParseBeaconChainETHDeposited(log types.Log) (*ContractIEigenPodManagerBeaconChainETHDeposited, error)
+
+	FilterBeaconChainETHWithdrawalCompleted(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator, error)
+	WatchBeaconChainETHWithdrawalCompleted(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted, podOwner []common.Address) (event.Subscription, error)
+	ParseBeaconChainETHWithdrawalCompleted(log types.Log) (*ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted, error)
+
+	FilterNewTotalShares(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerNewTotalSharesIterator, error)
+	WatchNewTotalShares(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerNewTotalShares, podOwner []common.Address) (event.Subscription, error)
+	ParseNewTotalShares(log types.Log) (*ContractIEigenPodManagerNewTotalShares, error)
+
+	FilterPaused(opts *bind.FilterOpts, account []common.Address) (*ContractIEigenPodManagerPausedIterator, error)
+	WatchPaused(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPaused, account []common.Address) (event.Subscription, error)
+	ParsePaused(log types.Log) (*ContractIEigenPodManagerPaused, error)
+
+	FilterPauserRegistrySet(opts *bind.FilterOpts) (*ContractIEigenPodManagerPauserRegistrySetIterator, error)
+	WatchPauserRegistrySet(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPauserRegistrySet) (event.Subscription, error)
+	ParsePauserRegistrySet(log types.Log) (*ContractIEigenPodManagerPauserRegistrySet, error)
+
+	FilterPodDeployed(opts *bind.FilterOpts, eigenPod []common.Address, podOwner []common.Address) (*ContractIEigenPodManagerPodDeployedIterator, error)
+	WatchPodDeployed(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPodDeployed, eigenPod []common.Address, podOwner []common.Address) (event.Subscription, error)
+	ParsePodDeployed(log types.Log) (*ContractIEigenPodManagerPodDeployed, error)
+
+	FilterPodSharesUpdated(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerPodSharesUpdatedIterator, error)
+	WatchPodSharesUpdated(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPodSharesUpdated, podOwner []common.Address) (event.Subscription, error)
+	ParsePodSharesUpdated(log types.Log) (*ContractIEigenPodManagerPodSharesUpdated, error)
+
+	FilterUnpaused(opts *bind.FilterOpts, account []common.Address) (*ContractIEigenPodManagerUnpausedIterator, error)
+	WatchUnpaused(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerUnpaused, account []common.Address) (event.Subscription, error)
+	ParseUnpaused(log types.Log) (*ContractIEigenPodManagerUnpaused, error)
+}
+
+// ContractIEigenPodManager is an auto generated Go binding around an Ethereum contract.
+type ContractIEigenPodManager struct {
+	ContractIEigenPodManagerCaller     // Read-only binding to the contract
+	ContractIEigenPodManagerTransactor // Write-only binding to the contract
+	ContractIEigenPodManagerFilterer   // Log filterer for contract events
+}
+
+// ContractIEigenPodManager implements the ContractIEigenPodManagerMethods interface.
+var _ ContractIEigenPodManagerMethods = (*ContractIEigenPodManager)(nil)
+
+// ContractIEigenPodManagerCaller is an auto generated read-only Go binding around an Ethereum contract.
+type ContractIEigenPodManagerCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// IEigenPodManagerTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type IEigenPodManagerTransactor struct {
+// ContractIEigenPodManagerCaller implements the ContractIEigenPodManagerCalls interface.
+var _ ContractIEigenPodManagerCalls = (*ContractIEigenPodManagerCaller)(nil)
+
+// ContractIEigenPodManagerTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type ContractIEigenPodManagerTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// IEigenPodManagerFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type IEigenPodManagerFilterer struct {
+// ContractIEigenPodManagerTransactor implements the ContractIEigenPodManagerTransacts interface.
+var _ ContractIEigenPodManagerTransacts = (*ContractIEigenPodManagerTransactor)(nil)
+
+// ContractIEigenPodManagerFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type ContractIEigenPodManagerFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// IEigenPodManagerSession is an auto generated Go binding around an Ethereum contract,
+// ContractIEigenPodManagerFilterer implements the ContractIEigenPodManagerFilters interface.
+var _ ContractIEigenPodManagerFilters = (*ContractIEigenPodManagerFilterer)(nil)
+
+// ContractIEigenPodManagerSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type IEigenPodManagerSession struct {
-	Contract     *IEigenPodManager // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+type ContractIEigenPodManagerSession struct {
+	Contract     *ContractIEigenPodManager // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts             // Call options to use throughout this session
+	TransactOpts bind.TransactOpts         // Transaction auth options to use throughout this session
 }
 
-// IEigenPodManagerCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// ContractIEigenPodManagerCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type IEigenPodManagerCallerSession struct {
-	Contract *IEigenPodManagerCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts           // Call options to use throughout this session
+type ContractIEigenPodManagerCallerSession struct {
+	Contract *ContractIEigenPodManagerCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts                   // Call options to use throughout this session
 }
 
-// IEigenPodManagerTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// ContractIEigenPodManagerTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type IEigenPodManagerTransactorSession struct {
-	Contract     *IEigenPodManagerTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts           // Transaction auth options to use throughout this session
+type ContractIEigenPodManagerTransactorSession struct {
+	Contract     *ContractIEigenPodManagerTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts                   // Transaction auth options to use throughout this session
 }
 
-// IEigenPodManagerRaw is an auto generated low-level Go binding around an Ethereum contract.
-type IEigenPodManagerRaw struct {
-	Contract *IEigenPodManager // Generic contract binding to access the raw methods on
+// ContractIEigenPodManagerRaw is an auto generated low-level Go binding around an Ethereum contract.
+type ContractIEigenPodManagerRaw struct {
+	Contract *ContractIEigenPodManager // Generic contract binding to access the raw methods on
 }
 
-// IEigenPodManagerCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type IEigenPodManagerCallerRaw struct {
-	Contract *IEigenPodManagerCaller // Generic read-only contract binding to access the raw methods on
+// ContractIEigenPodManagerCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type ContractIEigenPodManagerCallerRaw struct {
+	Contract *ContractIEigenPodManagerCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// IEigenPodManagerTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type IEigenPodManagerTransactorRaw struct {
-	Contract *IEigenPodManagerTransactor // Generic write-only contract binding to access the raw methods on
+// ContractIEigenPodManagerTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type ContractIEigenPodManagerTransactorRaw struct {
+	Contract *ContractIEigenPodManagerTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewIEigenPodManager creates a new instance of IEigenPodManager, bound to a specific deployed contract.
-func NewIEigenPodManager(address common.Address, backend bind.ContractBackend) (*IEigenPodManager, error) {
-	contract, err := bindIEigenPodManager(address, backend, backend, backend)
+// NewContractIEigenPodManager creates a new instance of ContractIEigenPodManager, bound to a specific deployed contract.
+func NewContractIEigenPodManager(address common.Address, backend bind.ContractBackend) (*ContractIEigenPodManager, error) {
+	contract, err := bindContractIEigenPodManager(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManager{IEigenPodManagerCaller: IEigenPodManagerCaller{contract: contract}, IEigenPodManagerTransactor: IEigenPodManagerTransactor{contract: contract}, IEigenPodManagerFilterer: IEigenPodManagerFilterer{contract: contract}}, nil
+	return &ContractIEigenPodManager{ContractIEigenPodManagerCaller: ContractIEigenPodManagerCaller{contract: contract}, ContractIEigenPodManagerTransactor: ContractIEigenPodManagerTransactor{contract: contract}, ContractIEigenPodManagerFilterer: ContractIEigenPodManagerFilterer{contract: contract}}, nil
 }
 
-// NewIEigenPodManagerCaller creates a new read-only instance of IEigenPodManager, bound to a specific deployed contract.
-func NewIEigenPodManagerCaller(address common.Address, caller bind.ContractCaller) (*IEigenPodManagerCaller, error) {
-	contract, err := bindIEigenPodManager(address, caller, nil, nil)
+// NewContractIEigenPodManagerCaller creates a new read-only instance of ContractIEigenPodManager, bound to a specific deployed contract.
+func NewContractIEigenPodManagerCaller(address common.Address, caller bind.ContractCaller) (*ContractIEigenPodManagerCaller, error) {
+	contract, err := bindContractIEigenPodManager(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerCaller{contract: contract}, nil
+	return &ContractIEigenPodManagerCaller{contract: contract}, nil
 }
 
-// NewIEigenPodManagerTransactor creates a new write-only instance of IEigenPodManager, bound to a specific deployed contract.
-func NewIEigenPodManagerTransactor(address common.Address, transactor bind.ContractTransactor) (*IEigenPodManagerTransactor, error) {
-	contract, err := bindIEigenPodManager(address, nil, transactor, nil)
+// NewContractIEigenPodManagerTransactor creates a new write-only instance of ContractIEigenPodManager, bound to a specific deployed contract.
+func NewContractIEigenPodManagerTransactor(address common.Address, transactor bind.ContractTransactor) (*ContractIEigenPodManagerTransactor, error) {
+	contract, err := bindContractIEigenPodManager(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerTransactor{contract: contract}, nil
+	return &ContractIEigenPodManagerTransactor{contract: contract}, nil
 }
 
-// NewIEigenPodManagerFilterer creates a new log filterer instance of IEigenPodManager, bound to a specific deployed contract.
-func NewIEigenPodManagerFilterer(address common.Address, filterer bind.ContractFilterer) (*IEigenPodManagerFilterer, error) {
-	contract, err := bindIEigenPodManager(address, nil, nil, filterer)
+// NewContractIEigenPodManagerFilterer creates a new log filterer instance of ContractIEigenPodManager, bound to a specific deployed contract.
+func NewContractIEigenPodManagerFilterer(address common.Address, filterer bind.ContractFilterer) (*ContractIEigenPodManagerFilterer, error) {
+	contract, err := bindContractIEigenPodManager(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerFilterer{contract: contract}, nil
+	return &ContractIEigenPodManagerFilterer{contract: contract}, nil
 }
 
-// bindIEigenPodManager binds a generic wrapper to an already deployed contract.
-func bindIEigenPodManager(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := IEigenPodManagerMetaData.GetAbi()
+// bindContractIEigenPodManager binds a generic wrapper to an already deployed contract.
+func bindContractIEigenPodManager(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := ContractIEigenPodManagerMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
@@ -146,46 +252,46 @@ func bindIEigenPodManager(address common.Address, caller bind.ContractCaller, tr
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_IEigenPodManager *IEigenPodManagerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _IEigenPodManager.Contract.IEigenPodManagerCaller.contract.Call(opts, result, method, params...)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _ContractIEigenPodManager.Contract.ContractIEigenPodManagerCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_IEigenPodManager *IEigenPodManagerRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.IEigenPodManagerTransactor.contract.Transfer(opts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.ContractIEigenPodManagerTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_IEigenPodManager *IEigenPodManagerRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.IEigenPodManagerTransactor.contract.Transact(opts, method, params...)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.ContractIEigenPodManagerTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_IEigenPodManager *IEigenPodManagerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _IEigenPodManager.Contract.contract.Call(opts, result, method, params...)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _ContractIEigenPodManager.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_IEigenPodManager *IEigenPodManagerTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.contract.Transfer(opts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_IEigenPodManager *IEigenPodManagerTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.contract.Transact(opts, method, params...)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.contract.Transact(opts, method, params...)
 }
 
 // BeaconChainETHStrategy is a free data retrieval call binding the contract method 0x9104c319.
 //
 // Solidity: function beaconChainETHStrategy() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) BeaconChainETHStrategy(opts *bind.CallOpts) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) BeaconChainETHStrategy(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "beaconChainETHStrategy")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "beaconChainETHStrategy")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -200,23 +306,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) BeaconChainETHStrategy(opts *bi
 // BeaconChainETHStrategy is a free data retrieval call binding the contract method 0x9104c319.
 //
 // Solidity: function beaconChainETHStrategy() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) BeaconChainETHStrategy() (common.Address, error) {
-	return _IEigenPodManager.Contract.BeaconChainETHStrategy(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) BeaconChainETHStrategy() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.BeaconChainETHStrategy(&_ContractIEigenPodManager.CallOpts)
 }
 
 // BeaconChainETHStrategy is a free data retrieval call binding the contract method 0x9104c319.
 //
 // Solidity: function beaconChainETHStrategy() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) BeaconChainETHStrategy() (common.Address, error) {
-	return _IEigenPodManager.Contract.BeaconChainETHStrategy(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) BeaconChainETHStrategy() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.BeaconChainETHStrategy(&_ContractIEigenPodManager.CallOpts)
 }
 
 // EigenPodBeacon is a free data retrieval call binding the contract method 0x292b7b2b.
 //
 // Solidity: function eigenPodBeacon() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) EigenPodBeacon(opts *bind.CallOpts) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) EigenPodBeacon(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "eigenPodBeacon")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "eigenPodBeacon")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -231,23 +337,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) EigenPodBeacon(opts *bind.CallO
 // EigenPodBeacon is a free data retrieval call binding the contract method 0x292b7b2b.
 //
 // Solidity: function eigenPodBeacon() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) EigenPodBeacon() (common.Address, error) {
-	return _IEigenPodManager.Contract.EigenPodBeacon(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) EigenPodBeacon() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.EigenPodBeacon(&_ContractIEigenPodManager.CallOpts)
 }
 
 // EigenPodBeacon is a free data retrieval call binding the contract method 0x292b7b2b.
 //
 // Solidity: function eigenPodBeacon() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) EigenPodBeacon() (common.Address, error) {
-	return _IEigenPodManager.Contract.EigenPodBeacon(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) EigenPodBeacon() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.EigenPodBeacon(&_ContractIEigenPodManager.CallOpts)
 }
 
 // EthPOS is a free data retrieval call binding the contract method 0x74cdd798.
 //
 // Solidity: function ethPOS() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) EthPOS(opts *bind.CallOpts) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) EthPOS(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "ethPOS")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "ethPOS")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -262,23 +368,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) EthPOS(opts *bind.CallOpts) (co
 // EthPOS is a free data retrieval call binding the contract method 0x74cdd798.
 //
 // Solidity: function ethPOS() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) EthPOS() (common.Address, error) {
-	return _IEigenPodManager.Contract.EthPOS(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) EthPOS() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.EthPOS(&_ContractIEigenPodManager.CallOpts)
 }
 
 // EthPOS is a free data retrieval call binding the contract method 0x74cdd798.
 //
 // Solidity: function ethPOS() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) EthPOS() (common.Address, error) {
-	return _IEigenPodManager.Contract.EthPOS(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) EthPOS() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.EthPOS(&_ContractIEigenPodManager.CallOpts)
 }
 
 // GetPod is a free data retrieval call binding the contract method 0xa38406a3.
 //
 // Solidity: function getPod(address podOwner) view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) GetPod(opts *bind.CallOpts, podOwner common.Address) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) GetPod(opts *bind.CallOpts, podOwner common.Address) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "getPod", podOwner)
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "getPod", podOwner)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -293,23 +399,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) GetPod(opts *bind.CallOpts, pod
 // GetPod is a free data retrieval call binding the contract method 0xa38406a3.
 //
 // Solidity: function getPod(address podOwner) view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) GetPod(podOwner common.Address) (common.Address, error) {
-	return _IEigenPodManager.Contract.GetPod(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) GetPod(podOwner common.Address) (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.GetPod(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // GetPod is a free data retrieval call binding the contract method 0xa38406a3.
 //
 // Solidity: function getPod(address podOwner) view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) GetPod(podOwner common.Address) (common.Address, error) {
-	return _IEigenPodManager.Contract.GetPod(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) GetPod(podOwner common.Address) (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.GetPod(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // HasPod is a free data retrieval call binding the contract method 0xf6848d24.
 //
 // Solidity: function hasPod(address podOwner) view returns(bool)
-func (_IEigenPodManager *IEigenPodManagerCaller) HasPod(opts *bind.CallOpts, podOwner common.Address) (bool, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) HasPod(opts *bind.CallOpts, podOwner common.Address) (bool, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "hasPod", podOwner)
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "hasPod", podOwner)
 
 	if err != nil {
 		return *new(bool), err
@@ -324,23 +430,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) HasPod(opts *bind.CallOpts, pod
 // HasPod is a free data retrieval call binding the contract method 0xf6848d24.
 //
 // Solidity: function hasPod(address podOwner) view returns(bool)
-func (_IEigenPodManager *IEigenPodManagerSession) HasPod(podOwner common.Address) (bool, error) {
-	return _IEigenPodManager.Contract.HasPod(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) HasPod(podOwner common.Address) (bool, error) {
+	return _ContractIEigenPodManager.Contract.HasPod(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // HasPod is a free data retrieval call binding the contract method 0xf6848d24.
 //
 // Solidity: function hasPod(address podOwner) view returns(bool)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) HasPod(podOwner common.Address) (bool, error) {
-	return _IEigenPodManager.Contract.HasPod(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) HasPod(podOwner common.Address) (bool, error) {
+	return _ContractIEigenPodManager.Contract.HasPod(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // NumPods is a free data retrieval call binding the contract method 0xa6a509be.
 //
 // Solidity: function numPods() view returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerCaller) NumPods(opts *bind.CallOpts) (*big.Int, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) NumPods(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "numPods")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "numPods")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -355,23 +461,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) NumPods(opts *bind.CallOpts) (*
 // NumPods is a free data retrieval call binding the contract method 0xa6a509be.
 //
 // Solidity: function numPods() view returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerSession) NumPods() (*big.Int, error) {
-	return _IEigenPodManager.Contract.NumPods(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) NumPods() (*big.Int, error) {
+	return _ContractIEigenPodManager.Contract.NumPods(&_ContractIEigenPodManager.CallOpts)
 }
 
 // NumPods is a free data retrieval call binding the contract method 0xa6a509be.
 //
 // Solidity: function numPods() view returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) NumPods() (*big.Int, error) {
-	return _IEigenPodManager.Contract.NumPods(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) NumPods() (*big.Int, error) {
+	return _ContractIEigenPodManager.Contract.NumPods(&_ContractIEigenPodManager.CallOpts)
 }
 
 // OwnerToPod is a free data retrieval call binding the contract method 0x9ba06275.
 //
 // Solidity: function ownerToPod(address podOwner) view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) OwnerToPod(opts *bind.CallOpts, podOwner common.Address) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) OwnerToPod(opts *bind.CallOpts, podOwner common.Address) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "ownerToPod", podOwner)
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "ownerToPod", podOwner)
 
 	if err != nil {
 		return *new(common.Address), err
@@ -386,23 +492,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) OwnerToPod(opts *bind.CallOpts,
 // OwnerToPod is a free data retrieval call binding the contract method 0x9ba06275.
 //
 // Solidity: function ownerToPod(address podOwner) view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) OwnerToPod(podOwner common.Address) (common.Address, error) {
-	return _IEigenPodManager.Contract.OwnerToPod(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) OwnerToPod(podOwner common.Address) (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.OwnerToPod(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // OwnerToPod is a free data retrieval call binding the contract method 0x9ba06275.
 //
 // Solidity: function ownerToPod(address podOwner) view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) OwnerToPod(podOwner common.Address) (common.Address, error) {
-	return _IEigenPodManager.Contract.OwnerToPod(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) OwnerToPod(podOwner common.Address) (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.OwnerToPod(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // Paused is a free data retrieval call binding the contract method 0x5ac86ab7.
 //
 // Solidity: function paused(uint8 index) view returns(bool)
-func (_IEigenPodManager *IEigenPodManagerCaller) Paused(opts *bind.CallOpts, index uint8) (bool, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) Paused(opts *bind.CallOpts, index uint8) (bool, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "paused", index)
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "paused", index)
 
 	if err != nil {
 		return *new(bool), err
@@ -417,23 +523,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) Paused(opts *bind.CallOpts, ind
 // Paused is a free data retrieval call binding the contract method 0x5ac86ab7.
 //
 // Solidity: function paused(uint8 index) view returns(bool)
-func (_IEigenPodManager *IEigenPodManagerSession) Paused(index uint8) (bool, error) {
-	return _IEigenPodManager.Contract.Paused(&_IEigenPodManager.CallOpts, index)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) Paused(index uint8) (bool, error) {
+	return _ContractIEigenPodManager.Contract.Paused(&_ContractIEigenPodManager.CallOpts, index)
 }
 
 // Paused is a free data retrieval call binding the contract method 0x5ac86ab7.
 //
 // Solidity: function paused(uint8 index) view returns(bool)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) Paused(index uint8) (bool, error) {
-	return _IEigenPodManager.Contract.Paused(&_IEigenPodManager.CallOpts, index)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) Paused(index uint8) (bool, error) {
+	return _ContractIEigenPodManager.Contract.Paused(&_ContractIEigenPodManager.CallOpts, index)
 }
 
 // Paused0 is a free data retrieval call binding the contract method 0x5c975abb.
 //
 // Solidity: function paused() view returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerCaller) Paused0(opts *bind.CallOpts) (*big.Int, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) Paused0(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "paused0")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "paused0")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -448,23 +554,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) Paused0(opts *bind.CallOpts) (*
 // Paused0 is a free data retrieval call binding the contract method 0x5c975abb.
 //
 // Solidity: function paused() view returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerSession) Paused0() (*big.Int, error) {
-	return _IEigenPodManager.Contract.Paused0(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) Paused0() (*big.Int, error) {
+	return _ContractIEigenPodManager.Contract.Paused0(&_ContractIEigenPodManager.CallOpts)
 }
 
 // Paused0 is a free data retrieval call binding the contract method 0x5c975abb.
 //
 // Solidity: function paused() view returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) Paused0() (*big.Int, error) {
-	return _IEigenPodManager.Contract.Paused0(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) Paused0() (*big.Int, error) {
+	return _ContractIEigenPodManager.Contract.Paused0(&_ContractIEigenPodManager.CallOpts)
 }
 
 // PauserRegistry is a free data retrieval call binding the contract method 0x886f1195.
 //
 // Solidity: function pauserRegistry() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) PauserRegistry(opts *bind.CallOpts) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) PauserRegistry(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "pauserRegistry")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "pauserRegistry")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -479,23 +585,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) PauserRegistry(opts *bind.CallO
 // PauserRegistry is a free data retrieval call binding the contract method 0x886f1195.
 //
 // Solidity: function pauserRegistry() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) PauserRegistry() (common.Address, error) {
-	return _IEigenPodManager.Contract.PauserRegistry(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) PauserRegistry() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.PauserRegistry(&_ContractIEigenPodManager.CallOpts)
 }
 
 // PauserRegistry is a free data retrieval call binding the contract method 0x886f1195.
 //
 // Solidity: function pauserRegistry() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) PauserRegistry() (common.Address, error) {
-	return _IEigenPodManager.Contract.PauserRegistry(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) PauserRegistry() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.PauserRegistry(&_ContractIEigenPodManager.CallOpts)
 }
 
 // PodOwnerShares is a free data retrieval call binding the contract method 0x60f4062b.
 //
 // Solidity: function podOwnerShares(address podOwner) view returns(int256)
-func (_IEigenPodManager *IEigenPodManagerCaller) PodOwnerShares(opts *bind.CallOpts, podOwner common.Address) (*big.Int, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) PodOwnerShares(opts *bind.CallOpts, podOwner common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "podOwnerShares", podOwner)
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "podOwnerShares", podOwner)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -510,23 +616,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) PodOwnerShares(opts *bind.CallO
 // PodOwnerShares is a free data retrieval call binding the contract method 0x60f4062b.
 //
 // Solidity: function podOwnerShares(address podOwner) view returns(int256)
-func (_IEigenPodManager *IEigenPodManagerSession) PodOwnerShares(podOwner common.Address) (*big.Int, error) {
-	return _IEigenPodManager.Contract.PodOwnerShares(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) PodOwnerShares(podOwner common.Address) (*big.Int, error) {
+	return _ContractIEigenPodManager.Contract.PodOwnerShares(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // PodOwnerShares is a free data retrieval call binding the contract method 0x60f4062b.
 //
 // Solidity: function podOwnerShares(address podOwner) view returns(int256)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) PodOwnerShares(podOwner common.Address) (*big.Int, error) {
-	return _IEigenPodManager.Contract.PodOwnerShares(&_IEigenPodManager.CallOpts, podOwner)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) PodOwnerShares(podOwner common.Address) (*big.Int, error) {
+	return _ContractIEigenPodManager.Contract.PodOwnerShares(&_ContractIEigenPodManager.CallOpts, podOwner)
 }
 
 // Slasher is a free data retrieval call binding the contract method 0xb1344271.
 //
 // Solidity: function slasher() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) Slasher(opts *bind.CallOpts) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) Slasher(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "slasher")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "slasher")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -541,23 +647,23 @@ func (_IEigenPodManager *IEigenPodManagerCaller) Slasher(opts *bind.CallOpts) (c
 // Slasher is a free data retrieval call binding the contract method 0xb1344271.
 //
 // Solidity: function slasher() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) Slasher() (common.Address, error) {
-	return _IEigenPodManager.Contract.Slasher(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) Slasher() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.Slasher(&_ContractIEigenPodManager.CallOpts)
 }
 
 // Slasher is a free data retrieval call binding the contract method 0xb1344271.
 //
 // Solidity: function slasher() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) Slasher() (common.Address, error) {
-	return _IEigenPodManager.Contract.Slasher(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) Slasher() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.Slasher(&_ContractIEigenPodManager.CallOpts)
 }
 
 // StrategyManager is a free data retrieval call binding the contract method 0x39b70e38.
 //
 // Solidity: function strategyManager() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCaller) StrategyManager(opts *bind.CallOpts) (common.Address, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCaller) StrategyManager(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _IEigenPodManager.contract.Call(opts, &out, "strategyManager")
+	err := _ContractIEigenPodManager.contract.Call(opts, &out, "strategyManager")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -572,230 +678,230 @@ func (_IEigenPodManager *IEigenPodManagerCaller) StrategyManager(opts *bind.Call
 // StrategyManager is a free data retrieval call binding the contract method 0x39b70e38.
 //
 // Solidity: function strategyManager() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) StrategyManager() (common.Address, error) {
-	return _IEigenPodManager.Contract.StrategyManager(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) StrategyManager() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.StrategyManager(&_ContractIEigenPodManager.CallOpts)
 }
 
 // StrategyManager is a free data retrieval call binding the contract method 0x39b70e38.
 //
 // Solidity: function strategyManager() view returns(address)
-func (_IEigenPodManager *IEigenPodManagerCallerSession) StrategyManager() (common.Address, error) {
-	return _IEigenPodManager.Contract.StrategyManager(&_IEigenPodManager.CallOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerCallerSession) StrategyManager() (common.Address, error) {
+	return _ContractIEigenPodManager.Contract.StrategyManager(&_ContractIEigenPodManager.CallOpts)
 }
 
 // AddShares is a paid mutator transaction binding the contract method 0x0e81073c.
 //
 // Solidity: function addShares(address podOwner, uint256 shares) returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerTransactor) AddShares(opts *bind.TransactOpts, podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "addShares", podOwner, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) AddShares(opts *bind.TransactOpts, podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "addShares", podOwner, shares)
 }
 
 // AddShares is a paid mutator transaction binding the contract method 0x0e81073c.
 //
 // Solidity: function addShares(address podOwner, uint256 shares) returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerSession) AddShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.AddShares(&_IEigenPodManager.TransactOpts, podOwner, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) AddShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.AddShares(&_ContractIEigenPodManager.TransactOpts, podOwner, shares)
 }
 
 // AddShares is a paid mutator transaction binding the contract method 0x0e81073c.
 //
 // Solidity: function addShares(address podOwner, uint256 shares) returns(uint256)
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) AddShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.AddShares(&_IEigenPodManager.TransactOpts, podOwner, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) AddShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.AddShares(&_ContractIEigenPodManager.TransactOpts, podOwner, shares)
 }
 
 // CreatePod is a paid mutator transaction binding the contract method 0x84d81062.
 //
 // Solidity: function createPod() returns(address)
-func (_IEigenPodManager *IEigenPodManagerTransactor) CreatePod(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "createPod")
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) CreatePod(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "createPod")
 }
 
 // CreatePod is a paid mutator transaction binding the contract method 0x84d81062.
 //
 // Solidity: function createPod() returns(address)
-func (_IEigenPodManager *IEigenPodManagerSession) CreatePod() (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.CreatePod(&_IEigenPodManager.TransactOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) CreatePod() (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.CreatePod(&_ContractIEigenPodManager.TransactOpts)
 }
 
 // CreatePod is a paid mutator transaction binding the contract method 0x84d81062.
 //
 // Solidity: function createPod() returns(address)
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) CreatePod() (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.CreatePod(&_IEigenPodManager.TransactOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) CreatePod() (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.CreatePod(&_ContractIEigenPodManager.TransactOpts)
 }
 
 // Pause is a paid mutator transaction binding the contract method 0x136439dd.
 //
 // Solidity: function pause(uint256 newPausedStatus) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) Pause(opts *bind.TransactOpts, newPausedStatus *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "pause", newPausedStatus)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) Pause(opts *bind.TransactOpts, newPausedStatus *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "pause", newPausedStatus)
 }
 
 // Pause is a paid mutator transaction binding the contract method 0x136439dd.
 //
 // Solidity: function pause(uint256 newPausedStatus) returns()
-func (_IEigenPodManager *IEigenPodManagerSession) Pause(newPausedStatus *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.Pause(&_IEigenPodManager.TransactOpts, newPausedStatus)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) Pause(newPausedStatus *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.Pause(&_ContractIEigenPodManager.TransactOpts, newPausedStatus)
 }
 
 // Pause is a paid mutator transaction binding the contract method 0x136439dd.
 //
 // Solidity: function pause(uint256 newPausedStatus) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) Pause(newPausedStatus *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.Pause(&_IEigenPodManager.TransactOpts, newPausedStatus)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) Pause(newPausedStatus *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.Pause(&_ContractIEigenPodManager.TransactOpts, newPausedStatus)
 }
 
 // PauseAll is a paid mutator transaction binding the contract method 0x595c6a67.
 //
 // Solidity: function pauseAll() returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) PauseAll(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "pauseAll")
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) PauseAll(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "pauseAll")
 }
 
 // PauseAll is a paid mutator transaction binding the contract method 0x595c6a67.
 //
 // Solidity: function pauseAll() returns()
-func (_IEigenPodManager *IEigenPodManagerSession) PauseAll() (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.PauseAll(&_IEigenPodManager.TransactOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) PauseAll() (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.PauseAll(&_ContractIEigenPodManager.TransactOpts)
 }
 
 // PauseAll is a paid mutator transaction binding the contract method 0x595c6a67.
 //
 // Solidity: function pauseAll() returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) PauseAll() (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.PauseAll(&_IEigenPodManager.TransactOpts)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) PauseAll() (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.PauseAll(&_ContractIEigenPodManager.TransactOpts)
 }
 
 // RecordBeaconChainETHBalanceUpdate is a paid mutator transaction binding the contract method 0xc2c51c40.
 //
 // Solidity: function recordBeaconChainETHBalanceUpdate(address podOwner, int256 sharesDelta) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) RecordBeaconChainETHBalanceUpdate(opts *bind.TransactOpts, podOwner common.Address, sharesDelta *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "recordBeaconChainETHBalanceUpdate", podOwner, sharesDelta)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) RecordBeaconChainETHBalanceUpdate(opts *bind.TransactOpts, podOwner common.Address, sharesDelta *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "recordBeaconChainETHBalanceUpdate", podOwner, sharesDelta)
 }
 
 // RecordBeaconChainETHBalanceUpdate is a paid mutator transaction binding the contract method 0xc2c51c40.
 //
 // Solidity: function recordBeaconChainETHBalanceUpdate(address podOwner, int256 sharesDelta) returns()
-func (_IEigenPodManager *IEigenPodManagerSession) RecordBeaconChainETHBalanceUpdate(podOwner common.Address, sharesDelta *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.RecordBeaconChainETHBalanceUpdate(&_IEigenPodManager.TransactOpts, podOwner, sharesDelta)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) RecordBeaconChainETHBalanceUpdate(podOwner common.Address, sharesDelta *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.RecordBeaconChainETHBalanceUpdate(&_ContractIEigenPodManager.TransactOpts, podOwner, sharesDelta)
 }
 
 // RecordBeaconChainETHBalanceUpdate is a paid mutator transaction binding the contract method 0xc2c51c40.
 //
 // Solidity: function recordBeaconChainETHBalanceUpdate(address podOwner, int256 sharesDelta) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) RecordBeaconChainETHBalanceUpdate(podOwner common.Address, sharesDelta *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.RecordBeaconChainETHBalanceUpdate(&_IEigenPodManager.TransactOpts, podOwner, sharesDelta)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) RecordBeaconChainETHBalanceUpdate(podOwner common.Address, sharesDelta *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.RecordBeaconChainETHBalanceUpdate(&_ContractIEigenPodManager.TransactOpts, podOwner, sharesDelta)
 }
 
 // RemoveShares is a paid mutator transaction binding the contract method 0xbeffbb89.
 //
 // Solidity: function removeShares(address podOwner, uint256 shares) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) RemoveShares(opts *bind.TransactOpts, podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "removeShares", podOwner, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) RemoveShares(opts *bind.TransactOpts, podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "removeShares", podOwner, shares)
 }
 
 // RemoveShares is a paid mutator transaction binding the contract method 0xbeffbb89.
 //
 // Solidity: function removeShares(address podOwner, uint256 shares) returns()
-func (_IEigenPodManager *IEigenPodManagerSession) RemoveShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.RemoveShares(&_IEigenPodManager.TransactOpts, podOwner, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) RemoveShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.RemoveShares(&_ContractIEigenPodManager.TransactOpts, podOwner, shares)
 }
 
 // RemoveShares is a paid mutator transaction binding the contract method 0xbeffbb89.
 //
 // Solidity: function removeShares(address podOwner, uint256 shares) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) RemoveShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.RemoveShares(&_IEigenPodManager.TransactOpts, podOwner, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) RemoveShares(podOwner common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.RemoveShares(&_ContractIEigenPodManager.TransactOpts, podOwner, shares)
 }
 
 // SetPauserRegistry is a paid mutator transaction binding the contract method 0x10d67a2f.
 //
 // Solidity: function setPauserRegistry(address newPauserRegistry) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) SetPauserRegistry(opts *bind.TransactOpts, newPauserRegistry common.Address) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "setPauserRegistry", newPauserRegistry)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) SetPauserRegistry(opts *bind.TransactOpts, newPauserRegistry common.Address) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "setPauserRegistry", newPauserRegistry)
 }
 
 // SetPauserRegistry is a paid mutator transaction binding the contract method 0x10d67a2f.
 //
 // Solidity: function setPauserRegistry(address newPauserRegistry) returns()
-func (_IEigenPodManager *IEigenPodManagerSession) SetPauserRegistry(newPauserRegistry common.Address) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.SetPauserRegistry(&_IEigenPodManager.TransactOpts, newPauserRegistry)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) SetPauserRegistry(newPauserRegistry common.Address) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.SetPauserRegistry(&_ContractIEigenPodManager.TransactOpts, newPauserRegistry)
 }
 
 // SetPauserRegistry is a paid mutator transaction binding the contract method 0x10d67a2f.
 //
 // Solidity: function setPauserRegistry(address newPauserRegistry) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) SetPauserRegistry(newPauserRegistry common.Address) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.SetPauserRegistry(&_IEigenPodManager.TransactOpts, newPauserRegistry)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) SetPauserRegistry(newPauserRegistry common.Address) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.SetPauserRegistry(&_ContractIEigenPodManager.TransactOpts, newPauserRegistry)
 }
 
 // Stake is a paid mutator transaction binding the contract method 0x9b4e4634.
 //
 // Solidity: function stake(bytes pubkey, bytes signature, bytes32 depositDataRoot) payable returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) Stake(opts *bind.TransactOpts, pubkey []byte, signature []byte, depositDataRoot [32]byte) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "stake", pubkey, signature, depositDataRoot)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) Stake(opts *bind.TransactOpts, pubkey []byte, signature []byte, depositDataRoot [32]byte) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "stake", pubkey, signature, depositDataRoot)
 }
 
 // Stake is a paid mutator transaction binding the contract method 0x9b4e4634.
 //
 // Solidity: function stake(bytes pubkey, bytes signature, bytes32 depositDataRoot) payable returns()
-func (_IEigenPodManager *IEigenPodManagerSession) Stake(pubkey []byte, signature []byte, depositDataRoot [32]byte) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.Stake(&_IEigenPodManager.TransactOpts, pubkey, signature, depositDataRoot)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) Stake(pubkey []byte, signature []byte, depositDataRoot [32]byte) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.Stake(&_ContractIEigenPodManager.TransactOpts, pubkey, signature, depositDataRoot)
 }
 
 // Stake is a paid mutator transaction binding the contract method 0x9b4e4634.
 //
 // Solidity: function stake(bytes pubkey, bytes signature, bytes32 depositDataRoot) payable returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) Stake(pubkey []byte, signature []byte, depositDataRoot [32]byte) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.Stake(&_IEigenPodManager.TransactOpts, pubkey, signature, depositDataRoot)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) Stake(pubkey []byte, signature []byte, depositDataRoot [32]byte) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.Stake(&_ContractIEigenPodManager.TransactOpts, pubkey, signature, depositDataRoot)
 }
 
 // Unpause is a paid mutator transaction binding the contract method 0xfabc1cbc.
 //
 // Solidity: function unpause(uint256 newPausedStatus) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) Unpause(opts *bind.TransactOpts, newPausedStatus *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "unpause", newPausedStatus)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) Unpause(opts *bind.TransactOpts, newPausedStatus *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "unpause", newPausedStatus)
 }
 
 // Unpause is a paid mutator transaction binding the contract method 0xfabc1cbc.
 //
 // Solidity: function unpause(uint256 newPausedStatus) returns()
-func (_IEigenPodManager *IEigenPodManagerSession) Unpause(newPausedStatus *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.Unpause(&_IEigenPodManager.TransactOpts, newPausedStatus)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) Unpause(newPausedStatus *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.Unpause(&_ContractIEigenPodManager.TransactOpts, newPausedStatus)
 }
 
 // Unpause is a paid mutator transaction binding the contract method 0xfabc1cbc.
 //
 // Solidity: function unpause(uint256 newPausedStatus) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) Unpause(newPausedStatus *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.Unpause(&_IEigenPodManager.TransactOpts, newPausedStatus)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) Unpause(newPausedStatus *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.Unpause(&_ContractIEigenPodManager.TransactOpts, newPausedStatus)
 }
 
 // WithdrawSharesAsTokens is a paid mutator transaction binding the contract method 0x387b1300.
 //
 // Solidity: function withdrawSharesAsTokens(address podOwner, address destination, uint256 shares) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactor) WithdrawSharesAsTokens(opts *bind.TransactOpts, podOwner common.Address, destination common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.contract.Transact(opts, "withdrawSharesAsTokens", podOwner, destination, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactor) WithdrawSharesAsTokens(opts *bind.TransactOpts, podOwner common.Address, destination common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.contract.Transact(opts, "withdrawSharesAsTokens", podOwner, destination, shares)
 }
 
 // WithdrawSharesAsTokens is a paid mutator transaction binding the contract method 0x387b1300.
 //
 // Solidity: function withdrawSharesAsTokens(address podOwner, address destination, uint256 shares) returns()
-func (_IEigenPodManager *IEigenPodManagerSession) WithdrawSharesAsTokens(podOwner common.Address, destination common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.WithdrawSharesAsTokens(&_IEigenPodManager.TransactOpts, podOwner, destination, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerSession) WithdrawSharesAsTokens(podOwner common.Address, destination common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.WithdrawSharesAsTokens(&_ContractIEigenPodManager.TransactOpts, podOwner, destination, shares)
 }
 
 // WithdrawSharesAsTokens is a paid mutator transaction binding the contract method 0x387b1300.
 //
 // Solidity: function withdrawSharesAsTokens(address podOwner, address destination, uint256 shares) returns()
-func (_IEigenPodManager *IEigenPodManagerTransactorSession) WithdrawSharesAsTokens(podOwner common.Address, destination common.Address, shares *big.Int) (*types.Transaction, error) {
-	return _IEigenPodManager.Contract.WithdrawSharesAsTokens(&_IEigenPodManager.TransactOpts, podOwner, destination, shares)
+func (_ContractIEigenPodManager *ContractIEigenPodManagerTransactorSession) WithdrawSharesAsTokens(podOwner common.Address, destination common.Address, shares *big.Int) (*types.Transaction, error) {
+	return _ContractIEigenPodManager.Contract.WithdrawSharesAsTokens(&_ContractIEigenPodManager.TransactOpts, podOwner, destination, shares)
 }
 
-// IEigenPodManagerBeaconChainETHDepositedIterator is returned from FilterBeaconChainETHDeposited and is used to iterate over the raw logs and unpacked data for BeaconChainETHDeposited events raised by the IEigenPodManager contract.
-type IEigenPodManagerBeaconChainETHDepositedIterator struct {
-	Event *IEigenPodManagerBeaconChainETHDeposited // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerBeaconChainETHDepositedIterator is returned from FilterBeaconChainETHDeposited and is used to iterate over the raw logs and unpacked data for BeaconChainETHDeposited events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerBeaconChainETHDepositedIterator struct {
+	Event *ContractIEigenPodManagerBeaconChainETHDeposited // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -809,7 +915,7 @@ type IEigenPodManagerBeaconChainETHDepositedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerBeaconChainETHDepositedIterator) Next() bool {
+func (it *ContractIEigenPodManagerBeaconChainETHDepositedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -818,7 +924,7 @@ func (it *IEigenPodManagerBeaconChainETHDepositedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerBeaconChainETHDeposited)
+			it.Event = new(ContractIEigenPodManagerBeaconChainETHDeposited)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -833,7 +939,7 @@ func (it *IEigenPodManagerBeaconChainETHDepositedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerBeaconChainETHDeposited)
+		it.Event = new(ContractIEigenPodManagerBeaconChainETHDeposited)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -849,19 +955,19 @@ func (it *IEigenPodManagerBeaconChainETHDepositedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerBeaconChainETHDepositedIterator) Error() error {
+func (it *ContractIEigenPodManagerBeaconChainETHDepositedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerBeaconChainETHDepositedIterator) Close() error {
+func (it *ContractIEigenPodManagerBeaconChainETHDepositedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerBeaconChainETHDeposited represents a BeaconChainETHDeposited event raised by the IEigenPodManager contract.
-type IEigenPodManagerBeaconChainETHDeposited struct {
+// ContractIEigenPodManagerBeaconChainETHDeposited represents a BeaconChainETHDeposited event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerBeaconChainETHDeposited struct {
 	PodOwner common.Address
 	Amount   *big.Int
 	Raw      types.Log // Blockchain specific contextual infos
@@ -870,31 +976,31 @@ type IEigenPodManagerBeaconChainETHDeposited struct {
 // FilterBeaconChainETHDeposited is a free log retrieval operation binding the contract event 0x35a85cabc603f48abb2b71d9fbd8adea7c449d7f0be900ae7a2986ea369c3d0d.
 //
 // Solidity: event BeaconChainETHDeposited(address indexed podOwner, uint256 amount)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterBeaconChainETHDeposited(opts *bind.FilterOpts, podOwner []common.Address) (*IEigenPodManagerBeaconChainETHDepositedIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterBeaconChainETHDeposited(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerBeaconChainETHDepositedIterator, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "BeaconChainETHDeposited", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "BeaconChainETHDeposited", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerBeaconChainETHDepositedIterator{contract: _IEigenPodManager.contract, event: "BeaconChainETHDeposited", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerBeaconChainETHDepositedIterator{contract: _ContractIEigenPodManager.contract, event: "BeaconChainETHDeposited", logs: logs, sub: sub}, nil
 }
 
 // WatchBeaconChainETHDeposited is a free log subscription operation binding the contract event 0x35a85cabc603f48abb2b71d9fbd8adea7c449d7f0be900ae7a2986ea369c3d0d.
 //
 // Solidity: event BeaconChainETHDeposited(address indexed podOwner, uint256 amount)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchBeaconChainETHDeposited(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerBeaconChainETHDeposited, podOwner []common.Address) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchBeaconChainETHDeposited(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerBeaconChainETHDeposited, podOwner []common.Address) (event.Subscription, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "BeaconChainETHDeposited", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "BeaconChainETHDeposited", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -904,8 +1010,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchBeaconChainETHDeposited(
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerBeaconChainETHDeposited)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "BeaconChainETHDeposited", log); err != nil {
+				event := new(ContractIEigenPodManagerBeaconChainETHDeposited)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "BeaconChainETHDeposited", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -929,18 +1035,18 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchBeaconChainETHDeposited(
 // ParseBeaconChainETHDeposited is a log parse operation binding the contract event 0x35a85cabc603f48abb2b71d9fbd8adea7c449d7f0be900ae7a2986ea369c3d0d.
 //
 // Solidity: event BeaconChainETHDeposited(address indexed podOwner, uint256 amount)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParseBeaconChainETHDeposited(log types.Log) (*IEigenPodManagerBeaconChainETHDeposited, error) {
-	event := new(IEigenPodManagerBeaconChainETHDeposited)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "BeaconChainETHDeposited", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParseBeaconChainETHDeposited(log types.Log) (*ContractIEigenPodManagerBeaconChainETHDeposited, error) {
+	event := new(ContractIEigenPodManagerBeaconChainETHDeposited)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "BeaconChainETHDeposited", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator is returned from FilterBeaconChainETHWithdrawalCompleted and is used to iterate over the raw logs and unpacked data for BeaconChainETHWithdrawalCompleted events raised by the IEigenPodManager contract.
-type IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator struct {
-	Event *IEigenPodManagerBeaconChainETHWithdrawalCompleted // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator is returned from FilterBeaconChainETHWithdrawalCompleted and is used to iterate over the raw logs and unpacked data for BeaconChainETHWithdrawalCompleted events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator struct {
+	Event *ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -954,7 +1060,7 @@ type IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Next() bool {
+func (it *ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -963,7 +1069,7 @@ func (it *IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Next() bool
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerBeaconChainETHWithdrawalCompleted)
+			it.Event = new(ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -978,7 +1084,7 @@ func (it *IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Next() bool
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerBeaconChainETHWithdrawalCompleted)
+		it.Event = new(ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -994,19 +1100,19 @@ func (it *IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Next() bool
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Error() error {
+func (it *ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Close() error {
+func (it *ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerBeaconChainETHWithdrawalCompleted represents a BeaconChainETHWithdrawalCompleted event raised by the IEigenPodManager contract.
-type IEigenPodManagerBeaconChainETHWithdrawalCompleted struct {
+// ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted represents a BeaconChainETHWithdrawalCompleted event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted struct {
 	PodOwner         common.Address
 	Shares           *big.Int
 	Nonce            *big.Int
@@ -1019,31 +1125,31 @@ type IEigenPodManagerBeaconChainETHWithdrawalCompleted struct {
 // FilterBeaconChainETHWithdrawalCompleted is a free log retrieval operation binding the contract event 0xa6bab1d55a361fcea2eee2bc9491e4f01e6cf333df03c9c4f2c144466429f7d6.
 //
 // Solidity: event BeaconChainETHWithdrawalCompleted(address indexed podOwner, uint256 shares, uint96 nonce, address delegatedAddress, address withdrawer, bytes32 withdrawalRoot)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterBeaconChainETHWithdrawalCompleted(opts *bind.FilterOpts, podOwner []common.Address) (*IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterBeaconChainETHWithdrawalCompleted(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "BeaconChainETHWithdrawalCompleted", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "BeaconChainETHWithdrawalCompleted", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerBeaconChainETHWithdrawalCompletedIterator{contract: _IEigenPodManager.contract, event: "BeaconChainETHWithdrawalCompleted", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerBeaconChainETHWithdrawalCompletedIterator{contract: _ContractIEigenPodManager.contract, event: "BeaconChainETHWithdrawalCompleted", logs: logs, sub: sub}, nil
 }
 
 // WatchBeaconChainETHWithdrawalCompleted is a free log subscription operation binding the contract event 0xa6bab1d55a361fcea2eee2bc9491e4f01e6cf333df03c9c4f2c144466429f7d6.
 //
 // Solidity: event BeaconChainETHWithdrawalCompleted(address indexed podOwner, uint256 shares, uint96 nonce, address delegatedAddress, address withdrawer, bytes32 withdrawalRoot)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchBeaconChainETHWithdrawalCompleted(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerBeaconChainETHWithdrawalCompleted, podOwner []common.Address) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchBeaconChainETHWithdrawalCompleted(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted, podOwner []common.Address) (event.Subscription, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "BeaconChainETHWithdrawalCompleted", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "BeaconChainETHWithdrawalCompleted", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1053,8 +1159,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchBeaconChainETHWithdrawal
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerBeaconChainETHWithdrawalCompleted)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "BeaconChainETHWithdrawalCompleted", log); err != nil {
+				event := new(ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "BeaconChainETHWithdrawalCompleted", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1078,18 +1184,18 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchBeaconChainETHWithdrawal
 // ParseBeaconChainETHWithdrawalCompleted is a log parse operation binding the contract event 0xa6bab1d55a361fcea2eee2bc9491e4f01e6cf333df03c9c4f2c144466429f7d6.
 //
 // Solidity: event BeaconChainETHWithdrawalCompleted(address indexed podOwner, uint256 shares, uint96 nonce, address delegatedAddress, address withdrawer, bytes32 withdrawalRoot)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParseBeaconChainETHWithdrawalCompleted(log types.Log) (*IEigenPodManagerBeaconChainETHWithdrawalCompleted, error) {
-	event := new(IEigenPodManagerBeaconChainETHWithdrawalCompleted)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "BeaconChainETHWithdrawalCompleted", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParseBeaconChainETHWithdrawalCompleted(log types.Log) (*ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted, error) {
+	event := new(ContractIEigenPodManagerBeaconChainETHWithdrawalCompleted)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "BeaconChainETHWithdrawalCompleted", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IEigenPodManagerNewTotalSharesIterator is returned from FilterNewTotalShares and is used to iterate over the raw logs and unpacked data for NewTotalShares events raised by the IEigenPodManager contract.
-type IEigenPodManagerNewTotalSharesIterator struct {
-	Event *IEigenPodManagerNewTotalShares // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerNewTotalSharesIterator is returned from FilterNewTotalShares and is used to iterate over the raw logs and unpacked data for NewTotalShares events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerNewTotalSharesIterator struct {
+	Event *ContractIEigenPodManagerNewTotalShares // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1103,7 +1209,7 @@ type IEigenPodManagerNewTotalSharesIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerNewTotalSharesIterator) Next() bool {
+func (it *ContractIEigenPodManagerNewTotalSharesIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1112,7 +1218,7 @@ func (it *IEigenPodManagerNewTotalSharesIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerNewTotalShares)
+			it.Event = new(ContractIEigenPodManagerNewTotalShares)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1127,7 +1233,7 @@ func (it *IEigenPodManagerNewTotalSharesIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerNewTotalShares)
+		it.Event = new(ContractIEigenPodManagerNewTotalShares)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1143,19 +1249,19 @@ func (it *IEigenPodManagerNewTotalSharesIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerNewTotalSharesIterator) Error() error {
+func (it *ContractIEigenPodManagerNewTotalSharesIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerNewTotalSharesIterator) Close() error {
+func (it *ContractIEigenPodManagerNewTotalSharesIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerNewTotalShares represents a NewTotalShares event raised by the IEigenPodManager contract.
-type IEigenPodManagerNewTotalShares struct {
+// ContractIEigenPodManagerNewTotalShares represents a NewTotalShares event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerNewTotalShares struct {
 	PodOwner       common.Address
 	NewTotalShares *big.Int
 	Raw            types.Log // Blockchain specific contextual infos
@@ -1164,31 +1270,31 @@ type IEigenPodManagerNewTotalShares struct {
 // FilterNewTotalShares is a free log retrieval operation binding the contract event 0xd4def76d6d2bed6f14d5cd9af73cc2913d618d00edde42432e81c09bfe077098.
 //
 // Solidity: event NewTotalShares(address indexed podOwner, int256 newTotalShares)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterNewTotalShares(opts *bind.FilterOpts, podOwner []common.Address) (*IEigenPodManagerNewTotalSharesIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterNewTotalShares(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerNewTotalSharesIterator, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "NewTotalShares", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "NewTotalShares", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerNewTotalSharesIterator{contract: _IEigenPodManager.contract, event: "NewTotalShares", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerNewTotalSharesIterator{contract: _ContractIEigenPodManager.contract, event: "NewTotalShares", logs: logs, sub: sub}, nil
 }
 
 // WatchNewTotalShares is a free log subscription operation binding the contract event 0xd4def76d6d2bed6f14d5cd9af73cc2913d618d00edde42432e81c09bfe077098.
 //
 // Solidity: event NewTotalShares(address indexed podOwner, int256 newTotalShares)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchNewTotalShares(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerNewTotalShares, podOwner []common.Address) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchNewTotalShares(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerNewTotalShares, podOwner []common.Address) (event.Subscription, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "NewTotalShares", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "NewTotalShares", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1198,8 +1304,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchNewTotalShares(opts *bin
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerNewTotalShares)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "NewTotalShares", log); err != nil {
+				event := new(ContractIEigenPodManagerNewTotalShares)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "NewTotalShares", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1223,18 +1329,18 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchNewTotalShares(opts *bin
 // ParseNewTotalShares is a log parse operation binding the contract event 0xd4def76d6d2bed6f14d5cd9af73cc2913d618d00edde42432e81c09bfe077098.
 //
 // Solidity: event NewTotalShares(address indexed podOwner, int256 newTotalShares)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParseNewTotalShares(log types.Log) (*IEigenPodManagerNewTotalShares, error) {
-	event := new(IEigenPodManagerNewTotalShares)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "NewTotalShares", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParseNewTotalShares(log types.Log) (*ContractIEigenPodManagerNewTotalShares, error) {
+	event := new(ContractIEigenPodManagerNewTotalShares)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "NewTotalShares", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IEigenPodManagerPausedIterator is returned from FilterPaused and is used to iterate over the raw logs and unpacked data for Paused events raised by the IEigenPodManager contract.
-type IEigenPodManagerPausedIterator struct {
-	Event *IEigenPodManagerPaused // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerPausedIterator is returned from FilterPaused and is used to iterate over the raw logs and unpacked data for Paused events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPausedIterator struct {
+	Event *ContractIEigenPodManagerPaused // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1248,7 +1354,7 @@ type IEigenPodManagerPausedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerPausedIterator) Next() bool {
+func (it *ContractIEigenPodManagerPausedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1257,7 +1363,7 @@ func (it *IEigenPodManagerPausedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerPaused)
+			it.Event = new(ContractIEigenPodManagerPaused)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1272,7 +1378,7 @@ func (it *IEigenPodManagerPausedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerPaused)
+		it.Event = new(ContractIEigenPodManagerPaused)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1288,19 +1394,19 @@ func (it *IEigenPodManagerPausedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerPausedIterator) Error() error {
+func (it *ContractIEigenPodManagerPausedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerPausedIterator) Close() error {
+func (it *ContractIEigenPodManagerPausedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerPaused represents a Paused event raised by the IEigenPodManager contract.
-type IEigenPodManagerPaused struct {
+// ContractIEigenPodManagerPaused represents a Paused event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPaused struct {
 	Account         common.Address
 	NewPausedStatus *big.Int
 	Raw             types.Log // Blockchain specific contextual infos
@@ -1309,31 +1415,31 @@ type IEigenPodManagerPaused struct {
 // FilterPaused is a free log retrieval operation binding the contract event 0xab40a374bc51de372200a8bc981af8c9ecdc08dfdaef0bb6e09f88f3c616ef3d.
 //
 // Solidity: event Paused(address indexed account, uint256 newPausedStatus)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterPaused(opts *bind.FilterOpts, account []common.Address) (*IEigenPodManagerPausedIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterPaused(opts *bind.FilterOpts, account []common.Address) (*ContractIEigenPodManagerPausedIterator, error) {
 
 	var accountRule []interface{}
 	for _, accountItem := range account {
 		accountRule = append(accountRule, accountItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "Paused", accountRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "Paused", accountRule)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerPausedIterator{contract: _IEigenPodManager.contract, event: "Paused", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerPausedIterator{contract: _ContractIEigenPodManager.contract, event: "Paused", logs: logs, sub: sub}, nil
 }
 
 // WatchPaused is a free log subscription operation binding the contract event 0xab40a374bc51de372200a8bc981af8c9ecdc08dfdaef0bb6e09f88f3c616ef3d.
 //
 // Solidity: event Paused(address indexed account, uint256 newPausedStatus)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPaused(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerPaused, account []common.Address) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchPaused(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPaused, account []common.Address) (event.Subscription, error) {
 
 	var accountRule []interface{}
 	for _, accountItem := range account {
 		accountRule = append(accountRule, accountItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "Paused", accountRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "Paused", accountRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1343,8 +1449,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPaused(opts *bind.WatchO
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerPaused)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "Paused", log); err != nil {
+				event := new(ContractIEigenPodManagerPaused)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "Paused", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1368,18 +1474,18 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPaused(opts *bind.WatchO
 // ParsePaused is a log parse operation binding the contract event 0xab40a374bc51de372200a8bc981af8c9ecdc08dfdaef0bb6e09f88f3c616ef3d.
 //
 // Solidity: event Paused(address indexed account, uint256 newPausedStatus)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParsePaused(log types.Log) (*IEigenPodManagerPaused, error) {
-	event := new(IEigenPodManagerPaused)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "Paused", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParsePaused(log types.Log) (*ContractIEigenPodManagerPaused, error) {
+	event := new(ContractIEigenPodManagerPaused)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "Paused", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IEigenPodManagerPauserRegistrySetIterator is returned from FilterPauserRegistrySet and is used to iterate over the raw logs and unpacked data for PauserRegistrySet events raised by the IEigenPodManager contract.
-type IEigenPodManagerPauserRegistrySetIterator struct {
-	Event *IEigenPodManagerPauserRegistrySet // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerPauserRegistrySetIterator is returned from FilterPauserRegistrySet and is used to iterate over the raw logs and unpacked data for PauserRegistrySet events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPauserRegistrySetIterator struct {
+	Event *ContractIEigenPodManagerPauserRegistrySet // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1393,7 +1499,7 @@ type IEigenPodManagerPauserRegistrySetIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerPauserRegistrySetIterator) Next() bool {
+func (it *ContractIEigenPodManagerPauserRegistrySetIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1402,7 +1508,7 @@ func (it *IEigenPodManagerPauserRegistrySetIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerPauserRegistrySet)
+			it.Event = new(ContractIEigenPodManagerPauserRegistrySet)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1417,7 +1523,7 @@ func (it *IEigenPodManagerPauserRegistrySetIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerPauserRegistrySet)
+		it.Event = new(ContractIEigenPodManagerPauserRegistrySet)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1433,19 +1539,19 @@ func (it *IEigenPodManagerPauserRegistrySetIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerPauserRegistrySetIterator) Error() error {
+func (it *ContractIEigenPodManagerPauserRegistrySetIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerPauserRegistrySetIterator) Close() error {
+func (it *ContractIEigenPodManagerPauserRegistrySetIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerPauserRegistrySet represents a PauserRegistrySet event raised by the IEigenPodManager contract.
-type IEigenPodManagerPauserRegistrySet struct {
+// ContractIEigenPodManagerPauserRegistrySet represents a PauserRegistrySet event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPauserRegistrySet struct {
 	PauserRegistry    common.Address
 	NewPauserRegistry common.Address
 	Raw               types.Log // Blockchain specific contextual infos
@@ -1454,21 +1560,21 @@ type IEigenPodManagerPauserRegistrySet struct {
 // FilterPauserRegistrySet is a free log retrieval operation binding the contract event 0x6e9fcd539896fca60e8b0f01dd580233e48a6b0f7df013b89ba7f565869acdb6.
 //
 // Solidity: event PauserRegistrySet(address pauserRegistry, address newPauserRegistry)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterPauserRegistrySet(opts *bind.FilterOpts) (*IEigenPodManagerPauserRegistrySetIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterPauserRegistrySet(opts *bind.FilterOpts) (*ContractIEigenPodManagerPauserRegistrySetIterator, error) {
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "PauserRegistrySet")
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "PauserRegistrySet")
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerPauserRegistrySetIterator{contract: _IEigenPodManager.contract, event: "PauserRegistrySet", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerPauserRegistrySetIterator{contract: _ContractIEigenPodManager.contract, event: "PauserRegistrySet", logs: logs, sub: sub}, nil
 }
 
 // WatchPauserRegistrySet is a free log subscription operation binding the contract event 0x6e9fcd539896fca60e8b0f01dd580233e48a6b0f7df013b89ba7f565869acdb6.
 //
 // Solidity: event PauserRegistrySet(address pauserRegistry, address newPauserRegistry)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPauserRegistrySet(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerPauserRegistrySet) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchPauserRegistrySet(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPauserRegistrySet) (event.Subscription, error) {
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "PauserRegistrySet")
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "PauserRegistrySet")
 	if err != nil {
 		return nil, err
 	}
@@ -1478,8 +1584,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPauserRegistrySet(opts *
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerPauserRegistrySet)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "PauserRegistrySet", log); err != nil {
+				event := new(ContractIEigenPodManagerPauserRegistrySet)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "PauserRegistrySet", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1503,18 +1609,18 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPauserRegistrySet(opts *
 // ParsePauserRegistrySet is a log parse operation binding the contract event 0x6e9fcd539896fca60e8b0f01dd580233e48a6b0f7df013b89ba7f565869acdb6.
 //
 // Solidity: event PauserRegistrySet(address pauserRegistry, address newPauserRegistry)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParsePauserRegistrySet(log types.Log) (*IEigenPodManagerPauserRegistrySet, error) {
-	event := new(IEigenPodManagerPauserRegistrySet)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "PauserRegistrySet", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParsePauserRegistrySet(log types.Log) (*ContractIEigenPodManagerPauserRegistrySet, error) {
+	event := new(ContractIEigenPodManagerPauserRegistrySet)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "PauserRegistrySet", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IEigenPodManagerPodDeployedIterator is returned from FilterPodDeployed and is used to iterate over the raw logs and unpacked data for PodDeployed events raised by the IEigenPodManager contract.
-type IEigenPodManagerPodDeployedIterator struct {
-	Event *IEigenPodManagerPodDeployed // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerPodDeployedIterator is returned from FilterPodDeployed and is used to iterate over the raw logs and unpacked data for PodDeployed events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPodDeployedIterator struct {
+	Event *ContractIEigenPodManagerPodDeployed // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1528,7 +1634,7 @@ type IEigenPodManagerPodDeployedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerPodDeployedIterator) Next() bool {
+func (it *ContractIEigenPodManagerPodDeployedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1537,7 +1643,7 @@ func (it *IEigenPodManagerPodDeployedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerPodDeployed)
+			it.Event = new(ContractIEigenPodManagerPodDeployed)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1552,7 +1658,7 @@ func (it *IEigenPodManagerPodDeployedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerPodDeployed)
+		it.Event = new(ContractIEigenPodManagerPodDeployed)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1568,19 +1674,19 @@ func (it *IEigenPodManagerPodDeployedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerPodDeployedIterator) Error() error {
+func (it *ContractIEigenPodManagerPodDeployedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerPodDeployedIterator) Close() error {
+func (it *ContractIEigenPodManagerPodDeployedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerPodDeployed represents a PodDeployed event raised by the IEigenPodManager contract.
-type IEigenPodManagerPodDeployed struct {
+// ContractIEigenPodManagerPodDeployed represents a PodDeployed event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPodDeployed struct {
 	EigenPod common.Address
 	PodOwner common.Address
 	Raw      types.Log // Blockchain specific contextual infos
@@ -1589,7 +1695,7 @@ type IEigenPodManagerPodDeployed struct {
 // FilterPodDeployed is a free log retrieval operation binding the contract event 0x21c99d0db02213c32fff5b05cf0a718ab5f858802b91498f80d82270289d856a.
 //
 // Solidity: event PodDeployed(address indexed eigenPod, address indexed podOwner)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterPodDeployed(opts *bind.FilterOpts, eigenPod []common.Address, podOwner []common.Address) (*IEigenPodManagerPodDeployedIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterPodDeployed(opts *bind.FilterOpts, eigenPod []common.Address, podOwner []common.Address) (*ContractIEigenPodManagerPodDeployedIterator, error) {
 
 	var eigenPodRule []interface{}
 	for _, eigenPodItem := range eigenPod {
@@ -1600,17 +1706,17 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) FilterPodDeployed(opts *bind.
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "PodDeployed", eigenPodRule, podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "PodDeployed", eigenPodRule, podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerPodDeployedIterator{contract: _IEigenPodManager.contract, event: "PodDeployed", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerPodDeployedIterator{contract: _ContractIEigenPodManager.contract, event: "PodDeployed", logs: logs, sub: sub}, nil
 }
 
 // WatchPodDeployed is a free log subscription operation binding the contract event 0x21c99d0db02213c32fff5b05cf0a718ab5f858802b91498f80d82270289d856a.
 //
 // Solidity: event PodDeployed(address indexed eigenPod, address indexed podOwner)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPodDeployed(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerPodDeployed, eigenPod []common.Address, podOwner []common.Address) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchPodDeployed(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPodDeployed, eigenPod []common.Address, podOwner []common.Address) (event.Subscription, error) {
 
 	var eigenPodRule []interface{}
 	for _, eigenPodItem := range eigenPod {
@@ -1621,7 +1727,7 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPodDeployed(opts *bind.W
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "PodDeployed", eigenPodRule, podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "PodDeployed", eigenPodRule, podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1631,8 +1737,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPodDeployed(opts *bind.W
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerPodDeployed)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "PodDeployed", log); err != nil {
+				event := new(ContractIEigenPodManagerPodDeployed)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "PodDeployed", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1656,18 +1762,18 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPodDeployed(opts *bind.W
 // ParsePodDeployed is a log parse operation binding the contract event 0x21c99d0db02213c32fff5b05cf0a718ab5f858802b91498f80d82270289d856a.
 //
 // Solidity: event PodDeployed(address indexed eigenPod, address indexed podOwner)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParsePodDeployed(log types.Log) (*IEigenPodManagerPodDeployed, error) {
-	event := new(IEigenPodManagerPodDeployed)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "PodDeployed", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParsePodDeployed(log types.Log) (*ContractIEigenPodManagerPodDeployed, error) {
+	event := new(ContractIEigenPodManagerPodDeployed)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "PodDeployed", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IEigenPodManagerPodSharesUpdatedIterator is returned from FilterPodSharesUpdated and is used to iterate over the raw logs and unpacked data for PodSharesUpdated events raised by the IEigenPodManager contract.
-type IEigenPodManagerPodSharesUpdatedIterator struct {
-	Event *IEigenPodManagerPodSharesUpdated // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerPodSharesUpdatedIterator is returned from FilterPodSharesUpdated and is used to iterate over the raw logs and unpacked data for PodSharesUpdated events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPodSharesUpdatedIterator struct {
+	Event *ContractIEigenPodManagerPodSharesUpdated // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1681,7 +1787,7 @@ type IEigenPodManagerPodSharesUpdatedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerPodSharesUpdatedIterator) Next() bool {
+func (it *ContractIEigenPodManagerPodSharesUpdatedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1690,7 +1796,7 @@ func (it *IEigenPodManagerPodSharesUpdatedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerPodSharesUpdated)
+			it.Event = new(ContractIEigenPodManagerPodSharesUpdated)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1705,7 +1811,7 @@ func (it *IEigenPodManagerPodSharesUpdatedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerPodSharesUpdated)
+		it.Event = new(ContractIEigenPodManagerPodSharesUpdated)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1721,19 +1827,19 @@ func (it *IEigenPodManagerPodSharesUpdatedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerPodSharesUpdatedIterator) Error() error {
+func (it *ContractIEigenPodManagerPodSharesUpdatedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerPodSharesUpdatedIterator) Close() error {
+func (it *ContractIEigenPodManagerPodSharesUpdatedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerPodSharesUpdated represents a PodSharesUpdated event raised by the IEigenPodManager contract.
-type IEigenPodManagerPodSharesUpdated struct {
+// ContractIEigenPodManagerPodSharesUpdated represents a PodSharesUpdated event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerPodSharesUpdated struct {
 	PodOwner    common.Address
 	SharesDelta *big.Int
 	Raw         types.Log // Blockchain specific contextual infos
@@ -1742,31 +1848,31 @@ type IEigenPodManagerPodSharesUpdated struct {
 // FilterPodSharesUpdated is a free log retrieval operation binding the contract event 0x4e2b791dedccd9fb30141b088cabf5c14a8912b52f59375c95c010700b8c6193.
 //
 // Solidity: event PodSharesUpdated(address indexed podOwner, int256 sharesDelta)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterPodSharesUpdated(opts *bind.FilterOpts, podOwner []common.Address) (*IEigenPodManagerPodSharesUpdatedIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterPodSharesUpdated(opts *bind.FilterOpts, podOwner []common.Address) (*ContractIEigenPodManagerPodSharesUpdatedIterator, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "PodSharesUpdated", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "PodSharesUpdated", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerPodSharesUpdatedIterator{contract: _IEigenPodManager.contract, event: "PodSharesUpdated", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerPodSharesUpdatedIterator{contract: _ContractIEigenPodManager.contract, event: "PodSharesUpdated", logs: logs, sub: sub}, nil
 }
 
 // WatchPodSharesUpdated is a free log subscription operation binding the contract event 0x4e2b791dedccd9fb30141b088cabf5c14a8912b52f59375c95c010700b8c6193.
 //
 // Solidity: event PodSharesUpdated(address indexed podOwner, int256 sharesDelta)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPodSharesUpdated(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerPodSharesUpdated, podOwner []common.Address) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchPodSharesUpdated(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerPodSharesUpdated, podOwner []common.Address) (event.Subscription, error) {
 
 	var podOwnerRule []interface{}
 	for _, podOwnerItem := range podOwner {
 		podOwnerRule = append(podOwnerRule, podOwnerItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "PodSharesUpdated", podOwnerRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "PodSharesUpdated", podOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1776,8 +1882,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPodSharesUpdated(opts *b
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerPodSharesUpdated)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "PodSharesUpdated", log); err != nil {
+				event := new(ContractIEigenPodManagerPodSharesUpdated)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "PodSharesUpdated", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1801,18 +1907,18 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchPodSharesUpdated(opts *b
 // ParsePodSharesUpdated is a log parse operation binding the contract event 0x4e2b791dedccd9fb30141b088cabf5c14a8912b52f59375c95c010700b8c6193.
 //
 // Solidity: event PodSharesUpdated(address indexed podOwner, int256 sharesDelta)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParsePodSharesUpdated(log types.Log) (*IEigenPodManagerPodSharesUpdated, error) {
-	event := new(IEigenPodManagerPodSharesUpdated)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "PodSharesUpdated", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParsePodSharesUpdated(log types.Log) (*ContractIEigenPodManagerPodSharesUpdated, error) {
+	event := new(ContractIEigenPodManagerPodSharesUpdated)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "PodSharesUpdated", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IEigenPodManagerUnpausedIterator is returned from FilterUnpaused and is used to iterate over the raw logs and unpacked data for Unpaused events raised by the IEigenPodManager contract.
-type IEigenPodManagerUnpausedIterator struct {
-	Event *IEigenPodManagerUnpaused // Event containing the contract specifics and raw log
+// ContractIEigenPodManagerUnpausedIterator is returned from FilterUnpaused and is used to iterate over the raw logs and unpacked data for Unpaused events raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerUnpausedIterator struct {
+	Event *ContractIEigenPodManagerUnpaused // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1826,7 +1932,7 @@ type IEigenPodManagerUnpausedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IEigenPodManagerUnpausedIterator) Next() bool {
+func (it *ContractIEigenPodManagerUnpausedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1835,7 +1941,7 @@ func (it *IEigenPodManagerUnpausedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IEigenPodManagerUnpaused)
+			it.Event = new(ContractIEigenPodManagerUnpaused)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1850,7 +1956,7 @@ func (it *IEigenPodManagerUnpausedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IEigenPodManagerUnpaused)
+		it.Event = new(ContractIEigenPodManagerUnpaused)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1866,19 +1972,19 @@ func (it *IEigenPodManagerUnpausedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IEigenPodManagerUnpausedIterator) Error() error {
+func (it *ContractIEigenPodManagerUnpausedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IEigenPodManagerUnpausedIterator) Close() error {
+func (it *ContractIEigenPodManagerUnpausedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IEigenPodManagerUnpaused represents a Unpaused event raised by the IEigenPodManager contract.
-type IEigenPodManagerUnpaused struct {
+// ContractIEigenPodManagerUnpaused represents a Unpaused event raised by the ContractIEigenPodManager contract.
+type ContractIEigenPodManagerUnpaused struct {
 	Account         common.Address
 	NewPausedStatus *big.Int
 	Raw             types.Log // Blockchain specific contextual infos
@@ -1887,31 +1993,31 @@ type IEigenPodManagerUnpaused struct {
 // FilterUnpaused is a free log retrieval operation binding the contract event 0x3582d1828e26bf56bd801502bc021ac0bc8afb57c826e4986b45593c8fad389c.
 //
 // Solidity: event Unpaused(address indexed account, uint256 newPausedStatus)
-func (_IEigenPodManager *IEigenPodManagerFilterer) FilterUnpaused(opts *bind.FilterOpts, account []common.Address) (*IEigenPodManagerUnpausedIterator, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) FilterUnpaused(opts *bind.FilterOpts, account []common.Address) (*ContractIEigenPodManagerUnpausedIterator, error) {
 
 	var accountRule []interface{}
 	for _, accountItem := range account {
 		accountRule = append(accountRule, accountItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.FilterLogs(opts, "Unpaused", accountRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.FilterLogs(opts, "Unpaused", accountRule)
 	if err != nil {
 		return nil, err
 	}
-	return &IEigenPodManagerUnpausedIterator{contract: _IEigenPodManager.contract, event: "Unpaused", logs: logs, sub: sub}, nil
+	return &ContractIEigenPodManagerUnpausedIterator{contract: _ContractIEigenPodManager.contract, event: "Unpaused", logs: logs, sub: sub}, nil
 }
 
 // WatchUnpaused is a free log subscription operation binding the contract event 0x3582d1828e26bf56bd801502bc021ac0bc8afb57c826e4986b45593c8fad389c.
 //
 // Solidity: event Unpaused(address indexed account, uint256 newPausedStatus)
-func (_IEigenPodManager *IEigenPodManagerFilterer) WatchUnpaused(opts *bind.WatchOpts, sink chan<- *IEigenPodManagerUnpaused, account []common.Address) (event.Subscription, error) {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) WatchUnpaused(opts *bind.WatchOpts, sink chan<- *ContractIEigenPodManagerUnpaused, account []common.Address) (event.Subscription, error) {
 
 	var accountRule []interface{}
 	for _, accountItem := range account {
 		accountRule = append(accountRule, accountItem)
 	}
 
-	logs, sub, err := _IEigenPodManager.contract.WatchLogs(opts, "Unpaused", accountRule)
+	logs, sub, err := _ContractIEigenPodManager.contract.WatchLogs(opts, "Unpaused", accountRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1921,8 +2027,8 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchUnpaused(opts *bind.Watc
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IEigenPodManagerUnpaused)
-				if err := _IEigenPodManager.contract.UnpackLog(event, "Unpaused", log); err != nil {
+				event := new(ContractIEigenPodManagerUnpaused)
+				if err := _ContractIEigenPodManager.contract.UnpackLog(event, "Unpaused", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1946,9 +2052,9 @@ func (_IEigenPodManager *IEigenPodManagerFilterer) WatchUnpaused(opts *bind.Watc
 // ParseUnpaused is a log parse operation binding the contract event 0x3582d1828e26bf56bd801502bc021ac0bc8afb57c826e4986b45593c8fad389c.
 //
 // Solidity: event Unpaused(address indexed account, uint256 newPausedStatus)
-func (_IEigenPodManager *IEigenPodManagerFilterer) ParseUnpaused(log types.Log) (*IEigenPodManagerUnpaused, error) {
-	event := new(IEigenPodManagerUnpaused)
-	if err := _IEigenPodManager.contract.UnpackLog(event, "Unpaused", log); err != nil {
+func (_ContractIEigenPodManager *ContractIEigenPodManagerFilterer) ParseUnpaused(log types.Log) (*ContractIEigenPodManagerUnpaused, error) {
+	event := new(ContractIEigenPodManagerUnpaused)
+	if err := _ContractIEigenPodManager.contract.UnpackLog(event, "Unpaused", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
