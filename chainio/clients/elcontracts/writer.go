@@ -611,6 +611,16 @@ func (w *ChainWriter) RemovePermission(
 	ctx context.Context,
 	request RemovePermissionRequest,
 ) (*gethtypes.Receipt, error) {
+	tx, err := w.NewRemovePermissionTx(request)
+	if err != nil {
+		return nil, utils.WrapError("failed to create NewRemovePermissionTx", err)
+	}
+	return w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+}
+
+func (w *ChainWriter) NewRemovePermissionTx(
+	request RemovePermissionRequest,
+) (*gethtypes.Transaction, error) {
 	if w.permissionController == nil {
 		return nil, errors.New("permission contract not provided")
 	}
@@ -619,21 +629,25 @@ func (w *ChainWriter) RemovePermission(
 		return nil, utils.WrapError("failed to get no send tx opts", err)
 	}
 
-	tx, err := w.permissionController.RemoveAppointee(
+	return w.permissionController.RemoveAppointee(
 		noSendTxOpts,
 		request.AccountAddress,
 		request.AppointeeAddress,
 		request.Target,
 		request.Selector,
 	)
+}
+
+func (w *ChainWriter) SetPermission(ctx context.Context, request SetPermissionRequest) (*gethtypes.Receipt, error) {
+	tx, err := w.NewSetPermissionTx(request)
 	if err != nil {
-		return nil, errors.New("call to permission controller failed: " + err.Error())
+		return nil, utils.WrapError("failed to create NewSetPermissionTx", err)
 	}
 	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
 	return receipt, err
 }
 
-func (w *ChainWriter) SetPermission(ctx context.Context, request SetPermissionRequest) (*gethtypes.Receipt, error) {
+func (w *ChainWriter) NewSetPermissionTx(request SetPermissionRequest) (*gethtypes.Transaction, error) {
 	if w.permissionController == nil {
 		return nil, errors.New("permission contract not provided")
 	}
@@ -652,8 +666,7 @@ func (w *ChainWriter) SetPermission(ctx context.Context, request SetPermissionRe
 	if err != nil {
 		return nil, errors.New("call to permission controller failed: " + err.Error())
 	}
-	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
-	return receipt, err
+	return tx, nil
 }
 
 func (w *ChainWriter) AcceptAdmin(ctx context.Context, request AcceptAdminRequest) (*gethtypes.Receipt, error) {
