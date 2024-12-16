@@ -336,3 +336,38 @@ func (r *ChainReader) CheckClaim(
 
 	return r.rewardsCoordinator.CheckClaim(&bind.CallOpts{Context: ctx}, claim)
 }
+
+func (r *ChainReader) GetOperatorAVSSplit(
+	ctx context.Context,
+	operator gethcommon.Address,
+	avs gethcommon.Address,
+) (uint16, error) {
+	if r.rewardsCoordinator == nil {
+		return 0, errors.New("RewardsCoordinator contract not provided")
+	}
+
+	split, err := r.rewardsCoordinator.GetOperatorAVSSplit(&bind.CallOpts{Context: ctx}, operator, avs)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return split, nil
+}
+
+func (r *ChainReader) GetOperatorPISplit(
+	ctx context.Context,
+	operator gethcommon.Address,
+) (uint16, error) {
+	if r.rewardsCoordinator == nil {
+		return 0, errors.New("RewardsCoordinator contract not provided")
+	}
+
+	split, err := r.rewardsCoordinator.GetOperatorPISplit(&bind.CallOpts{Context: ctx}, operator)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return split, nil
+}
