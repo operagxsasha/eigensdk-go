@@ -708,6 +708,9 @@ func (w *ChainWriter) NewAddPendingAdminTx(
 
 func (w *ChainWriter) AddPendingAdmin(ctx context.Context, request AddPendingAdminRequest) (*gethtypes.Receipt, error) {
 	txOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no send tx opts", err)
+	}
 	tx, err := w.NewAddPendingAdminTx(txOpts, request)
 	if err != nil {
 		return nil, utils.WrapError("failed to create AddPendingAdminTx", err)
