@@ -3,6 +3,7 @@ package elcontracts
 import (
 	"context"
 	"errors"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
 	"math/big"
 
@@ -669,73 +670,100 @@ func (w *ChainWriter) NewSetPermissionTx(request SetPermissionRequest) (*gethtyp
 	return tx, nil
 }
 
-func (w *ChainWriter) AcceptAdmin(ctx context.Context, request AcceptAdminRequest) (*gethtypes.Receipt, error) {
+func (w *ChainWriter) NewAcceptAdminTx(
+	txOpts *bind.TransactOpts,
+	request AcceptAdminRequest,
+) (*gethtypes.Transaction, error) {
 	if w.permissionController == nil {
 		return nil, errors.New("permission contract not provided")
 	}
+	return w.permissionController.AcceptAdmin(txOpts, request.AccountAddress)
+}
+
+func (w *ChainWriter) AcceptAdmin(
+	ctx context.Context,
+	request AcceptAdminRequest,
+) (*gethtypes.Receipt, error) {
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
 		return nil, utils.WrapError("failed to get no send tx opts", err)
 	}
 
-	tx, err := w.permissionController.AcceptAdmin(noSendTxOpts, request.AccountAddress)
+	tx, err := w.NewAcceptAdminTx(noSendTxOpts, request)
 	if err != nil {
-		return nil, errors.New("call to permission controller failed: " + err.Error())
+		return nil, utils.WrapError("failed to create AcceptAdmin transaction", err)
 	}
-	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
-	return receipt, err
+	return w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+}
+
+func (w *ChainWriter) NewAddPendingAdminTx(
+	txOpts *bind.TransactOpts,
+	request AddPendingAdminRequest,
+) (*gethtypes.Transaction, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	return w.permissionController.AddPendingAdmin(txOpts, request.AccountAddress, request.AdminAddress)
 }
 
 func (w *ChainWriter) AddPendingAdmin(ctx context.Context, request AddPendingAdminRequest) (*gethtypes.Receipt, error) {
-	if w.permissionController == nil {
-		return nil, errors.New("permission contract not provided")
-	}
-	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	txOpts, err := w.txMgr.GetNoSendTxOpts()
+	tx, err := w.NewAddPendingAdminTx(txOpts, request)
 	if err != nil {
-		return nil, utils.WrapError("failed to get no send tx opts", err)
+		return nil, utils.WrapError("failed to create AddPendingAdminTx", err)
 	}
-
-	tx, err := w.permissionController.AddPendingAdmin(noSendTxOpts, request.AccountAddress, request.AdminAddress)
-	if err != nil {
-		return nil, errors.New("call to permission controller failed: " + err.Error())
-	}
-	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
-	return receipt, err
+	return w.txMgr.Send(ctx, tx, request.WaitForReceipt)
 }
 
-func (w *ChainWriter) RemoveAdmin(ctx context.Context, request RemoveAdminRequest) (*gethtypes.Receipt, error) {
+func (w *ChainWriter) NewRemoveAdminTx(
+	txOpts *bind.TransactOpts,
+	request RemoveAdminRequest,
+) (*gethtypes.Transaction, error) {
 	if w.permissionController == nil {
 		return nil, errors.New("permission contract not provided")
 	}
+	return w.permissionController.RemoveAdmin(txOpts, request.AccountAddress, request.AdminAddress)
+}
+
+func (w *ChainWriter) RemoveAdmin(
+	ctx context.Context,
+	request RemoveAdminRequest,
+) (*gethtypes.Receipt, error) {
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
 		return nil, utils.WrapError("failed to get no send tx opts", err)
 	}
 
-	tx, err := w.permissionController.RemoveAdmin(noSendTxOpts, request.AccountAddress, request.AdminAddress)
+	tx, err := w.NewRemoveAdminTx(noSendTxOpts, request)
 	if err != nil {
-		return nil, errors.New("call to permission controller failed: " + err.Error())
+		return nil, utils.WrapError("failed to create RemoveAdmin transaction", err)
 	}
-	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
-	return receipt, err
+	return w.txMgr.Send(ctx, tx, request.WaitForReceipt)
+}
+
+func (w *ChainWriter) NewRemovePendingAdminTx(
+	txOpts *bind.TransactOpts,
+	request RemovePendingAdminRequest,
+) (*gethtypes.Transaction, error) {
+	if w.permissionController == nil {
+		return nil, errors.New("permission contract not provided")
+	}
+	return w.permissionController.RemovePendingAdmin(txOpts, request.AccountAddress, request.AdminAddress)
 }
 
 func (w *ChainWriter) RemovePendingAdmin(
 	ctx context.Context,
 	request RemovePendingAdminRequest,
 ) (*gethtypes.Receipt, error) {
-	if w.permissionController == nil {
-		return nil, errors.New("permission contract not provided")
-	}
 	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
 		return nil, utils.WrapError("failed to get no send tx opts", err)
 	}
 
-	tx, err := w.permissionController.RemovePendingAdmin(noSendTxOpts, request.AccountAddress, request.AdminAddress)
+	tx, err := w.NewRemovePendingAdminTx(noSendTxOpts, request)
 	if err != nil {
-		return nil, errors.New("call to permission controller failed: " + err.Error())
+		return nil, utils.WrapError("failed to create RemovePendingAdmin transaction", err)
 	}
-	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
-	return receipt, err
+
+	return w.txMgr.Send(ctx, tx, request.WaitForReceipt)
 }
