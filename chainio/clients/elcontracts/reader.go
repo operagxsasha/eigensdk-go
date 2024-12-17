@@ -561,6 +561,44 @@ func (r *ChainReader) GetStrategiesForOperatorSet(
 	}
 }
 
+func (r *ChainReader) GetSlashableShares(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	operatorSet allocationmanager.OperatorSet,
+	strategies []gethcommon.Address,
+) (map[gethcommon.Address]*big.Int, error) {
+	if r.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+
+	currentBlock, err := r.ethClient.BlockNumber(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	slashableShares, err := r.allocationManager.GetMinimumSlashableStake(
+		&bind.CallOpts{Context: ctx},
+		operatorSet,
+		[]gethcommon.Address{operatorAddress},
+		strategies,
+		uint32(currentBlock),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if len(slashableShares) == 0 {
+		return nil, errors.New("no slashable shares found for operator")
+	}
+
+	slashableShareStrategyMap := make(map[gethcommon.Address]*big.Int)
+	for i, strat := range strategies {
+		// The reason we use 0 here is because we only have one operator in the list
+		slashableShareStrategyMap[strat] = slashableShares[0][i]
+	}
+
+	return slashableShareStrategyMap, nil
+}
+
 // GetSlashableSharesForOperatorSets returns the strategies the operatorSets take into account, their
 // operators, and the minimum amount of shares that are slashable by the operatorSets.
 // Not supported for M2 AVSs
@@ -568,53 +606,19 @@ func (r *ChainReader) GetSlashableSharesForOperatorSets(
 	ctx context.Context,
 	operatorSets []allocationmanager.OperatorSet,
 ) ([]OperatorSetStakes, error) {
-	operatorSetStakes := make([]OperatorSetStakes, len(operatorSets))
 	currentBlock, err := r.ethClient.BlockNumber(ctx)
 	if err != nil {
 		return nil, err
 	}
-	for i, operatorSet := range operatorSets {
-		operators, err := r.GetOperatorsForOperatorSet(ctx, operatorSet)
-		if err != nil {
-			return nil, err
-		}
-
-		strategies, err := r.GetStrategiesForOperatorSet(ctx, operatorSet)
-		if err != nil {
-			return nil, err
-		}
-
-		slashableShares, err := r.allocationManager.GetMinimumSlashableStake(
-			&bind.CallOpts{Context: ctx},
-			allocationmanager.OperatorSet{
-				Id:  operatorSet.Id,
-				Avs: operatorSet.Avs,
-			},
-			operators,
-			strategies,
-			uint32(currentBlock),
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		operatorSetStakes[i] = OperatorSetStakes{
-			OperatorSet:     operatorSet,
-			Strategies:      strategies,
-			Operators:       operators,
-			SlashableStakes: slashableShares,
-		}
-	}
-
-	return operatorSetStakes, nil
+	return r.GetSlashableSharesForOperatorSetsBefore(ctx, operatorSets, uint32(currentBlock))
 }
 
-// GetDelegatedAndSlashableSharesForOperatorSetsBefore returns the strategies the operatorSets take into account, their
-// operators, and the minimum amount of shares that multiple operators delegated to them and slashable by the
+// GetSlashableSharesForOperatorSetsBefore returns the strategies the operatorSets take into account, their
+// operators, and the minimum amount of shares slashable by the
 // operatorSets before a given timestamp.
 // Timestamp must be in the future. Used to underestimate future slashable stake.
 // Not supported for M2 AVSs
-func (r *ChainReader) GetDelegatedAndSlashableSharesForOperatorSetsBefore(
+func (r *ChainReader) GetSlashableSharesForOperatorSetsBefore(
 	ctx context.Context,
 	operatorSets []allocationmanager.OperatorSet,
 	futureBlock uint32,
