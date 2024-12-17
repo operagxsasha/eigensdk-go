@@ -71,7 +71,6 @@ func TestRegisterOperator(t *testing.T) {
 			types.Operator{
 				Address:                   fundedAccount,
 				DelegationApproverAddress: "0xd5e099c71b797516c10ed0f0d895f429c2781142",
-				StakerOptOutWindowBlocks:  100,
 				MetadataUrl:               "https://madhur-test-public.s3.us-east-2.amazonaws.com/metadata.json",
 			}
 
@@ -98,7 +97,6 @@ func TestRegisterOperator(t *testing.T) {
 			types.Operator{
 				Address:                   operatorAddress,
 				DelegationApproverAddress: "0xd5e099c71b797516c10ed0f0d895f429c2781142",
-				StakerOptOutWindowBlocks:  100,
 				MetadataUrl:               "https://madhur-test-public.s3.us-east-2.amazonaws.com/metadata.json",
 			}
 
@@ -119,7 +117,6 @@ func TestChainWriter(t *testing.T) {
 		operatorModified := types.Operator{
 			Address:                   walletModifiedAddress.Hex(),
 			DelegationApproverAddress: walletModifiedAddress.Hex(),
-			StakerOptOutWindowBlocks:  101,
 			MetadataUrl:               "eigensdk-go",
 		}
 
