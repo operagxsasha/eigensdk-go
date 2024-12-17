@@ -612,7 +612,11 @@ func (w *ChainWriter) RemovePermission(
 	ctx context.Context,
 	request RemovePermissionRequest,
 ) (*gethtypes.Receipt, error) {
-	tx, err := w.NewRemovePermissionTx(request)
+	txOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, utils.WrapError("failed to get no-send tx opts", err)
+	}
+	tx, err := w.NewRemovePermissionTx(txOpts, request)
 	if err != nil {
 		return nil, utils.WrapError("failed to create NewRemovePermissionTx", err)
 	}
@@ -620,18 +624,14 @@ func (w *ChainWriter) RemovePermission(
 }
 
 func (w *ChainWriter) NewRemovePermissionTx(
+	txOpts *bind.TransactOpts,
 	request RemovePermissionRequest,
 ) (*gethtypes.Transaction, error) {
 	if w.permissionController == nil {
 		return nil, errors.New("permission contract not provided")
 	}
-	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
-	if err != nil {
-		return nil, utils.WrapError("failed to get no send tx opts", err)
-	}
-
 	return w.permissionController.RemoveAppointee(
-		noSendTxOpts,
+		txOpts,
 		request.AccountAddress,
 		request.AppointeeAddress,
 		request.Target,
@@ -639,35 +639,37 @@ func (w *ChainWriter) NewRemovePermissionTx(
 	)
 }
 
-func (w *ChainWriter) SetPermission(ctx context.Context, request SetPermissionRequest) (*gethtypes.Receipt, error) {
-	tx, err := w.NewSetPermissionTx(request)
-	if err != nil {
-		return nil, utils.WrapError("failed to create NewSetPermissionTx", err)
-	}
-	receipt, err := w.txMgr.Send(ctx, tx, request.WaitForReceipt)
-	return receipt, err
-}
-
-func (w *ChainWriter) NewSetPermissionTx(request SetPermissionRequest) (*gethtypes.Transaction, error) {
+func (w *ChainWriter) NewSetPermissionTx(
+	txOpts *bind.TransactOpts,
+	request SetPermissionRequest,
+) (*gethtypes.Transaction, error) {
 	if w.permissionController == nil {
 		return nil, errors.New("permission contract not provided")
 	}
-	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
-	if err != nil {
-		return nil, utils.WrapError("failed to get no send tx opts", err)
-	}
-
-	tx, err := w.permissionController.SetAppointee(
-		noSendTxOpts,
+	return w.permissionController.SetAppointee(
+		txOpts,
 		request.AccountAddress,
 		request.AppointeeAddress,
 		request.Target,
 		request.Selector,
 	)
+}
+
+func (w *ChainWriter) SetPermission(
+	ctx context.Context,
+	request SetPermissionRequest,
+) (*gethtypes.Receipt, error) {
+	txOpts, err := w.txMgr.GetNoSendTxOpts()
 	if err != nil {
-		return nil, errors.New("call to permission controller failed: " + err.Error())
+		return nil, utils.WrapError("failed to get no-send tx opts", err)
 	}
-	return tx, nil
+
+	tx, err := w.NewSetPermissionTx(txOpts, request)
+	if err != nil {
+		return nil, utils.WrapError("failed to create NewSetPermissionTx", err)
+	}
+
+	return w.txMgr.Send(ctx, tx, request.WaitForReceipt)
 }
 
 func (w *ChainWriter) NewAcceptAdminTx(
