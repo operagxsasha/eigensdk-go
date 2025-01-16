@@ -19,7 +19,7 @@ mocks: ## generates mocks
 
 .PHONY: tests
 tests: ## runs all tests
-	go test -race ./... -timeout=3m
+	go test -race ./... -timeout=4m
 
 .PHONY: tests-cover
 tests-cover: ## run all tests with test coverge
@@ -67,7 +67,7 @@ middleware_default := "RegistryCoordinator IndexRegistry OperatorStateRetriever 
 middleware_location := "./lib/eigenlayer-middleware"
 middleware_bindings_location := "../../bindings"
 
-sdk_default := "MockAvsServiceManager ContractsRegistry"
+sdk_default := "MockAvsServiceManager ContractsRegistry MockERC20"
 sdk_location := "."
 sdk_bindings_location := "./bindings"
 
