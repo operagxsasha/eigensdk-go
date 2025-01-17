@@ -78,51 +78,6 @@ func NewChainWriter(
 	}
 }
 
-// BuildELChainWriter builds an ChainWriter instance.
-// Deprecated: Use NewWriterFromConfig instead.
-func BuildELChainWriter(
-	delegationManagerAddr gethcommon.Address,
-	avsDirectoryAddr gethcommon.Address,
-	ethClient eth.HttpBackend,
-	logger logging.Logger,
-	eigenMetrics metrics.Metrics,
-	txMgr txmgr.TxManager,
-) (*ChainWriter, error) {
-	elContractBindings, err := NewEigenlayerContractBindings(
-		delegationManagerAddr,
-		avsDirectoryAddr,
-		ethClient,
-		logger,
-	)
-	if err != nil {
-		return nil, err
-	}
-	elChainReader := NewChainReader(
-		elContractBindings.DelegationManager,
-		elContractBindings.StrategyManager,
-		elContractBindings.AvsDirectory,
-		elContractBindings.RewardsCoordinator,
-		elContractBindings.AllocationManager,
-		elContractBindings.PermissionController,
-		logger,
-		ethClient,
-	)
-	return NewChainWriter(
-		elContractBindings.DelegationManager,
-		elContractBindings.StrategyManager,
-		elContractBindings.RewardsCoordinator,
-		elContractBindings.AvsDirectory,
-		elContractBindings.AllocationManager,
-		elContractBindings.PermissionController,
-		elContractBindings.StrategyManagerAddr,
-		elChainReader,
-		ethClient,
-		logger,
-		eigenMetrics,
-		txMgr,
-	), nil
-}
-
 func NewWriterFromConfig(
 	cfg Config,
 	ethClient eth.HttpBackend,
