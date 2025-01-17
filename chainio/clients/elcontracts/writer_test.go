@@ -10,6 +10,8 @@ import (
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients"
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/elcontracts"
 	allocationmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/AllocationManager"
+	"github.com/Layr-Labs/eigensdk-go/crypto/bls"
+
 	rewardscoordinator "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IRewardsCoordinator"
 	strategy "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IStrategy"
 	mockerc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/MockERC20"
@@ -116,6 +118,106 @@ func TestRegisterOperator(t *testing.T) {
 
 		_, err = clients.ElChainWriter.RegisterAsOperator(context.Background(), operator, true)
 		assert.Error(t, err)
+	})
+}
+
+func TestRegisterAndDeregisterFromOperatorSets(t *testing.T) {
+	testConfig := testutils.GetDefaultTestConfig()
+	anvilC, err := testutils.StartAnvilContainer(testConfig.AnvilStateFileName)
+	require.NoError(t, err)
+
+	anvilHttpEndpoint, err := anvilC.Endpoint(context.Background(), "http")
+	require.NoError(t, err)
+	contractAddrs := testutils.GetContractAddressesFromContractRegistry(anvilHttpEndpoint)
+
+	operatorAddressHex := "70997970C51812dc3A010C7d01b50e0d17dc79C8"
+	operatorPrivateKeyHex := "59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
+
+	config := elcontracts.Config{
+		DelegationManagerAddress:  contractAddrs.DelegationManager,
+		RewardsCoordinatorAddress: contractAddrs.RewardsCoordinator,
+	}
+
+	// Create operator clients
+	chainWriter, err := testclients.NewTestChainWriterFromConfig(anvilHttpEndpoint, operatorPrivateKeyHex, config)
+	require.NoError(t, err)
+
+	chainReader, err := testclients.NewTestChainReaderFromConfig(anvilHttpEndpoint, config)
+	require.NoError(t, err)
+
+	avsAddress := common.HexToAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+	operatorSetId := uint32(1)
+	erc20MockStrategyAddr := contractAddrs.Erc20MockStrategy
+
+	// Create an operator set to register an operator on it
+	err = createOperatorSet(
+		anvilHttpEndpoint,
+		testutils.ANVIL_FIRST_PRIVATE_KEY,
+		avsAddress,
+		operatorSetId,
+		erc20MockStrategyAddr,
+	)
+	require.NoError(t, err)
+
+	operatorAddress := common.HexToAddress(operatorAddressHex)
+	keypair, err := bls.NewKeyPairFromString("0x01")
+	require.NoError(t, err)
+
+	request := elcontracts.RegistrationRequest{
+		OperatorAddress: operatorAddress,
+		AVSAddress:      avsAddress,
+		OperatorSetIds:  []uint32{operatorSetId},
+		WaitForReceipt:  true,
+		Socket:          "socket",
+		BlsKeyPair:      keypair,
+	}
+
+	operatorSet := allocationmanager.OperatorSet{
+		Avs: avsAddress,
+		Id:  uint32(operatorSetId),
+	}
+	t.Run("register operator for operator set", func(t *testing.T) {
+		registryCoordinatorAddress := contractAddrs.RegistryCoordinator
+		receipt, err := chainWriter.RegisterForOperatorSets(
+			context.Background(),
+			registryCoordinatorAddress,
+			request,
+		)
+
+		require.NoError(t, err)
+		require.Equal(t, gethtypes.ReceiptStatusSuccessful, receipt.Status)
+
+		isRegistered, err := chainReader.IsOperatorRegisteredWithOperatorSet(
+			context.Background(),
+			operatorAddress,
+			operatorSet,
+		)
+		require.NoError(t, err)
+		require.Equal(t, true, isRegistered)
+	})
+
+	deregistrationRequest := elcontracts.DeregistrationRequest{
+		AVSAddress:     avsAddress,
+		OperatorSetIds: []uint32{operatorSetId},
+		WaitForReceipt: true,
+	}
+
+	t.Run("deregister operator from operator set", func(t *testing.T) {
+		receipt, err := chainWriter.DeregisterFromOperatorSets(
+			context.Background(),
+			operatorAddress,
+			deregistrationRequest,
+		)
+		require.NoError(t, err)
+		require.Equal(t, gethtypes.ReceiptStatusSuccessful, receipt.Status)
+
+		isRegistered, err := chainReader.IsOperatorRegisteredWithOperatorSet(
+			context.Background(),
+			operatorAddress,
+			operatorSet,
+		)
+		require.NoError(t, err)
+		require.Equal(t, false, isRegistered)
 	})
 }
 
