@@ -49,6 +49,7 @@ func NewSigner(cfg types.SignerConfig) (Signer, error) {
 			Password:        cfg.CerberusPassword,
 			EnableTLS:       cfg.EnableTLS,
 			TLSCertFilePath: cfg.TLSCertFilePath,
+			SignerAPIKey:    cfg.CerberusAPIKey,
 		})
 	case types.PrivateKey:
 		return privatekey.New(privatekey.Config{

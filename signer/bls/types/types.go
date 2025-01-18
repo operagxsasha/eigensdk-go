@@ -35,4 +35,6 @@ type SignerConfig struct {
 	EnableTLS bool
 	// TLSCertFilePath is the path to the TLS cert file
 	TLSCertFilePath string
+	// CerberusAPIKey is the API key for the cerberus signer
+	CerberusAPIKey string
 }

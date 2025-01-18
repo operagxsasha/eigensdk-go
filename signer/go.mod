@@ -5,8 +5,9 @@ go 1.21.13
 replace github.com/Layr-Labs/eigensdk-go => ../../eigensdk-go
 
 require (
-	github.com/Layr-Labs/cerberus-api v0.0.2-0.20250108174619-d5e1eb03fbd5
+	github.com/Layr-Labs/cerberus-api v0.0.2-0.20250117193600-e69c5e8b08fd
 	github.com/Layr-Labs/eigensdk-go v0.1.13
+	github.com/consensys/gnark-crypto v0.12.1
 	github.com/stretchr/testify v1.9.0
 	google.golang.org/grpc v1.64.1
 )
@@ -15,7 +16,6 @@ require (
 	github.com/bits-and-blooms/bitset v1.10.0 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/consensys/bavard v0.1.13 // indirect
-	github.com/consensys/gnark-crypto v0.12.1 // indirect
 	github.com/crate-crypto/go-kzg-4844 v1.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set/v2 v2.1.0 // indirect

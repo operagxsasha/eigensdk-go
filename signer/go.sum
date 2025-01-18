@@ -1,7 +1,7 @@
 github.com/DataDog/zstd v1.4.5 h1:EndNeuB0l9syBZhut0wns3gV1hL8zX8LIu6ZiVHWLIQ=
 github.com/DataDog/zstd v1.4.5/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
-github.com/Layr-Labs/cerberus-api v0.0.2-0.20250108174619-d5e1eb03fbd5 h1:s24M6HYObEuV9OSY36jUM09kp5fOhuz/g1ev2qWDPzU=
-github.com/Layr-Labs/cerberus-api v0.0.2-0.20250108174619-d5e1eb03fbd5/go.mod h1:Lm4fhzy0S3P7GjerzuseGaBFVczsIKmEhIjcT52Hluo=
+github.com/Layr-Labs/cerberus-api v0.0.2-0.20250117193600-e69c5e8b08fd h1:prMzW4BY6KZtWEanf5EIsyHzIZKCNV2mVIXrE6glRRM=
+github.com/Layr-Labs/cerberus-api v0.0.2-0.20250117193600-e69c5e8b08fd/go.mod h1:Lm4fhzy0S3P7GjerzuseGaBFVczsIKmEhIjcT52Hluo=
 github.com/StackExchange/wmi v1.2.1 h1:VIkavFPXSjcnS+O8yTq7NI32k0R5Aj+v39y29VYDOSA=
 github.com/StackExchange/wmi v1.2.1/go.mod h1:rcmrprowKIVzvc+NUiLncP2uuArMWLCbu9SBzvHz7e8=
 github.com/VictoriaMetrics/fastcache v1.12.1 h1:i0mICQuojGDL3KblA7wUNlY5lOK6a4bwt3uRKnkZU40=

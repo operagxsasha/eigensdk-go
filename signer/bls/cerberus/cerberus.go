@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 
 	sdkBls "github.com/Layr-Labs/eigensdk-go/crypto/bls"
 	"github.com/Layr-Labs/eigensdk-go/signer/bls/types"
@@ -20,6 +21,8 @@ import (
 type Config struct {
 	URL          string
 	PublicKeyHex string
+
+	SignerAPIKey string
 
 	// Optional: in case if your signer uses local keystore
 	Password string
@@ -35,6 +38,7 @@ type Signer struct {
 	kmsClient    v1.KeyManagerClient
 	pubKeyHex    string
 	password     string
+	signerAPIKey string
 }
 
 func New(cfg Config) (Signer, error) {
@@ -61,6 +65,7 @@ func New(cfg Config) (Signer, error) {
 		kmsClient:    kmsClient,
 		pubKeyHex:    cfg.PublicKeyHex,
 		password:     cfg.Password,
+		signerAPIKey: cfg.SignerAPIKey,
 	}, nil
 }
 
@@ -68,6 +73,9 @@ func (s Signer) Sign(ctx context.Context, msg []byte) ([]byte, error) {
 	if len(msg) != 32 {
 		return nil, types.ErrInvalidMessageLength
 	}
+
+	// Pass the API key to the signer client
+	ctx = metadata.AppendToOutgoingContext(ctx, "authorization", s.signerAPIKey)
 
 	resp, err := s.signerClient.SignGeneric(ctx, &v1.SignGenericRequest{
 		Data:        msg,
@@ -85,6 +93,9 @@ func (s Signer) SignG1(ctx context.Context, msg []byte) ([]byte, error) {
 	if len(msg) != 64 {
 		return nil, types.ErrInvalidMessageLength
 	}
+
+	// Pass the API key to the signer client
+	ctx = metadata.AppendToOutgoingContext(ctx, "authorization", s.signerAPIKey)
 
 	resp, err := s.signerClient.SignG1(ctx, &v1.SignG1Request{
 		Data:        msg,
