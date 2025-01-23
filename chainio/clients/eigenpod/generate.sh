@@ -16,7 +16,7 @@ cleanup_bindings_dir() {
 
 clone() {
   echo "Cloning the EigenLayer contracts repository"
-  git clone -b feat/partial-withdrawal-batching --depth=1 git@github.com:Layr-Labs/eigenlayer-contracts.git "${TMP_DIR}"
+  git clone -b slashing-magnitudes --depth=1 git@github.com:Layr-Labs/eigenlayer-contracts.git "${TMP_DIR}"
 }
 
 generate_bindings() {

@@ -19,12 +19,10 @@ import (
 	blsapkregistry "github.com/Layr-Labs/eigensdk-go/contracts/bindings/BLSApkRegistry"
 	opstateretriever "github.com/Layr-Labs/eigensdk-go/contracts/bindings/OperatorStateRetriever"
 	regcoord "github.com/Layr-Labs/eigensdk-go/contracts/bindings/RegistryCoordinator"
-	smbase "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ServiceManagerBase"
 	stakeregistry "github.com/Layr-Labs/eigensdk-go/contracts/bindings/StakeRegistry"
 	"github.com/Layr-Labs/eigensdk-go/crypto/bls"
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/types"
-	"github.com/Layr-Labs/eigensdk-go/utils"
 )
 
 type eLReader interface {
@@ -73,75 +71,6 @@ func NewChainWriter(
 		ethClient:              ethClient,
 		txMgr:                  txMgr,
 	}
-}
-
-// BuildAvsRegistryChainWriter creates a new ChainWriter instance from the provided contract addresses
-// Deprecated: Use NewWriterFromConfig instead
-func BuildAvsRegistryChainWriter(
-	registryCoordinatorAddr gethcommon.Address,
-	operatorStateRetrieverAddr gethcommon.Address,
-	logger logging.Logger,
-	ethClient eth.HttpBackend,
-	txMgr txmgr.TxManager,
-) (*ChainWriter, error) {
-	registryCoordinator, err := regcoord.NewContractRegistryCoordinator(registryCoordinatorAddr, ethClient)
-	if err != nil {
-		return nil, utils.WrapError("Failed to create RegistryCoordinator contract", err)
-	}
-	operatorStateRetriever, err := opstateretriever.NewContractOperatorStateRetriever(
-		operatorStateRetrieverAddr,
-		ethClient,
-	)
-	if err != nil {
-		return nil, utils.WrapError("Failed to create OperatorStateRetriever contract", err)
-	}
-	serviceManagerAddr, err := registryCoordinator.ServiceManager(&bind.CallOpts{})
-	if err != nil {
-		return nil, utils.WrapError("Failed to get ServiceManager address", err)
-	}
-	serviceManager, err := smbase.NewContractServiceManagerBase(serviceManagerAddr, ethClient)
-	if err != nil {
-		return nil, utils.WrapError("Failed to create ServiceManager contract", err)
-	}
-	blsApkRegistryAddr, err := registryCoordinator.BlsApkRegistry(&bind.CallOpts{})
-	if err != nil {
-		return nil, utils.WrapError("Failed to get BLSApkRegistry address", err)
-	}
-	blsApkRegistry, err := blsapkregistry.NewContractBLSApkRegistry(blsApkRegistryAddr, ethClient)
-	if err != nil {
-		return nil, utils.WrapError("Failed to create BLSApkRegistry contract", err)
-	}
-	stakeRegistryAddr, err := registryCoordinator.StakeRegistry(&bind.CallOpts{})
-	if err != nil {
-		return nil, utils.WrapError("Failed to get StakeRegistry address", err)
-	}
-	stakeRegistry, err := stakeregistry.NewContractStakeRegistry(stakeRegistryAddr, ethClient)
-	if err != nil {
-		return nil, utils.WrapError("Failed to create StakeRegistry contract", err)
-	}
-	delegationManagerAddr, err := stakeRegistry.Delegation(&bind.CallOpts{})
-	if err != nil {
-		return nil, utils.WrapError("Failed to get DelegationManager address", err)
-	}
-	avsDirectoryAddr, err := serviceManager.AvsDirectory(&bind.CallOpts{})
-	if err != nil {
-		return nil, utils.WrapError("Failed to get AvsDirectory address", err)
-	}
-	elReader, err := elcontracts.BuildELChainReader(delegationManagerAddr, avsDirectoryAddr, ethClient, logger)
-	if err != nil {
-		return nil, utils.WrapError("Failed to create ELChainReader", err)
-	}
-	return NewChainWriter(
-		serviceManagerAddr,
-		registryCoordinator,
-		operatorStateRetriever,
-		stakeRegistry,
-		blsApkRegistry,
-		elReader,
-		logger,
-		ethClient,
-		txMgr,
-	), nil
 }
 
 // NewWriterFromConfig creates a new ChainWriter from the provided config
@@ -490,7 +419,37 @@ func (w *ChainWriter) DeregisterOperator(
 	if err != nil {
 		return nil, err
 	}
-	tx, err := w.registryCoordinator.DeregisterOperator(noSendTxOpts, quorumNumbers.UnderlyingType())
+	tx, err := w.registryCoordinator.DeregisterOperator0(noSendTxOpts, quorumNumbers.UnderlyingType())
+	if err != nil {
+		return nil, err
+	}
+	receipt, err := w.txMgr.Send(ctx, tx, waitForReceipt)
+	if err != nil {
+		return nil, errors.New("failed to send tx with err: " + err.Error())
+	}
+	w.logger.Info(
+		"successfully deregistered operator with the AVS's registry coordinator",
+		"txHash",
+		receipt.TxHash.String(),
+	)
+	return receipt, nil
+}
+
+func (w *ChainWriter) DeregisterOperatorOperatorSets(
+	ctx context.Context,
+	operatorSetIds types.OperatorSetIds,
+	operator types.Operator,
+	pubkey regcoord.BN254G1Point,
+	waitForReceipt bool,
+) (*gethtypes.Receipt, error) {
+	w.logger.Info("deregistering operator with the AVS's registry coordinator")
+
+	operatorAddress := gethcommon.HexToAddress(operator.Address)
+	noSendTxOpts, err := w.txMgr.GetNoSendTxOpts()
+	if err != nil {
+		return nil, err
+	}
+	tx, err := w.registryCoordinator.DeregisterOperator(noSendTxOpts, operatorAddress, operatorSetIds.UnderlyingType())
 	if err != nil {
 		return nil, err
 	}

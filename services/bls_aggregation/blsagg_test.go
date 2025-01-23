@@ -117,16 +117,19 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		testOperator3 := types.TestOperator{
 			OperatorId:     types.OperatorId{3},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(300), 1: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x3"),
+			Socket:         "localhost:8082",
 		}
 		blockNum := uint32(1)
 		taskIndex := types.TaskIndex(0)
@@ -207,11 +210,13 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		blockNum := uint32(1)
 		taskIndex := types.TaskIndex(0)
@@ -282,11 +287,13 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		quorumNumbers := types.QuorumNums{0, 1}
 		quorumThresholdPercentages := []types.QuorumThresholdPercentage{100, 100}
@@ -418,11 +425,13 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 
 		blockNum := uint32(1)
@@ -513,6 +522,7 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		taskIndex := types.TaskIndex(0)
 		quorumNumbers := types.QuorumNums{0}
@@ -543,11 +553,13 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		taskIndex := types.TaskIndex(0)
 		quorumNumbers := types.QuorumNums{0}
@@ -602,11 +614,13 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		blockNum := uint32(1)
 		taskIndex := types.TaskIndex(0)
@@ -653,12 +667,14 @@ func TestBlsAgg(t *testing.T) {
 			// Note the quorums is {0, 1}, but operator id 1 just stake 0.
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId: types.OperatorId{2},
 			// Note the quorums is {0, 1}, but operator id 1 just stake 0.
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		taskIndex := types.TaskIndex(0)
 		quorumNumbers := types.QuorumNums{0, 1}
@@ -728,17 +744,20 @@ func TestBlsAgg(t *testing.T) {
 				// Note the quorums is {0, 1}, but operator id 1 just stake 0.
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 				BlsKeypair:     newBlsKeyPairPanics("0x1"),
+				Socket:         "localhost:8080",
 			}
 			testOperator2 := types.TestOperator{
 				OperatorId: types.OperatorId{2},
 				// Note the quorums is {0, 1}, but operator id 2 just stake 1.
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{1: big.NewInt(200)},
 				BlsKeypair:     newBlsKeyPairPanics("0x2"),
+				Socket:         "localhost:8081",
 			}
 			testOperator3 := types.TestOperator{
 				OperatorId:     types.OperatorId{3},
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 				BlsKeypair:     newBlsKeyPairPanics("0x3"),
+				Socket:         "localhost:8082",
 			}
 			taskIndex := types.TaskIndex(0)
 			quorumNumbers := types.QuorumNums{0, 1}
@@ -815,17 +834,20 @@ func TestBlsAgg(t *testing.T) {
 				// Note the quorums is {0, 1}, but operator id 1 just stake 0.
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 				BlsKeypair:     newBlsKeyPairPanics("0x1"),
+				Socket:         "localhost:8080",
 			}
 			testOperator2 := types.TestOperator{
 				OperatorId: types.OperatorId{2},
 				// Note the quorums is {0, 1}, but operator id 2 just stake 1.
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{1: big.NewInt(200)},
 				BlsKeypair:     newBlsKeyPairPanics("0x2"),
+				Socket:         "localhost:8081",
 			}
 			testOperator3 := types.TestOperator{
 				OperatorId:     types.OperatorId{3},
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 				BlsKeypair:     newBlsKeyPairPanics("0x3"),
+				Socket:         "localhost:8082",
 			}
 			taskIndex := types.TaskIndex(0)
 			quorumNumbers := types.QuorumNums{0, 1}
@@ -931,11 +953,13 @@ func TestBlsAgg(t *testing.T) {
 				// Note the quorums is {0, 1}, but operator id 1 just stake 0.
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 				BlsKeypair:     newBlsKeyPairPanics("0x1"),
+				Socket:         "localhost:8080",
 			}
 			testOperator2 := types.TestOperator{
 				OperatorId:     types.OperatorId{2},
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{1: big.NewInt(200)},
 				BlsKeypair:     newBlsKeyPairPanics("0x2"),
+				Socket:         "localhost:8081",
 			}
 			taskIndex := types.TaskIndex(0)
 			quorumNumbers := types.QuorumNums{0, 1}
@@ -1015,11 +1039,13 @@ func TestBlsAgg(t *testing.T) {
 				OperatorId:     types.OperatorId{1},
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 				BlsKeypair:     newBlsKeyPairPanics("0x1"),
+				Socket:         "localhost:8080",
 			}
 			testOperator2 := types.TestOperator{
 				OperatorId:     types.OperatorId{2},
 				StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 				BlsKeypair:     newBlsKeyPairPanics("0x2"),
+				Socket:         "localhost:8081",
 			}
 			blockNum := uint32(1)
 			taskIndex := types.TaskIndex(0)
@@ -1086,11 +1112,13 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		blockNum := uint32(1)
 		taskIndex := types.TaskIndex(0)
@@ -1194,16 +1222,19 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		testOperator3 := types.TestOperator{
 			OperatorId:     types.OperatorId{3},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x3"),
+			Socket:         "localhost:8082",
 		}
 		blockNum := uint32(1)
 		taskIndex := types.TaskIndex(0)
@@ -1299,16 +1330,19 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		testOperator3 := types.TestOperator{
 			OperatorId:     types.OperatorId{3},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x3"),
+			Socket:         "localhost:8082",
 		}
 		blockNum := uint32(1)
 		taskIndex := types.TaskIndex(0)
@@ -1506,16 +1540,19 @@ func TestBlsAgg(t *testing.T) {
 			OperatorId:     types.OperatorId{1},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x1"),
+			Socket:         "localhost:8080",
 		}
 		testOperator2 := types.TestOperator{
 			OperatorId:     types.OperatorId{2},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(200)},
 			BlsKeypair:     newBlsKeyPairPanics("0x2"),
+			Socket:         "localhost:8081",
 		}
 		testOperator3 := types.TestOperator{
 			OperatorId:     types.OperatorId{3},
 			StakePerQuorum: map[types.QuorumNum]types.StakeAmount{0: big.NewInt(100), 1: big.NewInt(100)},
 			BlsKeypair:     newBlsKeyPairPanics("0x3"),
+			Socket:         "localhost:8082",
 		}
 		blockNum := uint32(1)
 		taskIndex := types.TaskIndex(0)
@@ -1644,8 +1681,7 @@ func TestIntegrationBlsAgg(t *testing.T) {
 		testData := testutils.NewTestData(defaultInput)
 
 		// define operator ecdsa and bls private keys
-		ecdsaPrivKeyHex := "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-		ecdsaPrivKey, err := crypto.HexToECDSA(ecdsaPrivKeyHex)
+		ecdsaPrivKey, err := crypto.HexToECDSA(testutils.ANVIL_FIRST_PRIVATE_KEY)
 		require.NoError(t, err)
 		blsPrivKeyHex := testData.Input.BlsPrivKey
 		blsKeyPair := newBlsKeyPairPanics(blsPrivKeyHex)

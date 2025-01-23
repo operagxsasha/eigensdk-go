@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import "eigenlayer-contracts/src/contracts/permissions/PauserRegistry.sol";
@@ -7,22 +7,23 @@ import "eigenlayer-contracts/src/contracts/permissions/PauserRegistry.sol";
 import {IAVSDirectory} from "eigenlayer-contracts/src/contracts/interfaces/IAVSDirectory.sol";
 import {IDelegationManager} from "eigenlayer-contracts/src/contracts/interfaces/IDelegationManager.sol";
 import {IStrategyManager, IStrategy} from "eigenlayer-contracts/src/contracts/interfaces/IStrategyManager.sol";
-import {ISlasher} from "eigenlayer-contracts/src/contracts/interfaces/ISlasher.sol";
 import {StrategyBaseTVLLimits} from "eigenlayer-contracts/src/contracts/strategies/StrategyBaseTVLLimits.sol";
 import {IRewardsCoordinator} from "eigenlayer-contracts/src/contracts/interfaces/IRewardsCoordinator.sol";
+import {IAllocationManager} from "eigenlayer-contracts/src/contracts/interfaces/IAllocationManager.sol";
 
 import {ConfigsReadWriter} from "./ConfigsReadWriter.sol";
 import "forge-std/StdJson.sol";
+import {IAllocationManager} from "../../lib/eigenlayer-middleware/lib/eigenlayer-contracts/src/contracts/interfaces/IAllocationManager.sol";
 
-struct EigenlayerContracts {
+    struct EigenlayerContracts {
     ProxyAdmin eigenlayerProxyAdmin;
     PauserRegistry eigenlayerPauserReg;
     IStrategyManager strategyManager;
     IDelegationManager delegationManager;
-    ISlasher slasher;
     IAVSDirectory avsDirectory;
     IRewardsCoordinator rewardsCoordinator;
     StrategyBaseTVLLimits baseStrategyImplementation;
+    IAllocationManager allocationManager;
 }
 
 contract EigenlayerContractsParser is ConfigsReadWriter {
@@ -56,19 +57,13 @@ contract EigenlayerContractsParser is ConfigsReadWriter {
         IDelegationManager delegationManager = IDelegationManager(
             stdJson.readAddress(
                 eigenlayerDeployedContracts,
-                ".addresses.delegation"
+                ".addresses.delegationManager"
             )
         );
         IAVSDirectory avsDirectory = IAVSDirectory(
             stdJson.readAddress(
                 eigenlayerDeployedContracts,
                 ".addresses.avsDirectory"
-            )
-        );
-        ISlasher slasher = ISlasher(
-            stdJson.readAddress(
-                eigenlayerDeployedContracts,
-                ".addresses.slasher"
             )
         );
         StrategyBaseTVLLimits baseStrategyImplementation = StrategyBaseTVLLimits(
@@ -84,16 +79,23 @@ contract EigenlayerContractsParser is ConfigsReadWriter {
                  ".addresses.rewardsCoordinator"
              )
         );
+
+        IAllocationManager allocationManager = IAllocationManager(
+            stdJson.readAddress(
+                eigenlayerDeployedContracts,
+                ".addresses.allocationManager"
+            )
+        );
         return
             EigenlayerContracts(
                 eigenlayerProxyAdmin,
                 eigenlayerPauserReg,
                 strategyManager,
                 delegationManager,
-                slasher,
                 avsDirectory,
                 rewardsCoordinator,
-                baseStrategyImplementation
+                baseStrategyImplementation,
+                allocationManager
             );
     }
 }

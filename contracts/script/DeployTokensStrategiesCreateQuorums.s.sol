@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import "eigenlayer-contracts/src/contracts/permissions/PauserRegistry.sol";
@@ -9,6 +9,7 @@ import {StrategyBaseTVLLimits} from "eigenlayer-contracts/src/contracts/strategi
 
 import "eigenlayer-middleware/src/interfaces/IStakeRegistry.sol";
 import "eigenlayer-middleware/src/RegistryCoordinator.sol" as regcoord;
+import {StakeType} from "eigenlayer-middleware/src/interfaces/IStakeRegistry.sol";
 
 import {MockERC20, IERC20} from "../src/MockERC20.sol";
 import "./parsers/EigenlayerContractsParser.sol";
@@ -90,8 +91,7 @@ contract DeployTokensStrategiesCreateQuorums is
         bool[] memory thirdPartyTransfersForbiddenValues = new bool[](1);
         thirdPartyTransfersForbiddenValues[0] = false;
         strategyManager.addStrategiesToDepositWhitelist(
-            strats,
-            thirdPartyTransfersForbiddenValues
+            strats
         );
 
         // WRITE JSON DATA
@@ -147,7 +147,7 @@ contract DeployTokensStrategiesCreateQuorums is
             multiplier: 1 ether
         });
 
-        regcoord.RegistryCoordinator(address(mockAvsRegCoord)).createQuorum(
+        regcoord.RegistryCoordinator(address(mockAvsRegCoord)).createTotalDelegatedStakeQuorum(
             quorumOperatorSetParams,
             quorumMinimumStake,
             quorumStrategyParams

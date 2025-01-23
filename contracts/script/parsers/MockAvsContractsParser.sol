@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.12;
 
 import {RegistryCoordinator} from "eigenlayer-middleware/src/RegistryCoordinator.sol";
 import {OperatorStateRetriever} from "eigenlayer-middleware/src/OperatorStateRetriever.sol";

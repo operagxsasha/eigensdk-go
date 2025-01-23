@@ -25,11 +25,14 @@ type Operator struct {
 	Address string `yaml:"address" json:"address"`
 
 	// https://github.com/Layr-Labs/eigenlayer-contracts/blob/delegation-redesign/src/contracts/interfaces/IDelegationManager.sol#L18
-	DelegationApproverAddress string `yaml:"delegation_approver_address"  json:"delegation_approver_address"`
-	StakerOptOutWindowBlocks  uint32 `yaml:"staker_opt_out_window_blocks" json:"staker_opt_out_window_blocks"`
+	DelegationApproverAddress string `yaml:"delegation_approver_address" json:"delegation_approver_address"`
 
 	// MetadataUrl URL where operator metadata is stored
 	MetadataUrl string `yaml:"metadata_url" json:"metadata_url"`
+
+	// AllocationDelay is the delay in seconds where an operator is allowed to change allocation
+	// This can only be set once by the operator. Once set this can't be changed
+	AllocationDelay uint32 `yaml:"allocation_delay" json:"allocation_delay"`
 }
 
 func (o Operator) Validate() error {
@@ -192,4 +195,20 @@ type QuorumAvsState struct {
 	TotalStake   StakeAmount
 	AggPubkeyG1  *bls.G1Point
 	BlockNumber  BlockNum
+}
+
+type OperatorSetIds []OperatorSetId
+
+func (o OperatorSetIds) UnderlyingType() []uint32 {
+	underlying := make([]uint32, len(o))
+	for i, v := range o {
+		underlying[i] = v.UnderlyingType()
+	}
+	return underlying
+}
+
+type OperatorSetId uint32
+
+func (o OperatorSetId) UnderlyingType() uint32 {
+	return uint32(o)
 }

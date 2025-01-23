@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.12;
 
 import "./DeployMockAvsRegistries.s.sol";
 import "forge-std/console.sol";
@@ -9,14 +9,18 @@ contract DeployMockAvs is DeployMockAvsRegistries {
     MockAvsServiceManager public mockAvsServiceManager;
     MockAvsServiceManager public mockAvsServiceManagerImplementation;
 
+    EmptyContract public emptyContract;
+    ProxyAdmin public mockAvsProxyAdmin;
+
     function run() public virtual {
+
         // The ContractsRegistry contract should always be deployed at this address on anvil
         // it's the address of the contract created at nonce 0 by the first anvil account (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266)
         ContractsRegistry contractsRegistry = ContractsRegistry(
             0x5FbDB2315678afecb367f032d93F642f64180aa3
         );
         EigenlayerContracts
-            memory eigenlayerContracts = _loadEigenlayerDeployedContracts();
+        memory eigenlayerContracts = _loadEigenlayerDeployedContracts();
         MockAvsOpsAddresses memory addressConfig = _loadAvsOpsAddresses(
             "ops_addresses"
         );
@@ -38,17 +42,26 @@ contract DeployMockAvs is DeployMockAvsRegistries {
             )
         );
         MockAvsContracts
-            memory mockAvsContracts = _deploymockAvsRegistryContracts(
-                eigenlayerContracts,
-                addressConfig,
-                mockAvsServiceManager,
-                mockAvsServiceManagerImplementation
-            );
-        mockAvsServiceManagerImplementation = new MockAvsServiceManager(
-            registryCoordinator,
-            eigenlayerContracts.avsDirectory,
-            eigenlayerContracts.rewardsCoordinator
+        memory mockAvsContracts = _deploymockAvsRegistryContracts(
+            eigenlayerContracts,
+            addressConfig,
+            mockAvsServiceManager,
+            mockAvsServiceManagerImplementation
         );
+
+        console.log("HERE16");
+        console.logAddress(address(mockAvsContracts.registryCoordinator));
+        console.logAddress(address(eigenlayerContracts.avsDirectory));
+        console.logAddress(address(eigenlayerContracts.rewardsCoordinator));
+        console.logAddress(address(eigenlayerContracts.allocationManager));
+        mockAvsServiceManagerImplementation = new MockAvsServiceManager(
+            mockAvsContracts.registryCoordinator,
+            eigenlayerContracts.avsDirectory,
+            eigenlayerContracts.rewardsCoordinator,
+            eigenlayerContracts.allocationManager
+        );
+
+        console.log("HERE17");
 
         mockAvsProxyAdmin.upgradeAndCall(
             TransparentUpgradeableProxy(

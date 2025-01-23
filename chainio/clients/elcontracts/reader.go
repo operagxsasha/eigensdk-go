@@ -3,20 +3,19 @@ package elcontracts
 import (
 	"context"
 	"errors"
-
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
 	gethcommon "github.com/ethereum/go-ethereum/common"
 
 	"github.com/Layr-Labs/eigensdk-go/chainio/clients/eth"
+	avsdirectory "github.com/Layr-Labs/eigensdk-go/contracts/bindings/AVSDirectory"
+	allocationmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/AllocationManager"
 	delegationmanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/DelegationManager"
-	avsdirectory "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IAVSDirectory"
 	erc20 "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IERC20"
 	rewardscoordinator "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IRewardsCoordinator"
-	slasher "github.com/Layr-Labs/eigensdk-go/contracts/bindings/ISlasher"
 	strategy "github.com/Layr-Labs/eigensdk-go/contracts/bindings/IStrategy"
+	permissioncontroller "github.com/Layr-Labs/eigensdk-go/contracts/bindings/PermissionController"
 	strategymanager "github.com/Layr-Labs/eigensdk-go/contracts/bindings/StrategyManager"
 	"github.com/Layr-Labs/eigensdk-go/logging"
 	"github.com/Layr-Labs/eigensdk-go/types"
@@ -24,69 +23,47 @@ import (
 )
 
 type Config struct {
-	DelegationManagerAddress  common.Address
-	AvsDirectoryAddress       common.Address
-	RewardsCoordinatorAddress common.Address
+	DelegationManagerAddress     gethcommon.Address
+	AvsDirectoryAddress          gethcommon.Address
+	RewardsCoordinatorAddress    gethcommon.Address
+	PermissionsControllerAddress gethcommon.Address
 }
 
 type ChainReader struct {
-	logger             logging.Logger
-	slasher            slasher.ContractISlasherCalls
-	delegationManager  *delegationmanager.ContractDelegationManager
-	strategyManager    *strategymanager.ContractStrategyManager
-	avsDirectory       *avsdirectory.ContractIAVSDirectory
-	rewardsCoordinator *rewardscoordinator.ContractIRewardsCoordinator
-	ethClient          eth.HttpBackend
+	logger               logging.Logger
+	delegationManager    *delegationmanager.ContractDelegationManager
+	strategyManager      *strategymanager.ContractStrategyManager
+	avsDirectory         *avsdirectory.ContractAVSDirectory
+	rewardsCoordinator   *rewardscoordinator.ContractIRewardsCoordinator
+	allocationManager    *allocationmanager.ContractAllocationManager
+	permissionController *permissioncontroller.ContractPermissionController
+	ethClient            eth.HttpBackend
 }
 
+var errLegacyAVSsNotSupported = errors.New("method not supported for legacy AVSs")
+
 func NewChainReader(
-	slasher slasher.ContractISlasherCalls,
 	delegationManager *delegationmanager.ContractDelegationManager,
 	strategyManager *strategymanager.ContractStrategyManager,
-	avsDirectory *avsdirectory.ContractIAVSDirectory,
+	avsDirectory *avsdirectory.ContractAVSDirectory,
 	rewardsCoordinator *rewardscoordinator.ContractIRewardsCoordinator,
+	allocationManager *allocationmanager.ContractAllocationManager,
+	permissionController *permissioncontroller.ContractPermissionController,
 	logger logging.Logger,
 	ethClient eth.HttpBackend,
 ) *ChainReader {
 	logger = logger.With(logging.ComponentKey, "elcontracts/reader")
 
 	return &ChainReader{
-		slasher:            slasher,
-		delegationManager:  delegationManager,
-		strategyManager:    strategyManager,
-		avsDirectory:       avsDirectory,
-		rewardsCoordinator: rewardsCoordinator,
-		logger:             logger,
-		ethClient:          ethClient,
+		delegationManager:    delegationManager,
+		strategyManager:      strategyManager,
+		avsDirectory:         avsDirectory,
+		rewardsCoordinator:   rewardsCoordinator,
+		allocationManager:    allocationManager,
+		permissionController: permissionController,
+		logger:               logger,
+		ethClient:            ethClient,
 	}
-}
-
-// BuildELChainReader creates a new ELChainReader
-// Deprecated: Use BuildFromConfig instead
-func BuildELChainReader(
-	delegationManagerAddr gethcommon.Address,
-	avsDirectoryAddr gethcommon.Address,
-	ethClient eth.HttpBackend,
-	logger logging.Logger,
-) (*ChainReader, error) {
-	elContractBindings, err := NewEigenlayerContractBindings(
-		delegationManagerAddr,
-		avsDirectoryAddr,
-		ethClient,
-		logger,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return NewChainReader(
-		elContractBindings.Slasher,
-		elContractBindings.DelegationManager,
-		elContractBindings.StrategyManager,
-		elContractBindings.AvsDirectory,
-		elContractBindings.RewardsCoordinator,
-		logger,
-		ethClient,
-	), nil
 }
 
 func NewReaderFromConfig(
@@ -103,11 +80,12 @@ func NewReaderFromConfig(
 		return nil, err
 	}
 	return NewChainReader(
-		elContractBindings.Slasher,
 		elContractBindings.DelegationManager,
 		elContractBindings.StrategyManager,
 		elContractBindings.AvsDirectory,
 		elContractBindings.RewardsCoordinator,
+		elContractBindings.AllocationManager,
+		elContractBindings.PermissionController,
 		logger,
 		ethClient,
 	), nil
@@ -121,15 +99,31 @@ func (r *ChainReader) IsOperatorRegistered(
 		return false, errors.New("DelegationManager contract not provided")
 	}
 
-	isOperator, err := r.delegationManager.IsOperator(
-		&bind.CallOpts{Context: ctx},
-		gethcommon.HexToAddress(operator.Address),
-	)
-	if err != nil {
-		return false, err
-	}
+	return r.delegationManager.IsOperator(&bind.CallOpts{Context: ctx}, gethcommon.HexToAddress(operator.Address))
+}
 
-	return isOperator, nil
+// GetStakerShares returns the amount of shares that a staker has in all of the strategies in which they have nonzero
+// shares
+func (r *ChainReader) GetStakerShares(
+	ctx context.Context,
+	stakerAddress gethcommon.Address,
+) ([]gethcommon.Address, []*big.Int, error) {
+	if r.delegationManager == nil {
+		return nil, nil, errors.New("DelegationManager contract not provided")
+	}
+	return r.delegationManager.GetDepositedShares(&bind.CallOpts{Context: ctx}, stakerAddress)
+}
+
+// GetDelegatedOperator returns the operator that a staker has delegated to
+func (r *ChainReader) GetDelegatedOperator(
+	ctx context.Context,
+	stakerAddress gethcommon.Address,
+	blockNumber *big.Int,
+) (gethcommon.Address, error) {
+	if r.delegationManager == nil {
+		return gethcommon.Address{}, errors.New("DelegationManager contract not provided")
+	}
+	return r.delegationManager.DelegatedTo(&bind.CallOpts{Context: ctx}, stakerAddress)
 }
 
 func (r *ChainReader) GetOperatorDetails(
@@ -140,18 +134,37 @@ func (r *ChainReader) GetOperatorDetails(
 		return types.Operator{}, errors.New("DelegationManager contract not provided")
 	}
 
-	operatorDetails, err := r.delegationManager.OperatorDetails(
+	delegationManagerAddress, err := r.delegationManager.DelegationApprover(
 		&bind.CallOpts{Context: ctx},
 		gethcommon.HexToAddress(operator.Address),
 	)
+	// This call should not fail since it's a getter
 	if err != nil {
 		return types.Operator{}, err
 	}
 
+	isSet, delay, err := r.allocationManager.GetAllocationDelay(
+		&bind.CallOpts{
+			Context: ctx,
+		},
+		gethcommon.HexToAddress(operator.Address),
+	)
+	// This call should not fail
+	if err != nil {
+		return types.Operator{}, err
+	}
+
+	var allocationDelay uint32
+	if isSet {
+		allocationDelay = delay
+	} else {
+		allocationDelay = 0
+	}
+
 	return types.Operator{
 		Address:                   operator.Address,
-		StakerOptOutWindowBlocks:  operatorDetails.StakerOptOutWindowBlocks,
-		DelegationApproverAddress: operatorDetails.DelegationApprover.Hex(),
+		DelegationApproverAddress: delegationManagerAddress.Hex(),
+		AllocationDelay:           allocationDelay,
 	}, nil
 }
 
@@ -161,12 +174,13 @@ func (r *ChainReader) GetStrategyAndUnderlyingToken(
 	strategyAddr gethcommon.Address,
 ) (*strategy.ContractIStrategy, gethcommon.Address, error) {
 	contractStrategy, err := strategy.NewContractIStrategy(strategyAddr, r.ethClient)
+	// This call should not fail since it's an init
 	if err != nil {
-		return nil, common.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
+		return nil, gethcommon.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
 	}
 	underlyingTokenAddr, err := contractStrategy.UnderlyingToken(&bind.CallOpts{Context: ctx})
 	if err != nil {
-		return nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
+		return nil, gethcommon.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}
 	return contractStrategy, underlyingTokenAddr, nil
 }
@@ -178,43 +192,20 @@ func (r *ChainReader) GetStrategyAndUnderlyingERC20Token(
 	strategyAddr gethcommon.Address,
 ) (*strategy.ContractIStrategy, erc20.ContractIERC20Methods, gethcommon.Address, error) {
 	contractStrategy, err := strategy.NewContractIStrategy(strategyAddr, r.ethClient)
+	// This call should not fail since it's an init
 	if err != nil {
-		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
+		return nil, nil, gethcommon.Address{}, utils.WrapError("Failed to fetch strategy contract", err)
 	}
 	underlyingTokenAddr, err := contractStrategy.UnderlyingToken(&bind.CallOpts{Context: ctx})
 	if err != nil {
-		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
+		return nil, nil, gethcommon.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}
 	contractUnderlyingToken, err := erc20.NewContractIERC20(underlyingTokenAddr, r.ethClient)
+	// This call should not fail, if the strategy does not have an underlying token then it would enter the if above
 	if err != nil {
-		return nil, nil, common.Address{}, utils.WrapError("Failed to fetch token contract", err)
+		return nil, nil, gethcommon.Address{}, utils.WrapError("Failed to fetch token contract", err)
 	}
 	return contractStrategy, contractUnderlyingToken, underlyingTokenAddr, nil
-}
-
-func (r *ChainReader) ServiceManagerCanSlashOperatorUntilBlock(
-	ctx context.Context,
-	operatorAddr gethcommon.Address,
-	serviceManagerAddr gethcommon.Address,
-) (uint32, error) {
-	if r.slasher == nil {
-		return uint32(0), errors.New("slasher contract not provided")
-	}
-
-	return r.slasher.ContractCanSlashOperatorUntilBlock(
-		&bind.CallOpts{Context: ctx}, operatorAddr, serviceManagerAddr,
-	)
-}
-
-func (r *ChainReader) OperatorIsFrozen(
-	ctx context.Context,
-	operatorAddr gethcommon.Address,
-) (bool, error) {
-	if r.slasher == nil {
-		return false, errors.New("slasher contract not provided")
-	}
-
-	return r.slasher.IsFrozen(&bind.CallOpts{Context: ctx}, operatorAddr)
 }
 
 func (r *ChainReader) GetOperatorSharesInStrategy(
@@ -293,9 +284,9 @@ func (r *ChainReader) CurrRewardsCalculationEndTimestamp(ctx context.Context) (u
 
 func (r *ChainReader) GetCurrentClaimableDistributionRoot(
 	ctx context.Context,
-) (rewardscoordinator.IRewardsCoordinatorDistributionRoot, error) {
+) (rewardscoordinator.IRewardsCoordinatorTypesDistributionRoot, error) {
 	if r.rewardsCoordinator == nil {
-		return rewardscoordinator.IRewardsCoordinatorDistributionRoot{}, errors.New(
+		return rewardscoordinator.IRewardsCoordinatorTypesDistributionRoot{}, errors.New(
 			"RewardsCoordinator contract not provided",
 		)
 	}
@@ -328,7 +319,7 @@ func (r *ChainReader) GetCumulativeClaimed(
 
 func (r *ChainReader) CheckClaim(
 	ctx context.Context,
-	claim rewardscoordinator.IRewardsCoordinatorRewardsMerkleClaim,
+	claim rewardscoordinator.IRewardsCoordinatorTypesRewardsMerkleClaim,
 ) (bool, error) {
 	if r.rewardsCoordinator == nil {
 		return false, errors.New("RewardsCoordinator contract not provided")
@@ -346,13 +337,7 @@ func (r *ChainReader) GetOperatorAVSSplit(
 		return 0, errors.New("RewardsCoordinator contract not provided")
 	}
 
-	split, err := r.rewardsCoordinator.GetOperatorAVSSplit(&bind.CallOpts{Context: ctx}, operator, avs)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return split, nil
+	return r.rewardsCoordinator.GetOperatorAVSSplit(&bind.CallOpts{Context: ctx}, operator, avs)
 }
 
 func (r *ChainReader) GetOperatorPISplit(
@@ -363,11 +348,448 @@ func (r *ChainReader) GetOperatorPISplit(
 		return 0, errors.New("RewardsCoordinator contract not provided")
 	}
 
-	split, err := r.rewardsCoordinator.GetOperatorPISplit(&bind.CallOpts{Context: ctx}, operator)
+	return r.rewardsCoordinator.GetOperatorPISplit(&bind.CallOpts{Context: ctx}, operator)
+}
 
+func (r *ChainReader) GetAllocatableMagnitude(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	strategyAddress gethcommon.Address,
+) (uint64, error) {
+	if r.allocationManager == nil {
+		return 0, errors.New("AllocationManager contract not provided")
+	}
+
+	return r.allocationManager.GetAllocatableMagnitude(&bind.CallOpts{Context: ctx}, operatorAddress, strategyAddress)
+}
+
+func (r *ChainReader) GetMaxMagnitudes(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	strategyAddresses []gethcommon.Address,
+) ([]uint64, error) {
+	if r.allocationManager == nil {
+		return []uint64{}, errors.New("AllocationManager contract not provided")
+	}
+
+	return r.allocationManager.GetMaxMagnitudes0(&bind.CallOpts{Context: ctx}, operatorAddress, strategyAddresses)
+}
+
+func (r *ChainReader) GetAllocationInfo(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	strategyAddress gethcommon.Address,
+) ([]AllocationInfo, error) {
+	if r.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+
+	opSets, allocationInfo, err := r.allocationManager.GetStrategyAllocations(
+		&bind.CallOpts{Context: ctx},
+		operatorAddress,
+		strategyAddress,
+	)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, err
+	}
+
+	allocationsInfo := make([]AllocationInfo, len(opSets))
+	for i, opSet := range opSets {
+		allocationsInfo[i] = AllocationInfo{
+			OperatorSetId:    opSet.Id,
+			AvsAddress:       opSet.Avs,
+			CurrentMagnitude: big.NewInt(int64(allocationInfo[i].CurrentMagnitude)),
+			PendingDiff:      allocationInfo[i].PendingDiff,
+			EffectBlock:      allocationInfo[i].EffectBlock,
+		}
+	}
+
+	return allocationsInfo, nil
+}
+
+func (r *ChainReader) GetOperatorShares(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	strategyAddresses []gethcommon.Address,
+) ([]*big.Int, error) {
+	if r.delegationManager == nil {
+		return nil, errors.New("DelegationManager contract not provided")
+	}
+
+	return r.delegationManager.GetOperatorShares(&bind.CallOpts{
+		Context: ctx,
+	}, operatorAddress, strategyAddresses)
+}
+
+func (r *ChainReader) GetOperatorsShares(
+	ctx context.Context,
+	operatorAddresses []gethcommon.Address,
+	strategyAddresses []gethcommon.Address,
+) ([][]*big.Int, error) {
+	if r.delegationManager == nil {
+		return nil, errors.New("DelegationManager contract not provided")
+	}
+	return r.delegationManager.GetOperatorsShares(&bind.CallOpts{Context: ctx}, operatorAddresses, strategyAddresses)
+}
+
+// GetNumOperatorSetsForOperator returns the number of operator sets that an operator is part of
+// Doesn't include M2 AVSs
+func (r *ChainReader) GetNumOperatorSetsForOperator(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+) (*big.Int, error) {
+	if r.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+	opSets, err := r.allocationManager.GetAllocatedSets(&bind.CallOpts{Context: ctx}, operatorAddress)
+	if err != nil {
+		return nil, err
+	}
+	return big.NewInt(int64(len(opSets))), nil
+}
+
+// GetOperatorSetsForOperator returns the list of operator sets that an operator is part of
+// Doesn't include M2 AVSs
+func (r *ChainReader) GetOperatorSetsForOperator(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+) ([]allocationmanager.OperatorSet, error) {
+	if r.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+	// TODO: we're fetching max int64 operatorSets here. What's the practical limit for timeout by RPC? do we need to
+	// paginate?
+	return r.allocationManager.GetAllocatedSets(&bind.CallOpts{Context: ctx}, operatorAddress)
+}
+
+// IsOperatorRegisteredWithOperatorSet returns if an operator is registered with a specific operator set
+func (r *ChainReader) IsOperatorRegisteredWithOperatorSet(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	operatorSet allocationmanager.OperatorSet,
+) (bool, error) {
+	if operatorSet.Id == 0 {
+		// this is an M2 AVS
+		if r.avsDirectory == nil {
+			return false, errors.New("AVSDirectory contract not provided")
+		}
+
+		status, err := r.avsDirectory.AvsOperatorStatus(&bind.CallOpts{Context: ctx}, operatorSet.Avs, operatorAddress)
+		// This call should not fail since it's a getter
+		if err != nil {
+			return false, err
+		}
+
+		return status == 1, nil
+	} else {
+		if r.allocationManager == nil {
+			return false, errors.New("AllocationManager contract not provided")
+		}
+		registeredOperatorSets, err := r.allocationManager.GetRegisteredSets(&bind.CallOpts{Context: ctx}, operatorAddress)
+		// This call should not fail since it's a getter
+		if err != nil {
+			return false, err
+		}
+		for _, registeredOperatorSet := range registeredOperatorSets {
+			if registeredOperatorSet.Id == operatorSet.Id && registeredOperatorSet.Avs == operatorSet.Avs {
+				return true, nil
+			}
+		}
+
+		return false, nil
+	}
+}
+
+// GetOperatorsForOperatorSet returns the list of operators in a specific operator set
+// Not supported for M2 AVSs
+func (r *ChainReader) GetOperatorsForOperatorSet(
+	ctx context.Context,
+	operatorSet allocationmanager.OperatorSet,
+) ([]gethcommon.Address, error) {
+	if operatorSet.Id == 0 {
+		return nil, errLegacyAVSsNotSupported
+	} else {
+		if r.allocationManager == nil {
+			return nil, errors.New("AllocationManager contract not provided")
+		}
+
+		return r.allocationManager.GetMembers(&bind.CallOpts{Context: ctx}, operatorSet)
+	}
+}
+
+// GetNumOperatorsForOperatorSet returns the number of operators in a specific operator set
+func (r *ChainReader) GetNumOperatorsForOperatorSet(
+	ctx context.Context,
+	operatorSet allocationmanager.OperatorSet,
+) (*big.Int, error) {
+	if operatorSet.Id == 0 {
+		return nil, errLegacyAVSsNotSupported
+	} else {
+		if r.allocationManager == nil {
+			return nil, errors.New("AllocationManager contract not provided")
+		}
+
+		return r.allocationManager.GetMemberCount(&bind.CallOpts{Context: ctx}, operatorSet)
+	}
+}
+
+// GetStrategiesForOperatorSet returns the list of strategies that an operator set takes into account
+// Not supported for M2 AVSs
+func (r *ChainReader) GetStrategiesForOperatorSet(
+	ctx context.Context,
+	operatorSet allocationmanager.OperatorSet,
+) ([]gethcommon.Address, error) {
+	if operatorSet.Id == 0 {
+		return nil, errLegacyAVSsNotSupported
+	} else {
+		if r.allocationManager == nil {
+			return nil, errors.New("AllocationManager contract not provided")
+		}
+
+		return r.allocationManager.GetStrategiesInOperatorSet(&bind.CallOpts{Context: ctx}, operatorSet)
+	}
+}
+
+func (r *ChainReader) GetSlashableShares(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+	operatorSet allocationmanager.OperatorSet,
+	strategies []gethcommon.Address,
+) (map[gethcommon.Address]*big.Int, error) {
+	if r.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+
+	currentBlock, err := r.ethClient.BlockNumber(ctx)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, err
+	}
+
+	slashableShares, err := r.allocationManager.GetMinimumSlashableStake(
+		&bind.CallOpts{Context: ctx},
+		operatorSet,
+		[]gethcommon.Address{operatorAddress},
+		strategies,
+		uint32(currentBlock),
+	)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, err
+	}
+	if len(slashableShares) == 0 {
+		return nil, errors.New("no slashable shares found for operator")
+	}
+
+	slashableShareStrategyMap := make(map[gethcommon.Address]*big.Int)
+	for i, strat := range strategies {
+		// The reason we use 0 here is because we only have one operator in the list
+		slashableShareStrategyMap[strat] = slashableShares[0][i]
+	}
+
+	return slashableShareStrategyMap, nil
+}
+
+// GetSlashableSharesForOperatorSets returns the strategies the operatorSets take into account, their
+// operators, and the minimum amount of shares that are slashable by the operatorSets.
+// Not supported for M2 AVSs
+func (r *ChainReader) GetSlashableSharesForOperatorSets(
+	ctx context.Context,
+	operatorSets []allocationmanager.OperatorSet,
+) ([]OperatorSetStakes, error) {
+	currentBlock, err := r.ethClient.BlockNumber(ctx)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, err
+	}
+	return r.GetSlashableSharesForOperatorSetsBefore(ctx, operatorSets, uint32(currentBlock))
+}
+
+// GetSlashableSharesForOperatorSetsBefore returns the strategies the operatorSets take into account, their
+// operators, and the minimum amount of shares slashable by the
+// operatorSets before a given timestamp.
+// Timestamp must be in the future. Used to underestimate future slashable stake.
+// Not supported for M2 AVSs
+func (r *ChainReader) GetSlashableSharesForOperatorSetsBefore(
+	ctx context.Context,
+	operatorSets []allocationmanager.OperatorSet,
+	futureBlock uint32,
+) ([]OperatorSetStakes, error) {
+	operatorSetStakes := make([]OperatorSetStakes, len(operatorSets))
+	for i, operatorSet := range operatorSets {
+		operators, err := r.GetOperatorsForOperatorSet(ctx, operatorSet)
+		if err != nil {
+			return nil, err
+		}
+
+		strategies, err := r.GetStrategiesForOperatorSet(ctx, operatorSet)
+		// If operator setId is 0 will fail on if above
+		if err != nil {
+			return nil, err
+		}
+
+		slashableShares, err := r.allocationManager.GetMinimumSlashableStake(
+			&bind.CallOpts{Context: ctx},
+			allocationmanager.OperatorSet{
+				Id:  operatorSet.Id,
+				Avs: operatorSet.Avs,
+			},
+			operators,
+			strategies,
+			futureBlock,
+		)
+		// This call should not fail since it's a getter
+		if err != nil {
+			return nil, err
+		}
+
+		operatorSetStakes[i] = OperatorSetStakes{
+			OperatorSet:     operatorSet,
+			Strategies:      strategies,
+			Operators:       operators,
+			SlashableStakes: slashableShares,
+		}
+	}
+
+	return operatorSetStakes, nil
+}
+
+func (r *ChainReader) GetAllocationDelay(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+) (uint32, error) {
+	if r.allocationManager == nil {
+		return 0, errors.New("AllocationManager contract not provided")
+	}
+	isSet, delay, err := r.allocationManager.GetAllocationDelay(&bind.CallOpts{Context: ctx}, operatorAddress)
+	// This call should not fail since it's a getter
 	if err != nil {
 		return 0, err
 	}
+	if !isSet {
+		return 0, errors.New("allocation delay not set")
+	}
+	return delay, nil
+}
 
-	return split, nil
+func (r *ChainReader) GetRegisteredSets(
+	ctx context.Context,
+	operatorAddress gethcommon.Address,
+) ([]allocationmanager.OperatorSet, error) {
+	if r.allocationManager == nil {
+		return nil, errors.New("AllocationManager contract not provided")
+	}
+	return r.allocationManager.GetRegisteredSets(&bind.CallOpts{Context: ctx}, operatorAddress)
+}
+
+func (r *ChainReader) CanCall(
+	ctx context.Context,
+	accountAddress gethcommon.Address,
+	appointeeAddress gethcommon.Address,
+	target gethcommon.Address,
+	selector [4]byte,
+) (bool, error) {
+	canCall, err := r.permissionController.CanCall(
+		&bind.CallOpts{Context: ctx},
+		accountAddress,
+		appointeeAddress,
+		target,
+		selector,
+	)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return false, utils.WrapError("call to permission controller failed", err)
+	}
+	return canCall, nil
+}
+
+func (r *ChainReader) ListAppointees(
+	ctx context.Context,
+	accountAddress gethcommon.Address,
+	target gethcommon.Address,
+	selector [4]byte,
+) ([]gethcommon.Address, error) {
+	appointees, err := r.permissionController.GetAppointees(
+		&bind.CallOpts{Context: ctx},
+		accountAddress,
+		target,
+		selector,
+	)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, utils.WrapError("call to permission controller failed", err)
+	}
+	return appointees, nil
+}
+
+func (r *ChainReader) ListAppointeePermissions(
+	ctx context.Context,
+	accountAddress gethcommon.Address,
+	appointeeAddress gethcommon.Address,
+) ([]gethcommon.Address, [][4]byte, error) {
+	targets, selectors, err := r.permissionController.GetAppointeePermissions(
+		&bind.CallOpts{Context: ctx},
+		accountAddress,
+		appointeeAddress,
+	)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, nil, utils.WrapError("call to permission controller failed", err)
+	}
+	return targets, selectors, nil
+}
+
+func (r *ChainReader) ListPendingAdmins(
+	ctx context.Context,
+	accountAddress gethcommon.Address,
+) ([]gethcommon.Address, error) {
+	pendingAdmins, err := r.permissionController.GetPendingAdmins(&bind.CallOpts{Context: ctx}, accountAddress)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, utils.WrapError("call to permission controller failed", err)
+	}
+	return pendingAdmins, nil
+}
+
+func (r *ChainReader) ListAdmins(
+	ctx context.Context,
+	accountAddress gethcommon.Address,
+) ([]gethcommon.Address, error) {
+	pendingAdmins, err := r.permissionController.GetAdmins(&bind.CallOpts{Context: ctx}, accountAddress)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return nil, utils.WrapError("call to permission controller failed", err)
+	}
+	return pendingAdmins, nil
+}
+
+func (r *ChainReader) IsPendingAdmin(
+	ctx context.Context,
+	accountAddress gethcommon.Address,
+	pendingAdminAddress gethcommon.Address,
+) (bool, error) {
+	isPendingAdmin, err := r.permissionController.IsPendingAdmin(
+		&bind.CallOpts{Context: ctx},
+		accountAddress,
+		pendingAdminAddress,
+	)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return false, utils.WrapError("call to permission controller failed", err)
+	}
+	return isPendingAdmin, nil
+}
+
+func (r *ChainReader) IsAdmin(
+	ctx context.Context,
+	accountAddress gethcommon.Address,
+	adminAddress gethcommon.Address,
+) (bool, error) {
+	isAdmin, err := r.permissionController.IsAdmin(&bind.CallOpts{Context: ctx}, accountAddress, adminAddress)
+	// This call should not fail since it's a getter
+	if err != nil {
+		return false, utils.WrapError("call to permission controller failed", err)
+	}
+	return isAdmin, nil
 }
